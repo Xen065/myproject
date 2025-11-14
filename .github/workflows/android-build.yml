@@ -17,7 +17,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install tools (curl, unzip)
+      - name: Install required tools
         run: sudo apt-get update && sudo apt-get install -y curl unzip
 
       - name: Set up JDK 17
@@ -26,110 +26,41 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Prepare SDK dirs
+      - name: Prepare SDK directory
         run: |
           mkdir -p "$ANDROID_HOME/cmdline-tools"
-          mkdir -p "$ANDROID_HOME/licenses"
 
-      - name: Download & install Android command-line tools (resilient)
-        shell: bash
+      - name: Download official Android command-line tools (correct structure)
         run: |
-          set -euo pipefail
           cd "$ANDROID_HOME/cmdline-tools"
+          URL="https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip"
+          curl -L -o tools.zip "$URL"
+          unzip -q tools.zip
+          rm tools.zip
+          mv cmdline-tools latest
 
-          # reliable versioned URL (no redirect issues)
-          URL="https://dl-ssl.google.com/android/repository/commandlinetools-linux-9123335_latest.zip"
-          OUT=tools.zip
-
-          echo "Downloading $URL ..."
-          curl -L -o "$OUT" "$URL"
-          echo "Unzipping..."
-          unzip -q "$OUT"
-          rm -f "$OUT"
-
-          # Find the sdkmanager script anywhere under this dir (handles nested structures)
-          SDKMANAGER_PATH=$(find . -type f -name sdkmanager | head -n 1 || true)
-          if [ -z "$SDKMANAGER_PATH" ]; then
-            echo "ERROR: sdkmanager not found after unzip. Listing files:"
-            ls -la
-            exit 1
-          fi
-
-          echo "Found sdkmanager at: $SDKMANAGER_PATH"
-          # sdkmanager is in .../<some-dir>/bin/sdkmanager. Determine its top-level tool dir
-          BIN_DIR=$(dirname "$SDKMANAGER_PATH")        # ./<X>/bin
-          TOOL_ROOT=$(dirname "$BIN_DIR")              # ./<X>
-
-          echo "Tool root directory is: $TOOL_ROOT"
-
-          # Ensure the required layout: latest/cmdline-tools/{bin,lib,...}
-          mkdir -p latest
-          # If TOOL_ROOT is '.' (unlikely) handle carefully
-          # Move the found tool root directory into latest/cmdline-tools
-          # If the folder name is '.' or already 'latest', copy contents appropriately
-          if [ "$TOOL_ROOT" = "." ]; then
-            # move all files (should not usually happen)
-            mv . latest/cmdline-tools || true
-          else
-            # Move the directory (strip leading ./ if present)
-            STRIPPED=$(echo "$TOOL_ROOT" | sed 's|^\./||')
-            mv "$STRIPPED" latest/cmdline-tools || {
-              # if mv fails, try copy then remove
-              cp -r "$STRIPPED" latest/cmdline-tools
-              rm -rf "$STRIPPED"
-            }
-          fi
-
-          echo "Installed command-line tools to: $ANDROID_HOME/cmdline-tools/latest/cmdline-tools"
-          echo "Contents:"
-          ls -la "$ANDROID_HOME/cmdline-tools/latest/cmdline-tools"
-          echo "bin contents:"
-          ls -la "$ANDROID_HOME/cmdline-tools/latest/cmdline-tools/bin"
-
-      - name: Verify sdkmanager runs
-        shell: bash
+      - name: Test sdkmanager
         run: |
-          set -euo pipefail
-          export PATH="$ANDROID_HOME/cmdline-tools/latest/cmdline-tools/bin:$PATH"
-          echo "sdkmanager path: $(which sdkmanager || echo 'not found')"
-          java -version || true
-          sdkmanager --version || (echo "sdkmanager failed to run" && exit 1)
+          export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
+          sdkmanager --version
 
-      - name: Install SDK components
-        shell: bash
+      - name: Install Android SDK components
         run: |
-          set -euo pipefail
-          export PATH="$ANDROID_HOME/cmdline-tools/latest/cmdline-tools/bin:$PATH"
-          echo "Installing platform-tools, platforms;android-33, build-tools;33.0.2"
-          yes | sdkmanager --sdk_root="${ANDROID_HOME}" "platform-tools" "platforms;android-33" "build-tools;33.0.2"
+          export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
+          yes | sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
 
-      - name: Accept SDK licenses
-        shell: bash
+      - name: Accept licenses
         run: |
-          export PATH="$ANDROID_HOME/cmdline-tools/latest/cmdline-tools/bin:$PATH"
-          yes | sdkmanager --sdk_root="${ANDROID_HOME}" --licenses || true
+          export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
+          yes | sdkmanager --licenses
 
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
-
-      - name: Cache Gradle
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-
-      - name: Build Release APK
-        env:
-          ANDROID_HOME: $HOME/android-sdk
-          ANDROID_SDK_ROOT: $HOME/android-sdk
-          PATH: $HOME/android-sdk/cmdline-tools/latest/cmdline-tools/bin:$HOME/android-sdk/platform-tools:${{ env.PATH }}
+      - name: Build APK
         run: |
-          ./gradlew assembleRelease --no-daemon
+          chmod +x ./gradlew
+          ./gradlew assembleRelease
 
-      - name: Upload APK artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: app-release-apk
-          path: app/build/outputs/apk/**/*.apk
+          path: app/build/outputs/apk/release/*.apk
