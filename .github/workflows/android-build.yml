@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      # Use HOME path instead of runner.temp to avoid expression parsing issues
       ANDROID_HOME: $HOME/android-sdk
       ANDROID_SDK_ROOT: $HOME/android-sdk
 
@@ -39,10 +38,10 @@ jobs:
           curl -fSL "https://dl.google.com/android/repository/commandlinetools-linux-latest.zip" -o cmdline-tools.zip
           unzip -q cmdline-tools.zip
           # move into 'latest' so sdkmanager path is consistent
-          mv cmdline-tools latest || true
+          if [ -d "cmdline-tools" ]; then mv cmdline-tools latest || true; fi
           rm -f cmdline-tools.zip
 
-      - name: Add sdkmanager to PATH and show version
+      - name: Show sdkmanager version
         shell: bash
         run: |
           export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
@@ -70,3 +69,14 @@ jobs:
 
       - name: Build Release APK
         env:
+          ANDROID_HOME: $HOME/android-sdk
+          ANDROID_SDK_ROOT: $HOME/android-sdk
+          PATH: $HOME/android-sdk/cmdline-tools/latest/bin:$HOME/android-sdk/platform-tools:${{ env.PATH }}
+        run: |
+          ./gradlew assembleRelease --no-daemon
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-apk
+          path: app/build/outputs/apk/**/*.apk
