@@ -7,17 +7,24 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     env:
       ANDROID_HOME: $HOME/android-sdk
       ANDROID_SDK_ROOT: $HOME/android-sdk
+      # FORCE clean PATH to avoid Ubuntu runner’s broken sdkmanager
+      PATH: $HOME/android-sdk/cmdline-tools/latest/bin:$HOME/android-sdk/platform-tools:/usr/bin:/bin
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install required tools
+      - name: Remove preinstalled broken sdkmanager
+        run: |
+          sudo rm -rf /usr/lib/android-sdk || true
+          sudo rm -rf /usr/local/lib/android || true
+
+      - name: Install unzip & curl
         run: sudo apt-get update && sudo apt-get install -y curl unzip
 
       - name: Set up JDK 17
@@ -27,40 +34,35 @@ jobs:
           java-version: 17
 
       - name: Prepare SDK directory
-        run: |
-          mkdir -p "$ANDROID_HOME/cmdline-tools"
+        run: mkdir -p "$ANDROID_HOME/cmdline-tools"
 
-      - name: Download official Android command-line tools (correct structure)
+      - name: Download Android command-line tools
         run: |
           cd "$ANDROID_HOME/cmdline-tools"
-          URL="https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip"
-          curl -L -o tools.zip "$URL"
+          curl -L -o tools.zip "https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip"
           unzip -q tools.zip
           rm tools.zip
           mv cmdline-tools latest
 
-      - name: Test sdkmanager
+      - name: Verify correct sdkmanager
         run: |
-          export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
+          which sdkmanager
           sdkmanager --version
 
-      - name: Install Android SDK components
+      - name: Install SDK components
         run: |
-          export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
           yes | sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
 
-      - name: Accept licenses
-        run: |
-          export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
-          yes | sdkmanager --licenses
+      - name: Accept SDK licenses
+        run: yes | sdkmanager --licenses
 
       - name: Build APK
         run: |
           chmod +x ./gradlew
-          ./gradlew assembleRelease
+          ./gradlew assembleRelease --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: app-release-apk
-          path: app/build/outputs/apk/release/*.apk
+          path: app/build/outputs/apk/**/*.apk
