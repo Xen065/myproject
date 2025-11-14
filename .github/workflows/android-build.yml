@@ -32,30 +32,82 @@ jobs:
           mkdir -p "$ANDROID_HOME/cmdline-tools"
           mkdir -p "$ANDROID_HOME/licenses"
 
-      - name: Download Android command-line tools
+      - name: Download Android command-line tools (with retries & fallback)
+        shell: bash
         run: |
+          set -euo pipefail
           cd "$ANDROID_HOME/cmdline-tools"
-          curl -fSL "https://dl.google.com/android/repository/commandlinetools-linux-latest.zip" -o cmdline-tools.zip
-          unzip -q cmdline-tools.zip
-          # move into 'latest' so sdkmanager path is consistent
-          if [ -d "cmdline-tools" ]; then mv cmdline-tools latest || true; fi
+          URL="https://dl.google.com/android/repository/commandlinetools-linux-latest.zip"
+          echo "Downloading: $URL"
+          # try curl with retries; if curl fails, try wget; print HTTP info
+          retry=0
+          max=5
+          until [ $retry -ge $max ]
+          do
+            echo "Attempt $((retry+1))..."
+            if command -v curl >/dev/null 2>&1; then
+              # -f returns exit 22 on HTTP errors; we capture http code via --write-out
+              http_code=$(curl -sSL -w "%{http_code}" -o cmdline-tools.zip "$URL" || echo "000")
+              if [ "$http_code" = "200" ]; then
+                echo "Downloaded with curl (HTTP $http_code)."
+                break
+              else
+                echo "curl returned HTTP code: $http_code"
+              fi
+            fi
+
+            if command -v wget >/dev/null 2>&1; then
+              wget --tries=3 -O cmdline-tools.zip "$URL" && { echo "Downloaded with wget."; break; } || echo "wget failed."
+            fi
+
+            retry=$((retry+1))
+            sleep 5
+          done
+
+          if [ ! -f cmdline-tools.zip ]; then
+            echo "ERROR: failed to download command-line tools after $max attempts."
+            echo "Listing current directory:"
+            ls -lah
+            exit 22
+          fi
+
+          unzip -q cmdline-tools.zip || { echo "unzip failed"; exit 23; }
+
+          # The zip may create a folder named 'cmdline-tools'
+          if [ -d "cmdline-tools" ]; then
+            mv cmdline-tools latest || true
+          elif [ -d "latest" ]; then
+            echo "latest already exists"
+          fi
           rm -f cmdline-tools.zip
+          echo "cmdline-tools installed to $ANDROID_HOME/cmdline-tools/latest"
 
-      - name: Show sdkmanager version
+      - name: Show sdkmanager version & path
         shell: bash
         run: |
+          set -euo pipefail
           export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
-          sdkmanager --version
+          which sdkmanager || true
+          sdkmanager --version || (echo "sdkmanager failed to run" && exit 24)
 
-      - name: Install Android SDK components (platform-tools, platform & build-tools)
+      - name: Install Android SDK components (platform-tools/platforms/build-tools)
         shell: bash
         run: |
+          set -euo pipefail
           export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
-          yes | sdkmanager --sdk_root="${ANDROID_HOME}" "platform-tools" "platforms;android-33" "build-tools;33.0.2"
+          echo "SDK root: $ANDROID_HOME"
+          echo "Installing: platform-tools, platforms;android-33, build-tools;33.0.2"
+          # show available packages (verbose) then install
+          sdkmanager --sdk_root="${ANDROID_HOME}" --list || true
+          yes | sdkmanager --sdk_root="${ANDROID_HOME}" "platform-tools" "platforms;android-33" "build-tools;33.0.2" || {
+            echo "ERROR: sdkmanager install failed"
+            exit 25
+          }
 
       - name: Accept Android SDK licenses
         shell: bash
         run: |
+          set -euo pipefail
           export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
           yes | sdkmanager --sdk_root="${ANDROID_HOME}" --licenses || true
 
@@ -73,6 +125,7 @@ jobs:
           ANDROID_SDK_ROOT: $HOME/android-sdk
           PATH: $HOME/android-sdk/cmdline-tools/latest/bin:$HOME/android-sdk/platform-tools:${{ env.PATH }}
         run: |
+          set -euo pipefail
           ./gradlew assembleRelease --no-daemon
 
       - name: Upload APK artifact
