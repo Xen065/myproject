@@ -1,0 +1,2026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduMaster - Spaced Repetition Learning with Calendar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --dark: #1f2937;
+            --light: #f3f4f6;
+            --white: #ffffff;
+            --text: #111827;
+            --text-light: #6b7280;
+            --border: #e5e7eb;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--text);
+        }
+
+        /* Mobile App Container */
+        .app-container {
+            max-width: 480px;
+            margin: 0 auto;
+            background: var(--white);
+            min-height: 100vh;
+            position: relative;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Header */
+        .app-header {
+            background: var(--gradient);
+            color: white;
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px var(--shadow);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .app-title {
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .icon-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 18px;
+        }
+
+        .icon-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        /* User Stats Bar */
+        .user-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            opacity: 0.9;
+            margin-top: 2px;
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 140px;
+            z-index: 90;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 15px;
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .nav-tab.active {
+            color: var(--primary);
+        }
+
+        .nav-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary);
+        }
+
+        .nav-tab:hover {
+            background: var(--light);
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+            padding: 20px;
+            animation: fadeIn 0.3s;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Dashboard Section */
+        .dashboard-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .dashboard-card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 2px 10px var(--shadow);
+            transition: all 0.3s;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px var(--shadow);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .progress-bar {
+            background: var(--light);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient);
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+
+        .course-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .course-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: var(--light);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .course-item:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .course-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-right: 15px;
+            font-size: 20px;
+        }
+
+        .course-info {
+            flex: 1;
+        }
+
+        .course-name {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .course-progress {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        /* Study Section */
+        .study-container {
+            padding: 20px;
+        }
+
+        .flashcard {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 30px;
+            min-height: 300px;
+            box-shadow: 0 10px 30px var(--shadow);
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            margin-bottom: 20px;
+        }
+
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front,
+        .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .flashcard-back {
+            transform: rotateY(180deg);
+        }
+
+        .card-content {
+            font-size: 20px;
+            line-height: 1.5;
+        }
+
+        .card-hint {
+            margin-top: 20px;
+            padding: 10px;
+            background: var(--light);
+            border-radius: 10px;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .study-controls {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .study-btn {
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-again {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-hard {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-good {
+            background: var(--info);
+            color: white;
+        }
+
+        .btn-easy {
+            background: var(--success);
+            color: white;
+        }
+
+        .study-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+
+        /* Calendar Section (Compact Version) */
+        .calendar-section {
+            padding: 10px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: var(--gradient);
+            color: white;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            background: var(--white);
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px var(--shadow);
+        }
+
+        .calendar-day-header {
+            text-align: center;
+            font-weight: 600;
+            font-size: 12px;
+            color: var(--text-light);
+            padding: 5px;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            position: relative;
+        }
+
+        .calendar-day:hover {
+            background: var(--light);
+            transform: scale(1.1);
+        }
+
+        .calendar-day.today {
+            background: var(--primary);
+            color: white;
+            font-weight: bold;
+        }
+
+        .calendar-day.has-event::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            width: 4px;
+            height: 4px;
+            background: var(--danger);
+            border-radius: 50%;
+        }
+
+        .calendar-day.study-day {
+            background: var(--success);
+            color: white;
+        }
+
+        /* Store Section */
+        .store-section {
+            padding: 20px;
+        }
+
+        .store-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .coins-display {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 10px 15px;
+            background: var(--gradient);
+            color: white;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .store-categories {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .category-chip {
+            padding: 8px 15px;
+            background: var(--light);
+            border-radius: 20px;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .category-chip.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary-dark);
+        }
+
+        .course-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .course-card {
+            background: var(--white);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px var(--shadow);
+            transition: all 0.3s;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px var(--shadow);
+        }
+
+        .course-image {
+            height: 120px;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+        }
+
+        .course-details {
+            padding: 15px;
+        }
+
+        .course-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .course-description {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 10px;
+        }
+
+        .course-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .course-price {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .course-rating {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 12px;
+        }
+
+        /* Profile Section */
+        .profile-section {
+            padding: 20px;
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            background: var(--gradient);
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+
+        .profile-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .profile-level {
+            color: var(--text-light);
+            margin-bottom: 15px;
+        }
+
+        .profile-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .profile-stat {
+            background: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .profile-stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .profile-stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+
+        .achievements-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .achievement {
+            aspect-ratio: 1;
+            background: var(--light);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .achievement.unlocked {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 3px 10px var(--shadow);
+        }
+
+        .achievement:hover {
+            transform: scale(1.1);
+        }
+
+        .settings-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: var(--light);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .setting-item:hover {
+            background: var(--border);
+        }
+
+        .setting-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 25px;
+            background: var(--border);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: var(--primary);
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 21px;
+            height: 21px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(25px);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            background: var(--white);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px var(--shadow);
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            padding: 5px;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: all 0.3s;
+            background: none;
+            border: none;
+            font-size: 24px;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-item:hover {
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            animation: fadeIn 0.3s;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--white);
+            width: 90%;
+            max-width: 400px;
+            border-radius: 20px;
+            padding: 25px;
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--light);
+            color: var(--text);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            background: var(--gradient);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px var(--shadow);
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .fab:hover {
+            transform: scale(1.1) rotate(90deg);
+        }
+
+        /* Study Timer */
+        .study-timer {
+            background: var(--gradient);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .timer-display {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .timer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .timer-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .timer-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Notification Badge */
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger);
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        /* Loading Spinner */
+        .loading {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2000;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--light);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--dark);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px var(--shadow);
+            animation: slideInUp 0.3s;
+            z-index: 1500;
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translate(-50%, 100px);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, 0);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .app-container {
+                max-width: 100%;
+                border-radius: 0;
+            }
+
+            .bottom-nav {
+                max-width: 100%;
+            }
+        }
+
+        /* Streak Counter */
+        .streak-counter {
+            background: linear-gradient(135deg, #ff6b6b, #ffd93d);
+            color: white;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+
+        .streak-number {
+            font-size: 36px;
+            font-weight: bold;
+        }
+
+        .streak-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Study Progress Ring */
+        .progress-ring {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto;
+        }
+
+        .progress-ring-circle {
+            stroke: var(--light);
+            stroke-width: 8;
+            fill: none;
+        }
+
+        .progress-ring-circle-progress {
+            stroke: var(--gradient);
+            stroke-width: 8;
+            fill: none;
+            stroke-dasharray: 339.292;
+            stroke-dashoffset: 339.292;
+            transform: rotate(-90deg);
+            transform-origin: center;
+            transition: stroke-dashoffset 0.5s;
+        }
+
+        /* Quick Stats */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .quick-stat {
+            background: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quick-stat-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .quick-stat-info {
+            flex: 1;
+        }
+
+        .quick-stat-value {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .quick-stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <div class="app-header">
+            <div class="header-top">
+                <div class="app-title">
+                    <span>🎓</span>
+                    EduMaster
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn" onclick="toggleNotifications()">
+                        🔔
+                        <span class="notification-badge">3</span>
+                    </button>
+                    <button class="icon-btn" onclick="showSettings()">⚙️</button>
+                </div>
+            </div>
+            <div class="user-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="streakCount">7</div>
+                    <div class="stat-label">Day Streak</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="totalCards">248</div>
+                    <div class="stat-label">Cards</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="todayGoal">85%</div>
+                    <div class="stat-label">Today</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="userLevel">12</div>
+                    <div class="stat-label">Level</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('dashboard')">Dashboard</button>
+            <button class="nav-tab" onclick="switchTab('study')">Study</button>
+            <button class="nav-tab" onclick="switchTab('calendar')">Calendar</button>
+            <button class="nav-tab" onclick="switchTab('store')">Store</button>
+            <button class="nav-tab" onclick="switchTab('profile')">Profile</button>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div class="content-section active" id="dashboard">
+            <div class="dashboard-grid">
+                <!-- Streak Counter -->
+                <div class="streak-counter">
+                    <div class="streak-number">🔥 7</div>
+                    <div class="streak-label">Days Study Streak</div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="quick-stats">
+                    <div class="quick-stat">
+                        <div class="quick-stat-icon">📚</div>
+                        <div class="quick-stat-info">
+                            <div class="quick-stat-value">32</div>
+                            <div class="quick-stat-label">Due Today</div>
+                        </div>
+                    </div>
+                    <div class="quick-stat">
+                        <div class="quick-stat-icon">✅</div>
+                        <div class="quick-stat-info">
+                            <div class="quick-stat-value">18</div>
+                            <div class="quick-stat-label">Completed</div>
+                        </div>
+                    </div>
+                    <div class="quick-stat">
+                        <div class="quick-stat-icon">📝</div>
+                        <div class="quick-stat-info">
+                            <div class="quick-stat-value">5</div>
+                            <div class="quick-stat-label">New Cards</div>
+                        </div>
+                    </div>
+                    <div class="quick-stat">
+                        <div class="quick-stat-icon">⏱️</div>
+                        <div class="quick-stat-info">
+                            <div class="quick-stat-value">45m</div>
+                            <div class="quick-stat-label">Study Time</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Today's Progress -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Today's Progress</h3>
+                        <span>85%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 85%;"></div>
+                    </div>
+                    <p style="font-size: 12px; color: var(--text-light); margin-top: 10px;">
+                        Keep going! Only 5 more cards to reach your daily goal.
+                    </p>
+                </div>
+
+                <!-- Active Courses -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Active Courses</h3>
+                        <button class="icon-btn" style="width: 30px; height: 30px; font-size: 16px;">+</button>
+                    </div>
+                    <div class="course-list">
+                        <div class="course-item" onclick="startStudy('vocabulary')">
+                            <div class="course-icon">📖</div>
+                            <div class="course-info">
+                                <div class="course-name">English Vocabulary</div>
+                                <div class="course-progress">156/500 cards • Due: 12</div>
+                            </div>
+                        </div>
+                        <div class="course-item" onclick="startStudy('current-affairs')">
+                            <div class="course-icon">📰</div>
+                            <div class="course-info">
+                                <div class="course-name">Current Affairs 2024</div>
+                                <div class="course-progress">89/200 cards • Due: 8</div>
+                            </div>
+                        </div>
+                        <div class="course-item" onclick="startStudy('science')">
+                            <div class="course-icon">🔬</div>
+                            <div class="course-info">
+                                <div class="course-name">General Science MCQ</div>
+                                <div class="course-progress">67/150 cards • Due: 5</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Study Reminder -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Next Study Session</h3>
+                    </div>
+                    <div style="text-align: center; padding: 20px;">
+                        <div style="font-size: 24px; margin-bottom: 10px;">⏰</div>
+                        <div style="font-size: 18px; font-weight: bold;">2:00 PM</div>
+                        <div style="font-size: 12px; color: var(--text-light);">English Vocabulary Review</div>
+                        <button class="btn btn-primary" style="margin-top: 15px;">Start Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Study Section -->
+        <div class="content-section" id="study">
+            <div class="study-container">
+                <!-- Study Timer -->
+                <div class="study-timer">
+                    <div>Study Session</div>
+                    <div class="timer-display" id="timerDisplay">25:00</div>
+                    <div class="timer-controls">
+                        <button class="timer-btn" onclick="startTimer()">Start</button>
+                        <button class="timer-btn" onclick="pauseTimer()">Pause</button>
+                        <button class="timer-btn" onclick="resetTimer()">Reset</button>
+                    </div>
+                </div>
+
+                <!-- Flashcard -->
+                <div class="flashcard" id="flashcard" onclick="flipCard()">
+                    <div class="flashcard-front">
+                        <div class="card-content">
+                            <strong>Question:</strong><br><br>
+                            What is the process by which plants make their own food using sunlight?
+                        </div>
+                        <div class="card-hint">
+                            💡 Hint: It involves chlorophyll and produces oxygen
+                        </div>
+                    </div>
+                    <div class="flashcard-back">
+                        <div class="card-content">
+                            <strong>Answer:</strong><br><br>
+                            Photosynthesis
+                            <br><br>
+                            <small>The process where plants convert light energy into chemical energy, using CO₂ and water to produce glucose and oxygen.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Study Controls -->
+                <div class="study-controls">
+                    <button class="study-btn btn-again" onclick="rateCard(1)">
+                        <div>😣</div>
+                        <div style="font-size: 10px;">Again</div>
+                    </button>
+                    <button class="study-btn btn-hard" onclick="rateCard(2)">
+                        <div>😐</div>
+                        <div style="font-size: 10px;">Hard</div>
+                    </button>
+                    <button class="study-btn btn-good" onclick="rateCard(3)">
+                        <div>😊</div>
+                        <div style="font-size: 10px;">Good</div>
+                    </button>
+                    <button class="study-btn btn-easy" onclick="rateCard(4)">
+                        <div>😎</div>
+                        <div style="font-size: 10px;">Easy</div>
+                    </button>
+                </div>
+
+                <!-- Progress Info -->
+                <div class="dashboard-card" style="margin-top: 20px;">
+                    <div class="card-header">
+                        <h3 class="card-title">Session Progress</h3>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center;">
+                        <div>
+                            <div style="font-size: 20px; font-weight: bold; color: var(--primary);">12</div>
+                            <div style="font-size: 12px; color: var(--text-light);">Reviewed</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 20px; font-weight: bold; color: var(--success);">8</div>
+                            <div style="font-size: 12px; color: var(--text-light);">Correct</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 20px; font-weight: bold; color: var(--warning);">20</div>
+                            <div style="font-size: 12px; color: var(--text-light);">Remaining</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calendar Section -->
+        <div class="content-section" id="calendar">
+            <div class="calendar-section">
+                <div class="calendar-header">
+                    <button class="icon-btn" onclick="previousMonth()">◀</button>
+                    <h3 id="currentMonth">November 2024</h3>
+                    <button class="icon-btn" onclick="nextMonth()">▶</button>
+                </div>
+                
+                <div class="calendar-grid" id="calendarGrid">
+                    <!-- Calendar will be generated here -->
+                </div>
+
+                <!-- Study Schedule -->
+                <div class="dashboard-card" style="margin-top: 15px;">
+                    <div class="card-header">
+                        <h3 class="card-title">Study Schedule</h3>
+                        <button class="icon-btn" style="width: 30px; height: 30px;" onclick="addStudySession()">+</button>
+                    </div>
+                    <div id="studySchedule">
+                        <!-- Schedule items will be added here -->
+                    </div>
+                </div>
+
+                <!-- Upcoming Reviews -->
+                <div class="dashboard-card" style="margin-top: 15px;">
+                    <div class="card-header">
+                        <h3 class="card-title">Upcoming Reviews</h3>
+                    </div>
+                    <div style="display: grid; gap: 10px;">
+                        <div class="course-item">
+                            <div class="course-icon">📅</div>
+                            <div class="course-info">
+                                <div class="course-name">Tomorrow</div>
+                                <div class="course-progress">45 cards due for review</div>
+                            </div>
+                        </div>
+                        <div class="course-item">
+                            <div class="course-icon">📅</div>
+                            <div class="course-info">
+                                <div class="course-name">In 2 Days</div>
+                                <div class="course-progress">23 cards due for review</div>
+                            </div>
+                        </div>
+                        <div class="course-item">
+                            <div class="course-icon">📅</div>
+                            <div class="course-info">
+                                <div class="course-name">This Week</div>
+                                <div class="course-progress">112 total cards scheduled</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Store Section -->
+        <div class="content-section" id="store">
+            <div class="store-section">
+                <div class="store-header">
+                    <h2>Course Store</h2>
+                    <div class="coins-display">
+                        <span>🪙</span>
+                        <span>2,450</span>
+                    </div>
+                </div>
+
+                <div class="store-categories">
+                    <div class="category-chip active">All</div>
+                    <div class="category-chip">Vocabulary</div>
+                    <div class="category-chip">Current Affairs</div>
+                    <div class="category-chip">Science</div>
+                    <div class="category-chip">History</div>
+                    <div class="category-chip">Mathematics</div>
+                </div>
+
+                <div class="course-grid">
+                    <div class="course-card">
+                        <div class="course-image">📚</div>
+                        <div class="course-details">
+                            <div class="course-title">Advanced English Vocabulary</div>
+                            <div class="course-description">Master 1000+ advanced English words with spaced repetition</div>
+                            <div class="course-meta">
+                                <div class="course-price">
+                                    <span>🪙</span>
+                                    <span>500</span>
+                                </div>
+                                <div class="course-rating">
+                                    <span>⭐ 4.8</span>
+                                    <span>(234)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="course-card">
+                        <div class="course-image">📰</div>
+                        <div class="course-details">
+                            <div class="course-title">Monthly Current Affairs</div>
+                            <div class="course-description">November 2024 current affairs MCQs for competitive exams</div>
+                            <div class="course-meta">
+                                <div class="course-price">
+                                    <span>🪙</span>
+                                    <span>300</span>
+                                </div>
+                                <div class="course-rating">
+                                    <span>⭐ 4.9</span>
+                                    <span>(156)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="course-card">
+                        <div class="course-image">🔬</div>
+                        <div class="course-details">
+                            <div class="course-title">Physics Fundamentals</div>
+                            <div class="course-description">Essential physics concepts and formulas for exams</div>
+                            <div class="course-meta">
+                                <div class="course-price">
+                                    <span>🪙</span>
+                                    <span>450</span>
+                                </div>
+                                <div class="course-rating">
+                                    <span>⭐ 4.7</span>
+                                    <span>(89)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="course-card">
+                        <div class="course-image">🗺️</div>
+                        <div class="course-details">
+                            <div class="course-title">World Geography</div>
+                            <div class="course-description">Countries, capitals, and geographical features</div>
+                            <div class="course-meta">
+                                <div class="course-price">
+                                    <span>🪙</span>
+                                    <span>350</span>
+                                </div>
+                                <div class="course-rating">
+                                    <span>⭐ 4.6</span>
+                                    <span>(201)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Section -->
+        <div class="content-section" id="profile">
+            <div class="profile-section">
+                <div class="profile-header">
+                    <div class="profile-avatar">👤</div>
+                    <div class="profile-name">John Doe</div>
+                    <div class="profile-level">Level 12 • Expert Learner</div>
+                    <div class="progress-bar" style="max-width: 200px; margin: 0 auto;">
+                        <div class="progress-fill" style="width: 65%;"></div>
+                    </div>
+                </div>
+
+                <div class="profile-stats-grid">
+                    <div class="profile-stat">
+                        <div class="profile-stat-value">1,234</div>
+                        <div class="profile-stat-label">Total Cards</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div class="profile-stat-value">89%</div>
+                        <div class="profile-stat-label">Accuracy</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div class="profile-stat-value">47</div>
+                        <div class="profile-stat-label">Day Streak</div>
+                    </div>
+                </div>
+
+                <div class="achievements-section">
+                    <h3 class="section-title">Achievements</h3>
+                    <div class="achievements-grid">
+                        <div class="achievement unlocked">🏆</div>
+                        <div class="achievement unlocked">🥇</div>
+                        <div class="achievement unlocked">📚</div>
+                        <div class="achievement unlocked">🔥</div>
+                        <div class="achievement">🎯</div>
+                        <div class="achievement">💎</div>
+                        <div class="achievement">🌟</div>
+                        <div class="achievement">👑</div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3 class="section-title">Settings</h3>
+                    <div class="settings-list">
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span>🔔</span>
+                                <span>Study Reminders</span>
+                            </div>
+                            <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                                <div class="toggle-slider"></div>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span>🌙</span>
+                                <span>Dark Mode</span>
+                            </div>
+                            <div class="toggle-switch" onclick="toggleSwitch(this)">
+                                <div class="toggle-slider"></div>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span>🔊</span>
+                                <span>Sound Effects</span>
+                            </div>
+                            <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                                <div class="toggle-slider"></div>
+                            </div>
+                        </div>
+                        <div class="setting-item" onclick="showAbout()">
+                            <div class="setting-label">
+                                <span>ℹ️</span>
+                                <span>About</span>
+                            </div>
+                            <span>›</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <button class="nav-item active" onclick="switchSection('dashboard')">
+                <span>🏠</span>
+                <span class="nav-label">Home</span>
+            </button>
+            <button class="nav-item" onclick="switchSection('study')">
+                <span>📚</span>
+                <span class="nav-label">Study</span>
+            </button>
+            <button class="nav-item" onclick="switchSection('calendar')">
+                <span>📅</span>
+                <span class="nav-label">Calendar</span>
+            </button>
+            <button class="nav-item" onclick="switchSection('store')">
+                <span>🛍️</span>
+                <span class="nav-label">Store</span>
+            </button>
+            <button class="nav-item" onclick="switchSection('profile')">
+                <span>👤</span>
+                <span class="nav-label">Profile</span>
+            </button>
+        </div>
+
+        <!-- Floating Action Button -->
+        <button class="fab" onclick="quickAddCard()">+</button>
+
+        <!-- Modal for Adding Study Session -->
+        <div class="modal" id="addSessionModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Add Study Session</h3>
+                    <button class="close-btn" onclick="closeModal()">&times;</button>
+                </div>
+                <form onsubmit="saveStudySession(event)">
+                    <div class="form-group">
+                        <label class="form-label">Course</label>
+                        <select class="form-input" id="sessionCourse">
+                            <option>English Vocabulary</option>
+                            <option>Current Affairs</option>
+                            <option>General Science</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Date</label>
+                        <input type="date" class="form-input" id="sessionDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Time</label>
+                        <input type="time" class="form-input" id="sessionTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Duration (minutes)</label>
+                        <input type="number" class="form-input" id="sessionDuration" value="30" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+    <script>
+        // Global Variables
+        let currentDate = new Date();
+        let currentTab = 'dashboard';
+        let timerInterval = null;
+        let timerSeconds = 1500; // 25 minutes
+        let cards = [];
+        let currentCardIndex = 0;
+        let studySessions = [];
+
+        // Sample flashcards data
+        const sampleCards = [
+            {
+                id: 1,
+                question: "What is the process by which plants make their own food using sunlight?",
+                answer: "Photosynthesis",
+                hint: "It involves chlorophyll and produces oxygen",
+                category: "science",
+                interval: 1,
+                easeFactor: 2.5,
+                nextReview: new Date()
+            },
+            {
+                id: 2,
+                question: "What is the capital of France?",
+                answer: "Paris",
+                hint: "City of Light",
+                category: "geography",
+                interval: 1,
+                easeFactor: 2.5,
+                nextReview: new Date()
+            },
+            {
+                id: 3,
+                question: "Who wrote 'Romeo and Juliet'?",
+                answer: "William Shakespeare",
+                hint: "Famous English playwright",
+                category: "literature",
+                interval: 1,
+                easeFactor: 2.5,
+                nextReview: new Date()
+            }
+        ];
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            renderCalendar();
+            updateStats();
+            cards = [...sampleCards];
+        });
+
+        // Tab switching
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tab).classList.add('active');
+        }
+
+        // Bottom navigation
+        function switchSection(section) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.getElementById(section).classList.add('active');
+        }
+
+        // Calendar Functions
+        function renderCalendar() {
+            const grid = document.getElementById('calendarGrid');
+            if (!grid) return;
+            
+            grid.innerHTML = '';
+            
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            
+            // Update month display
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                              'July', 'August', 'September', 'October', 'November', 'December'];
+            document.getElementById('currentMonth').textContent = `${monthNames[month]} ${year}`;
+            
+            // Add day headers
+            const dayHeaders = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+            dayHeaders.forEach(day => {
+                const header = document.createElement('div');
+                header.className = 'calendar-day-header';
+                header.textContent = day;
+                grid.appendChild(header);
+            });
+            
+            // Calculate days
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const today = new Date();
+            
+            // Empty cells for alignment
+            for (let i = 0; i < firstDay; i++) {
+                const empty = document.createElement('div');
+                grid.appendChild(empty);
+            }
+            
+            // Days of month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.textContent = day;
+                
+                // Check if today
+                if (year === today.getFullYear() && 
+                    month === today.getMonth() && 
+                    day === today.getDate()) {
+                    dayElement.classList.add('today');
+                }
+                
+                // Check if has study session
+                if (hasStudySession(year, month, day)) {
+                    dayElement.classList.add('study-day');
+                }
+                
+                // Random events for demo
+                if (Math.random() > 0.8) {
+                    dayElement.classList.add('has-event');
+                }
+                
+                dayElement.onclick = () => showDayDetails(year, month, day);
+                grid.appendChild(dayElement);
+            }
+        }
+
+        function previousMonth() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        }
+
+        function nextMonth() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+        }
+
+        function hasStudySession(year, month, day) {
+            return studySessions.some(session => {
+                const sessionDate = new Date(session.date);
+                return sessionDate.getFullYear() === year &&
+                       sessionDate.getMonth() === month &&
+                       sessionDate.getDate() === day;
+            });
+        }
+
+        function showDayDetails(year, month, day) {
+            showToast(`Selected: ${month + 1}/${day}/${year}`);
+        }
+
+        // Study Functions
+        function flipCard() {
+            document.getElementById('flashcard').classList.toggle('flipped');
+        }
+
+        function rateCard(rating) {
+            // Spaced repetition algorithm (simplified SM-2)
+            const card = cards[currentCardIndex];
+            
+            if (rating < 3) {
+                card.interval = 1;
+                card.easeFactor = Math.max(1.3, card.easeFactor - 0.2);
+            } else {
+                if (card.interval === 1) {
+                    card.interval = 6;
+                } else {
+                    card.interval = Math.round(card.interval * card.easeFactor);
+                }
+                card.easeFactor = Math.min(2.5, card.easeFactor + (rating - 3) * 0.1);
+            }
+            
+            // Set next review date
+            const nextReview = new Date();
+            nextReview.setDate(nextReview.getDate() + card.interval);
+            card.nextReview = nextReview;
+            
+            // Move to next card
+            currentCardIndex = (currentCardIndex + 1) % cards.length;
+            loadCard(currentCardIndex);
+            
+            // Update stats
+            updateStats();
+            showToast(`Next review in ${card.interval} days`);
+        }
+
+        function loadCard(index) {
+            const card = cards[index];
+            const flashcard = document.getElementById('flashcard');
+            flashcard.classList.remove('flipped');
+            
+            // Update card content
+            setTimeout(() => {
+                flashcard.querySelector('.flashcard-front .card-content').innerHTML = 
+                    `<strong>Question:</strong><br><br>${card.question}`;
+                flashcard.querySelector('.card-hint').innerHTML = 
+                    `💡 Hint: ${card.hint}`;
+                flashcard.querySelector('.flashcard-back .card-content').innerHTML = 
+                    `<strong>Answer:</strong><br><br>${card.answer}`;
+            }, 300);
+        }
+
+        // Timer Functions
+        function startTimer() {
+            if (!timerInterval) {
+                timerInterval = setInterval(() => {
+                    timerSeconds--;
+                    updateTimerDisplay();
+                    
+                    if (timerSeconds <= 0) {
+                        pauseTimer();
+                        showToast('Study session completed! 🎉');
+                        timerSeconds = 1500;
+                        updateTimerDisplay();
+                    }
+                }, 1000);
+            }
+        }
+
+        function pauseTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        function resetTimer() {
+            pauseTimer();
+            timerSeconds = 1500;
+            updateTimerDisplay();
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timerSeconds / 60);
+            const seconds = timerSeconds % 60;
+            document.getElementById('timerDisplay').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Modal Functions
+        function addStudySession() {
+            document.getElementById('addSessionModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.classList.remove('show');
+            });
+        }
+
+        function saveStudySession(event) {
+            event.preventDefault();
+            
+            const session = {
+                id: Date.now(),
+                course: document.getElementById('sessionCourse').value,
+                date: document.getElementById('sessionDate').value,
+                time: document.getElementById('sessionTime').value,
+                duration: document.getElementById('sessionDuration').value
+            };
+            
+            studySessions.push(session);
+            saveData();
+            renderCalendar();
+            updateScheduleDisplay();
+            closeModal();
+            showToast('Study session added!');
+        }
+
+        function updateScheduleDisplay() {
+            const schedule = document.getElementById('studySchedule');
+            if (!schedule) return;
+            
+            schedule.innerHTML = '';
+            
+            const upcomingSessions = studySessions
+                .filter(s => new Date(s.date) >= new Date())
+                .sort((a, b) => new Date(a.date) - new Date(b.date))
+                .slice(0, 3);
+            
+            if (upcomingSessions.length === 0) {
+                schedule.innerHTML = '<p style="text-align: center; color: var(--text-light);">No upcoming sessions</p>';
+                return;
+            }
+            
+            upcomingSessions.forEach(session => {
+                const item = document.createElement('div');
+                item.className = 'course-item';
+                item.innerHTML = `
+                    <div class="course-icon">📚</div>
+                    <div class="course-info">
+                        <div class="course-name">${session.course}</div>
+                        <div class="course-progress">${new Date(session.date).toLocaleDateString()} at ${session.time}</div>
+                    </div>
+                `;
+                schedule.appendChild(item);
+            });
+        }
+
+        // Quick Add Card
+        function quickAddCard() {
+            const question = prompt('Enter question:');
+            if (!question) return;
+            
+            const answer = prompt('Enter answer:');
+            if (!answer) return;
+            
+            const newCard = {
+                id: Date.now(),
+                question: question,
+                answer: answer,
+                hint: '',
+                category: 'custom',
+                interval: 1,
+                easeFactor: 2.5,
+                nextReview: new Date()
+            };
+            
+            cards.push(newCard);
+            saveData();
+            showToast('Card added successfully!');
+        }
+
+        // Settings Functions
+        function toggleSwitch(element) {
+            element.classList.toggle('active');
+        }
+
+        function toggleNotifications() {
+            showToast('Notifications panel coming soon!');
+        }
+
+        function showSettings() {
+            showToast('Settings page coming soon!');
+        }
+
+        function showAbout() {
+            showToast('EduMaster v1.0 - Spaced Repetition Learning App');
+        }
+
+        // Stats Functions
+        function updateStats() {
+            // Update header stats
+            document.getElementById('streakCount').textContent = '7';
+            document.getElementById('totalCards').textContent = cards.length;
+            document.getElementById('todayGoal').textContent = '85%';
+            document.getElementById('userLevel').textContent = '12';
+            
+            // Update other stats throughout the app
+            updateScheduleDisplay();
+        }
+
+        // Data Management
+        function saveData() {
+            localStorage.setItem('edumaster_cards', JSON.stringify(cards));
+            localStorage.setItem('edumaster_sessions', JSON.stringify(studySessions));
+        }
+
+        function loadData() {
+            const savedCards = localStorage.getItem('edumaster_cards');
+            const savedSessions = localStorage.getItem('edumaster_sessions');
+            
+            if (savedCards) {
+                cards = JSON.parse(savedCards);
+            }
+            
+            if (savedSessions) {
+                studySessions = JSON.parse(savedSessions);
+            }
+        }
+
+        // Start Study
+        function startStudy(course) {
+            switchSection('study');
+            document.querySelector('.nav-item:nth-child(2)').classList.add('active');
+            document.querySelector('.nav-item:nth-child(1)').classList.remove('active');
+            showToast(`Starting ${course} study session`);
+        }
+
+        // Toast Notification
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Initialize timer display
+        updateTimerDisplay();
+    </script>
+</body>
+</html>
