@@ -17,6 +17,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Install OS deps (curl, wget, unzip, zip)
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y curl wget unzip zip
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -32,54 +37,67 @@ jobs:
           mkdir -p "$ANDROID_HOME/cmdline-tools"
           mkdir -p "$ANDROID_HOME/licenses"
 
-      - name: Download Android command-line tools (with retries & fallback)
+      - name: Download Android command-line tools (retries + validate ZIP)
         shell: bash
         run: |
           set -euo pipefail
           cd "$ANDROID_HOME/cmdline-tools"
           URL="https://dl.google.com/android/repository/commandlinetools-linux-latest.zip"
-          echo "Downloading: $URL"
-          # try curl with retries; if curl fails, try wget; print HTTP info
-          retry=0
-          max=5
-          until [ $retry -ge $max ]
-          do
-            echo "Attempt $((retry+1))..."
+          OUT=cmdline-tools.zip
+          max_attempts=5
+          attempt=1
+          while [ $attempt -le $max_attempts ]; do
+            echo "Download attempt $attempt of $max_attempts..."
+            # prefer curl, fall back to wget
             if command -v curl >/dev/null 2>&1; then
-              # -f returns exit 22 on HTTP errors; we capture http code via --write-out
-              http_code=$(curl -sSL -w "%{http_code}" -o cmdline-tools.zip "$URL" || echo "000")
-              if [ "$http_code" = "200" ]; then
-                echo "Downloaded with curl (HTTP $http_code)."
-                break
-              else
-                echo "curl returned HTTP code: $http_code"
+              http_code=$(curl -sSL -w "%{http_code}" -o "$OUT" "$URL" || echo "000")
+              echo "curl HTTP code: $http_code"
+              if [ "$http_code" != "200" ]; then
+                echo "curl did not return HTTP 200 (code $http_code)."
+              fi
+            fi
+            if [ ! -f "$OUT" ] || [ ! -s "$OUT" ]; then
+              echo "curl failed or produced empty file; trying wget..."
+              if command -v wget >/dev/null 2>&1; then
+                wget -O "$OUT" "$URL" || true
               fi
             fi
 
-            if command -v wget >/dev/null 2>&1; then
-              wget --tries=3 -O cmdline-tools.zip "$URL" && { echo "Downloaded with wget."; break; } || echo "wget failed."
+            # Quick file checks
+            if [ -f "$OUT" ] && [ -s "$OUT" ]; then
+              echo "Downloaded file size: $(stat -c%s "$OUT") bytes"
+              echo "Testing zip integrity..."
+              if unzip -tq "$OUT"; then
+                echo "ZIP integrity OK."
+                break
+              else
+                echo "ZIP test failed; removing corrupted file and retrying."
+                rm -f "$OUT"
+              fi
+            else
+              echo "No valid file found after attempt $attempt."
             fi
 
-            retry=$((retry+1))
-            sleep 5
+            attempt=$((attempt+1))
+            sleep 3
           done
 
-          if [ ! -f cmdline-tools.zip ]; then
-            echo "ERROR: failed to download command-line tools after $max attempts."
-            echo "Listing current directory:"
+          if [ ! -f "$OUT" ]; then
+            echo "ERROR: Failed to download a valid command-line tools ZIP after $max_attempts attempts."
             ls -lah
-            exit 22
+            exit 23
           fi
 
-          unzip -q cmdline-tools.zip || { echo "unzip failed"; exit 23; }
+          echo "Unzipping..."
+          unzip -q "$OUT" || { echo "unzip failed"; exit 24; }
 
-          # The zip may create a folder named 'cmdline-tools'
+          # move cmdline-tools dir into 'latest' if needed
           if [ -d "cmdline-tools" ]; then
             mv cmdline-tools latest || true
           elif [ -d "latest" ]; then
-            echo "latest already exists"
+            echo "'latest' already present"
           fi
-          rm -f cmdline-tools.zip
+          rm -f "$OUT"
           echo "cmdline-tools installed to $ANDROID_HOME/cmdline-tools/latest"
 
       - name: Show sdkmanager version & path
@@ -87,17 +105,15 @@ jobs:
         run: |
           set -euo pipefail
           export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
-          which sdkmanager || true
-          sdkmanager --version || (echo "sdkmanager failed to run" && exit 24)
+          echo "sdkmanager path:" $(which sdkmanager || echo "not found")
+          sdkmanager --version || (echo "sdkmanager failed" && exit 24)
 
       - name: Install Android SDK components (platform-tools/platforms/build-tools)
         shell: bash
         run: |
           set -euo pipefail
           export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
-          echo "SDK root: $ANDROID_HOME"
-          echo "Installing: platform-tools, platforms;android-33, build-tools;33.0.2"
-          # show available packages (verbose) then install
+          echo "Installing platform-tools, platforms;android-33, build-tools;33.0.2"
           sdkmanager --sdk_root="${ANDROID_HOME}" --list || true
           yes | sdkmanager --sdk_root="${ANDROID_HOME}" "platform-tools" "platforms;android-33" "build-tools;33.0.2" || {
             echo "ERROR: sdkmanager install failed"
