@@ -2,12 +2,16 @@ name: Build Android APK
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      ANDROID_HOME: ${{ runner.temp }}/android-sdk
+      ANDROID_SDK_ROOT: ${{ runner.temp }}/android-sdk
+      SDKMANAGER: ${{ runner.temp }}/android-sdk/cmdline-tools/latest/bin/sdkmanager
 
     steps:
       - name: Checkout repository
@@ -22,23 +26,59 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      - name: Accept Android SDK licenses
-        run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
-        env:
-          ANDROID_HOME: ${{ runner.temp }}/android-sdk
-
-      - name: Install Android SDK components
+      # ---- Install Android command-line tools ----
+      - name: Create Android SDK dirs
         run: |
           mkdir -p $ANDROID_HOME
-          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
-        env:
-          ANDROID_HOME: ${{ runner.temp }}/android-sdk
+          mkdir -p $ANDROID_HOME/cmdline-tools
+          mkdir -p $ANDROID_HOME/licenses
+
+      - name: Download Android command-line tools
+        run: |
+          cd $ANDROID_HOME/cmdline-tools
+          curl -fSL "https://dl.google.com/android/repository/commandlinetools-linux-latest.zip" -o cmdline-tools.zip
+          unzip -q cmdline-tools.zip
+          # The zip creates a 'cmdline-tools' folder containing 'bin' etc.
+          # Move it to $ANDROID_HOME/cmdline-tools/latest so sdkmanager path matches common usage
+          mv cmdline-tools latest
+          rm -f cmdline-tools.zip
+
+      - name: Add sdkmanager to PATH and show version
+        run: |
+          export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
+          $SDKMANAGER --version
+        shell: bash
+
+      - name: Install Android SDK components (platform-tools, platform & build-tools)
+        run: |
+          export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
+          yes | $SDKMANAGER --sdk_root=${ANDROID_HOME} "platform-tools" "platforms;android-33" "build-tools;33.0.2"
+        shell: bash
+
+      - name: Accept Android SDK licenses
+        run: |
+          export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
+          yes | $SDKMANAGER --sdk_root=${ANDROID_HOME} --licenses || true
+        shell: bash
+
+      # Optional: cache Gradle (speeds up repeated builds)
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
 
       - name: Build Release APK
-        run: ./gradlew assembleRelease
+        env:
+          ANDROID_HOME: ${{ runner.temp }}/android-sdk
+          ANDROID_SDK_ROOT: ${{ runner.temp }}/android-sdk
+          PATH: ${{ runner.temp }}/android-sdk/cmdline-tools/latest/bin:${{ runner.temp }}/android-sdk/platform-tools:${{ env.PATH }}
+        run: ./gradlew assembleRelease --no-daemon
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-release-apk
-          path: app/build/outputs/apk/release/*.apk
+          path: app/build/outputs/apk/**/*.apk
