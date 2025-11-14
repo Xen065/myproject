@@ -1,23 +1,58 @@
-- name: Download Android command-line tools (mirror)
-  shell: bash
-  run: |
-    set -euo pipefail
-    cd "$ANDROID_HOME/cmdline-tools"
+name: Build Android APK
 
-    # Mirror URL (always works on GitHub runners)
-    URL="https://dl-ssl.google.com/android/repository/commandlinetools-linux-9123335_latest.zip"
-    OUT=cmdline-tools.zip
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
 
-    echo "Downloading Android command-line tools from mirror..."
-    curl -L -o "$OUT" "$URL"
-    echo "Testing ZIP..."
-    unzip -tq "$OUT"
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-    echo "Unzipping..."
-    unzip -q "$OUT"
+    env:
+      ANDROID_HOME: $HOME/android-sdk
+      ANDROID_SDK_ROOT: $HOME/android-sdk
 
-    if [ -d "cmdline-tools" ]; then
-      mv cmdline-tools latest
-    fi
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    rm "$OUT"
+      - name: Install unzip & curl
+        run: sudo apt-get update && sudo apt-get install -y unzip curl
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Prepare SDK directories
+        run: |
+          mkdir -p "$ANDROID_HOME/cmdline-tools"
+          mkdir -p "$ANDROID_HOME/licenses"
+
+      - name: Download Android command-line tools (stable mirror)
+        run: |
+          cd "$ANDROID_HOME/cmdline-tools"
+          URL="https://dl-ssl.google.com/android/repository/commandlinetools-linux-9123335_latest.zip"
+          curl -L -o tools.zip "$URL"
+          unzip -q tools.zip
+          mv cmdline-tools latest
+          rm tools.zip
+
+      - name: Install SDK components
+        run: |
+          export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
+          yes | sdkmanager --licenses
+          yes | sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
+
+      - name: Build Release APK
+        run: |
+          export PATH="$ANDROID_HOME/platform-tools:$PATH"
+          ./gradlew assembleRelease --no-daemon
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-apk
+          path: app/build/outputs/apk/**/*.apk
