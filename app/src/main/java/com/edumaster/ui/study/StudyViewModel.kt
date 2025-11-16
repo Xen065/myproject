@@ -151,19 +151,22 @@ class StudyViewModel(private val repository: EduMasterRepository) : ViewModel() 
             _sessionComplete.value = true
 
             val startTime = _sessionStartTime.value ?: System.currentTimeMillis()
-            val duration = ((System.currentTimeMillis() - startTime) / 1000).toInt() // seconds
+            val durationMinutes = ((System.currentTimeMillis() - startTime) / 60000).toInt() // minutes
             val reviewed = _cardsReviewed.value ?: 0
             val correct = _cardsCorrect.value ?: 0
 
             // Save study session to database
             val session = StudySession(
-                courseId = null, // All courses
-                startTime = Date(startTime),
-                endTime = Date(),
+                courseId = 0, // All courses (using 0 as placeholder)
+                courseName = "Mixed Review",
+                scheduledDate = Date(startTime),
+                scheduledTime = java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault()).format(Date(startTime)),
+                durationMinutes = 30,
+                isCompleted = true,
                 cardsReviewed = reviewed,
                 cardsCorrect = correct,
-                duration = duration,
-                isCompleted = true
+                actualDurationMinutes = durationMinutes,
+                completedAt = Date()
             )
 
             repository.insertSession(session)
