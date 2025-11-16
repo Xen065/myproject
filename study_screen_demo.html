@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduMaster - Study Screen Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .phone-container {
+            width: 100%;
+            max-width: 400px;
+            height: 700px;
+            background: #F9FAFB;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .session-header {
+            padding: 20px;
+            background: white;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .progress-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .progress-bar-bg {
+            flex: 1;
+            height: 8px;
+            background: #E5E7EB;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: #6366F1;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            margin-left: 12px;
+            font-size: 14px;
+            color: #6B7280;
+            font-weight: 500;
+            min-width: 50px;
+        }
+
+        .session-stats {
+            display: flex;
+            gap: 8px;
+        }
+
+        .stat-item {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #6B7280;
+        }
+
+        .flashcard-area {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .flashcard {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .flashcard:hover {
+            transform: scale(1.02);
+        }
+
+        .flashcard.flipping {
+            animation: flip 0.6s ease;
+        }
+
+        @keyframes flip {
+            0% { transform: rotateY(0deg); }
+            50% { transform: rotateY(90deg); }
+            100% { transform: rotateY(0deg); }
+        }
+
+        .course-badge {
+            background: linear-gradient(135deg, #667EEA, #764BA2);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+
+        .card-side-label {
+            text-align: center;
+            color: #9CA3AF;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 24px;
+        }
+
+        .card-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #111827;
+            line-height: 1.4;
+            padding: 20px;
+        }
+
+        .card-stats {
+            text-align: center;
+            color: #9CA3AF;
+            font-size: 12px;
+            margin-top: auto;
+        }
+
+        .action-buttons {
+            padding: 24px;
+            background: white;
+            border-top: 1px solid #E5E7EB;
+        }
+
+        .show-answer-btn {
+            width: 100%;
+            padding: 16px;
+            background: #6366F1;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .show-answer-btn:hover {
+            background: #4F46E5;
+        }
+
+        .rating-section {
+            display: none;
+        }
+
+        .rating-section.active {
+            display: block;
+        }
+
+        .rating-title {
+            text-align: center;
+            color: #6B7280;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .rating-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .rating-btn {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .rating-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .rating-btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-wrong { background: #EF4444; }
+        .btn-hard { background: #F59E0B; }
+        .btn-good { background: #10B981; }
+        .btn-easy { background: #3B82F6; }
+
+        .completion-card {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            text-align: center;
+            max-width: 350px;
+            width: 90%;
+        }
+
+        .completion-card.active {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        .completion-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .completion-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .completion-subtitle {
+            color: #6B7280;
+            margin-bottom: 24px;
+        }
+
+        .summary-box {
+            background: linear-gradient(135deg, #667EEA, #764BA2);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            color: white;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .summary-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .summary-label {
+            opacity: 0.9;
+        }
+
+        .summary-value {
+            font-weight: bold;
+        }
+
+        .completion-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .completion-btn {
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #6366F1;
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: #4F46E5;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #6366F1;
+            border: 2px solid #6366F1;
+        }
+
+        .btn-secondary:hover {
+            background: #F3F4F6;
+        }
+
+        .empty-state {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .empty-state.active {
+            display: block;
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .empty-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .empty-message {
+            color: #6B7280;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <!-- Session Header -->
+        <div class="session-header" id="sessionHeader">
+            <div class="progress-container">
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="progressBar" style="width: 0%"></div>
+                </div>
+                <div class="progress-text" id="progressText">0/4</div>
+            </div>
+            <div class="session-stats">
+                <div class="stat-item">
+                    <div class="stat-value" style="color: #6366F1;" id="reviewedCount">0</div>
+                    <div class="stat-label">Reviewed</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" style="color: #10B981;" id="accuracyPercent">0%</div>
+                    <div class="stat-label">Accuracy</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" style="color: #3B82F6;" id="xpEarned">0 XP</div>
+                    <div class="stat-label">Earned</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flashcard Area -->
+        <div class="flashcard-area" id="flashcardArea">
+            <div class="flashcard" id="flashcard">
+                <div class="course-badge" id="courseBadge">English Vocabulary</div>
+                <div class="card-side-label" id="cardSideLabel">QUESTION</div>
+                <div class="card-content" id="cardContent">
+                    What does "ubiquitous" mean?
+                </div>
+                <div class="card-stats" id="cardStats">New card</div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons" id="actionButtons">
+            <button class="show-answer-btn" id="showAnswerBtn" onclick="showAnswer()">
+                Show Answer
+            </button>
+
+            <div class="rating-section" id="ratingSection">
+                <div class="rating-title">How well did you know this?</div>
+                <div class="rating-buttons">
+                    <button class="rating-btn btn-wrong" onclick="rateCard(1)">Wrong</button>
+                    <button class="rating-btn btn-hard" onclick="rateCard(2)">Hard</button>
+                    <button class="rating-btn btn-good" onclick="rateCard(3)">Good</button>
+                    <button class="rating-btn btn-easy" onclick="rateCard(4)">Easy</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Completion Card -->
+        <div class="completion-card" id="completionCard">
+            <div class="completion-icon">🎉</div>
+            <div class="completion-title">Session Complete!</div>
+            <div class="completion-subtitle">Great job studying!</div>
+
+            <div class="summary-box">
+                <div class="summary-row">
+                    <span class="summary-label">Cards Reviewed</span>
+                    <span class="summary-value" id="summaryCards">0</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Accuracy</span>
+                    <span class="summary-value" id="summaryAccuracy">0%</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">XP Earned</span>
+                    <span class="summary-value" id="summaryXp">0 XP</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Coins Earned</span>
+                    <span class="summary-value" id="summaryCoins">0</span>
+                </div>
+            </div>
+
+            <div class="completion-buttons">
+                <button class="completion-btn btn-primary" onclick="studyAgain()">Study Again</button>
+                <button class="completion-btn btn-secondary" onclick="backToDashboard()">Back to Dashboard</button>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState">
+            <div class="empty-icon">📚</div>
+            <div class="empty-title">No Cards Due</div>
+            <div class="empty-message">
+                You're all caught up!<br>
+                Come back later for more reviews.
+            </div>
+            <button class="completion-btn btn-primary" onclick="browseCourses()">Browse Courses</button>
+        </div>
+    </div>
+
+    <script>
+        // Sample flashcards data
+        const flashcards = [
+            {
+                courseId: 1,
+                courseName: "English Vocabulary",
+                question: "What does 'ubiquitous' mean?",
+                answer: "Present, appearing, or found everywhere",
+                timesReviewed: 0,
+                timesCorrect: 0
+            },
+            {
+                courseId: 1,
+                courseName: "English Vocabulary",
+                question: "What does 'ephemeral' mean?",
+                answer: "Lasting for a very short time",
+                timesReviewed: 2,
+                timesCorrect: 1
+            },
+            {
+                courseId: 2,
+                courseName: "Current Affairs",
+                question: "What is the capital of Australia?",
+                answer: "Canberra",
+                timesReviewed: 3,
+                timesCorrect: 3
+            },
+            {
+                courseId: 3,
+                courseName: "Science Facts",
+                question: "What is the speed of light?",
+                answer: "299,792,458 meters per second (approximately 300,000 km/s)",
+                timesReviewed: 1,
+                timesCorrect: 0
+            }
+        ];
+
+        // Session state
+        let currentCardIndex = 0;
+        let cardsReviewed = 0;
+        let cardsCorrect = 0;
+        let xpTotal = 0;
+        let coinsTotal = 0;
+        let showingAnswer = false;
+
+        // Initialize
+        function init() {
+            displayCard();
+        }
+
+        // Display current card
+        function displayCard() {
+            if (currentCardIndex >= flashcards.length) {
+                showCompletion();
+                return;
+            }
+
+            const card = flashcards[currentCardIndex];
+            showingAnswer = false;
+
+            document.getElementById('courseBadge').textContent = card.courseName;
+            document.getElementById('cardSideLabel').textContent = 'QUESTION';
+            document.getElementById('cardContent').textContent = card.question;
+
+            if (card.timesReviewed > 0) {
+                const accuracy = Math.round((card.timesCorrect / card.timesReviewed) * 100);
+                document.getElementById('cardStats').textContent =
+                    `Reviewed: ${card.timesReviewed} times • ${accuracy}% correct`;
+            } else {
+                document.getElementById('cardStats').textContent = 'New card';
+            }
+
+            // Reset buttons
+            document.getElementById('showAnswerBtn').style.display = 'block';
+            document.getElementById('ratingSection').classList.remove('active');
+        }
+
+        // Show answer
+        function showAnswer() {
+            if (showingAnswer) return;
+
+            showingAnswer = true;
+            const card = flashcards[currentCardIndex];
+
+            // Flip animation
+            const flashcardEl = document.getElementById('flashcard');
+            flashcardEl.classList.add('flipping');
+
+            setTimeout(() => {
+                document.getElementById('cardSideLabel').textContent = 'ANSWER';
+                document.getElementById('cardContent').textContent = card.answer;
+                flashcardEl.classList.remove('flipping');
+            }, 300);
+
+            // Show rating buttons
+            document.getElementById('showAnswerBtn').style.display = 'none';
+            document.getElementById('ratingSection').classList.add('active');
+        }
+
+        // Rate card
+        function rateCard(quality) {
+            const card = flashcards[currentCardIndex];
+
+            // Update stats
+            cardsReviewed++;
+            if (quality >= 3) {
+                cardsCorrect++;
+            }
+
+            // Calculate rewards
+            const xp = quality * 5;
+            const coins = quality * 2;
+            xpTotal += xp;
+            coinsTotal += coins;
+
+            // Update UI
+            updateStats();
+
+            // Flip animation back
+            const flashcardEl = document.getElementById('flashcard');
+            flashcardEl.classList.add('flipping');
+
+            setTimeout(() => {
+                flashcardEl.classList.remove('flipping');
+                currentCardIndex++;
+                displayCard();
+            }, 300);
+        }
+
+        // Update session stats
+        function updateStats() {
+            const total = flashcards.length;
+            const progress = Math.round((cardsReviewed / total) * 100);
+            const accuracy = cardsReviewed > 0 ? Math.round((cardsCorrect / cardsReviewed) * 100) : 0;
+
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `${cardsReviewed}/${total}`;
+            document.getElementById('reviewedCount').textContent = cardsReviewed;
+            document.getElementById('accuracyPercent').textContent = accuracy + '%';
+            document.getElementById('xpEarned').textContent = xpTotal + ' XP';
+        }
+
+        // Show completion screen
+        function showCompletion() {
+            const accuracy = cardsReviewed > 0 ? Math.round((cardsCorrect / cardsReviewed) * 100) : 0;
+
+            document.getElementById('summaryCards').textContent = cardsReviewed;
+            document.getElementById('summaryAccuracy').textContent = accuracy + '%';
+            document.getElementById('summaryXp').textContent = xpTotal + ' XP';
+            document.getElementById('summaryCoins').textContent = coinsTotal;
+
+            document.getElementById('flashcardArea').classList.add('hidden');
+            document.getElementById('actionButtons').classList.add('hidden');
+            document.getElementById('completionCard').classList.add('active');
+        }
+
+        // Study again
+        function studyAgain() {
+            // Reset session
+            currentCardIndex = 0;
+            cardsReviewed = 0;
+            cardsCorrect = 0;
+            xpTotal = 0;
+            coinsTotal = 0;
+
+            // Reset UI
+            document.getElementById('completionCard').classList.remove('active');
+            document.getElementById('flashcardArea').classList.remove('hidden');
+            document.getElementById('actionButtons').classList.remove('hidden');
+
+            updateStats();
+            displayCard();
+        }
+
+        // Back to dashboard
+        function backToDashboard() {
+            alert('Navigation to Dashboard! (In the real app, this would navigate to the Dashboard screen)');
+        }
+
+        // Browse courses
+        function browseCourses() {
+            alert('Navigation to Course Store! (In the real app, this would navigate to the Store screen)');
+        }
+
+        // Start the demo
+        init();
+    </script>
+</body>
+</html>
