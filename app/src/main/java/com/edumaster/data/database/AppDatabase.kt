@@ -18,9 +18,11 @@ import java.util.Date
         Course::class,
         StudySession::class,
         UserStats::class,
-        Achievement::class
+        Achievement::class,
+        RecurringPattern::class,
+        StudyReminder::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -31,6 +33,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun studySessionDao(): StudySessionDao
     abstract fun userStatsDao(): UserStatsDao
     abstract fun achievementDao(): AchievementDao
+    abstract fun recurringPatternDao(): RecurringPatternDao
+    abstract fun studyReminderDao(): StudyReminderDao
 
     companion object {
         @Volatile
@@ -43,6 +47,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "edumaster_database"
                 )
+                    .fallbackToDestructiveMigration()
                     .addCallback(DatabaseCallback())
                     .build()
                 INSTANCE = instance

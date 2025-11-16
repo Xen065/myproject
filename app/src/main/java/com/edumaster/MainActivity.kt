@@ -8,6 +8,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.edumaster.data.database.AppDatabase
 import com.edumaster.data.repository.EduMasterRepository
 import com.edumaster.databinding.ActivityMainBinding
+import com.edumaster.notifications.NotificationScheduler
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -28,12 +29,17 @@ class MainActivity : AppCompatActivity() {
             database.courseDao(),
             database.studySessionDao(),
             database.userStatsDao(),
-            database.achievementDao()
+            database.achievementDao(),
+            database.recurringPatternDao(),
+            database.studyReminderDao()
         )
 
         setupNavigation()
         observeUserStats()
         setupClickListeners()
+
+        // Schedule notification checks
+        NotificationScheduler.scheduleReminderCheck(applicationContext)
     }
 
     private fun setupNavigation() {
