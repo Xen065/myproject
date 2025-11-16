@@ -7,7 +7,15 @@
     <fragment
         android:id="@+id/navigation_dashboard"
         android:name="com.edumaster.ui.dashboard.DashboardFragment"
-        android:label="@string/nav_dashboard" />
+        android:label="@string/nav_dashboard">
+        <action
+            android:id="@+id/action_dashboard_to_study"
+            app:destination="@id/navigation_study"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_study"
