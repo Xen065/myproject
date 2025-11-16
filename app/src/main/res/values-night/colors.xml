@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary Colors (slightly brighter for dark mode) -->
+    <color name="primary">#8B8FF1</color>
+    <color name="primary_dark">#6366F1</color>
+    <color name="primary_variant">#A78BFA</color>
+
+    <!-- Accent Colors -->
+    <color name="secondary">#A78BFA</color>
+    <color name="secondary_dark">#8B5CF6</color>
+
+    <!-- Status Colors (slightly adjusted for dark mode) -->
+    <color name="success">#34D399</color>
+    <color name="warning">#FBBF24</color>
+    <color name="danger">#F87171</color>
+    <color name="info">#60A5FA</color>
+
+    <!-- Neutral Colors -->
+    <color name="dark">#F3F4F6</color>
+    <color name="light">#1F2937</color>
+    <color name="white">#000000</color>
+    <color name="black">#FFFFFF</color>
+
+    <!-- Text Colors (inverted for dark mode) -->
+    <color name="text_primary">#F9FAFB</color>
+    <color name="text_secondary">#D1D5DB</color>
+    <color name="text_hint">#6B7280</color>
+
+    <!-- Background Colors (dark backgrounds) -->
+    <color name="background">#0F172A</color>
+    <color name="surface">#1E293B</color>
+    <color name="border">#374151</color>
+
+    <!-- Gradient Colors (slightly brighter for dark mode) -->
+    <color name="gradient_start">#8B8FF1</color>
+    <color name="gradient_end">#8B5CF6</color>
+
+    <!-- Streak Colors -->
+    <color name="streak_start">#FF8787</color>
+    <color name="streak_end">#FFE66D</color>
+
+    <!-- Divider -->
+    <color name="divider">#374151</color>
+</resources>

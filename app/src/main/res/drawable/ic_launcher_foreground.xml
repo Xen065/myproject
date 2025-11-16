@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Graduation cap icon centered with padding -->
+    <group
+        android:translateX="30"
+        android:translateY="30">
+
+        <!-- Cap base -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M24,11L0,20l24,9l20,-8.18V30h4V18L24,11zM8,26.36v8L24,42l16,-7.64v-8L24,34L8,26.36z"/>
+
+        <!-- Tassel -->
+        <path
+            android:fillColor="#FFD93D"
+            android:pathData="M44,18m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0"/>
+    </group>
+</vector>

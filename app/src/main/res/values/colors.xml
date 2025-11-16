@@ -38,4 +38,7 @@
     <!-- Streak Colors -->
     <color name="streak_start">#FF6B6B</color>
     <color name="streak_end">#FFD93D</color>
+
+    <!-- Divider -->
+    <color name="divider">#E5E7EB</color>
 </resources>

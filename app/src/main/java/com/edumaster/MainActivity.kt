@@ -13,6 +13,7 @@ import com.edumaster.databinding.ActivityMainBinding
 import com.edumaster.notifications.NotificationHelper
 import com.edumaster.notifications.StudyReminderScheduler
 import com.edumaster.ui.onboarding.OnboardingActivity
+import com.edumaster.utils.ThemeHelper
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -21,6 +22,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var repository: EduMasterRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Apply saved theme preference
+        ThemeHelper.applyTheme(ThemeHelper.getThemeMode(this))
+
         // Install splash screen
         installSplashScreen()
 
@@ -94,8 +98,24 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnSettings.setOnClickListener {
-            // TODO: Show settings
+            showThemeDialog()
         }
+    }
+
+    private fun showThemeDialog() {
+        val themes = arrayOf("Light", "Dark", "System Default")
+        val currentTheme = ThemeHelper.getThemeMode(this)
+
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Choose Theme")
+            .setSingleChoiceItems(themes, currentTheme) { dialog, which ->
+                ThemeHelper.saveThemeMode(this, which)
+                dialog.dismiss()
+                // Recreate activity to apply theme
+                recreate()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     fun getRepository(): EduMasterRepository = repository
