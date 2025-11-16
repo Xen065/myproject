@@ -13,8 +13,14 @@ interface CardDao {
     @Query("SELECT * FROM cards WHERE nextReview <= :date ORDER BY nextReview ASC")
     fun getDueCards(date: Date): LiveData<List<Card>>
 
+    @Query("SELECT * FROM cards WHERE nextReview <= :date ORDER BY nextReview ASC")
+    suspend fun getDueCardsSync(date: Date): List<Card>
+
     @Query("SELECT * FROM cards WHERE courseId = :courseId AND nextReview <= :date ORDER BY nextReview ASC")
     fun getDueCardsByCourse(courseId: Long, date: Date): LiveData<List<Card>>
+
+    @Query("SELECT * FROM cards WHERE courseId = :courseId AND nextReview <= :date ORDER BY nextReview ASC")
+    suspend fun getDueCardsByCourseSync(courseId: Long, date: Date): List<Card>
 
     @Query("SELECT * FROM cards WHERE id = :cardId")
     suspend fun getCardById(cardId: Long): Card?

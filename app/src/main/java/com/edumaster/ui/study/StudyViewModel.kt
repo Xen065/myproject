@@ -58,22 +58,20 @@ class StudyViewModel(private val repository: EduMasterRepository) : ViewModel() 
             _coinsEarned.value = 0
             _sessionComplete.value = false
 
-            // Load due cards
-            val dueCardsLiveData = if (courseId != null) {
-                repository.getDueCardsByCourse(courseId, Date())
+            // Load due cards using suspend function
+            val cards = if (courseId != null) {
+                repository.getDueCardsByCourseSync(courseId, Date())
             } else {
-                repository.getDueCards(Date())
+                repository.getDueCardsSync(Date())
             }
 
-            dueCardsLiveData.observeForever { cards ->
-                if (cards.isNotEmpty()) {
-                    _cardsRemaining.value = cards.toMutableList()
-                    _totalCards.value = cards.size
-                    loadNextCard()
-                } else {
-                    // No cards to study
-                    _sessionComplete.value = true
-                }
+            if (cards.isNotEmpty()) {
+                _cardsRemaining.value = cards.toMutableList()
+                _totalCards.value = cards.size
+                loadNextCard()
+            } else {
+                // No cards to study
+                _sessionComplete.value = true
             }
         }
     }

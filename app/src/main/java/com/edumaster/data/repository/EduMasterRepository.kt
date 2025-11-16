@@ -19,8 +19,13 @@ class EduMasterRepository(
 
     fun getDueCards(date: Date = Date()): LiveData<List<Card>> = cardDao.getDueCards(date)
 
+    suspend fun getDueCardsSync(date: Date = Date()): List<Card> = cardDao.getDueCardsSync(date)
+
     fun getDueCardsByCourse(courseId: Long, date: Date = Date()): LiveData<List<Card>> =
         cardDao.getDueCardsByCourse(courseId, date)
+
+    suspend fun getDueCardsByCourseSync(courseId: Long, date: Date = Date()): List<Card> =
+        cardDao.getDueCardsByCourseSync(courseId, date)
 
     fun getAllCards(): LiveData<List<Card>> = cardDao.getAllCards()
 
