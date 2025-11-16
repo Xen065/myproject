@@ -11,7 +11,9 @@ class EduMasterRepository(
     private val courseDao: CourseDao,
     private val studySessionDao: StudySessionDao,
     private val userStatsDao: UserStatsDao,
-    private val achievementDao: AchievementDao
+    private val achievementDao: AchievementDao,
+    private val recurringPatternDao: RecurringPatternDao,
+    private val studyReminderDao: StudyReminderDao
 ) {
 
     // Card operations
@@ -254,5 +256,72 @@ class EduMasterRepository(
         val completedCards = totalCards - dueCards
 
         courseDao.updateCourseStats(courseId, dueCards, totalCards, completedCards)
+    }
+
+    // Recurring Pattern operations
+    fun getAllActivePatterns(): LiveData<List<RecurringPattern>> =
+        recurringPatternDao.getAllActivePatterns()
+
+    suspend fun insertRecurringPattern(pattern: RecurringPattern): Long =
+        recurringPatternDao.insert(pattern)
+
+    suspend fun updateRecurringPattern(pattern: RecurringPattern) =
+        recurringPatternDao.update(pattern)
+
+    suspend fun deleteRecurringPattern(pattern: RecurringPattern) =
+        recurringPatternDao.delete(pattern)
+
+    suspend fun deactivatePattern(patternId: Long) =
+        recurringPatternDao.deactivatePattern(patternId)
+
+    suspend fun getPatternForSession(sessionId: Long): RecurringPattern? =
+        recurringPatternDao.getPatternForSession(sessionId)
+
+    // Study Reminder operations
+    fun getRemindersForSession(sessionId: Long): LiveData<List<StudyReminder>> =
+        studyReminderDao.getRemindersForSession(sessionId)
+
+    fun getAllPendingReminders(): LiveData<List<StudyReminder>> =
+        studyReminderDao.getAllPendingReminders()
+
+    suspend fun insertReminder(reminder: StudyReminder): Long =
+        studyReminderDao.insert(reminder)
+
+    suspend fun insertReminders(reminders: List<StudyReminder>) =
+        studyReminderDao.insertAll(reminders)
+
+    suspend fun updateReminder(reminder: StudyReminder) =
+        studyReminderDao.update(reminder)
+
+    suspend fun deleteReminder(reminder: StudyReminder) =
+        studyReminderDao.delete(reminder)
+
+    suspend fun markReminderAsSent(reminderId: Long) =
+        studyReminderDao.markAsSent(reminderId)
+
+    suspend fun getPendingReminders(currentTime: Date): List<StudyReminder> =
+        studyReminderDao.getPendingReminders(currentTime)
+
+    // Calendar-specific operations
+    suspend fun getCalendarEventsForDate(date: Date): List<CalendarEvent> {
+        val sessions = studySessionDao.getSessionsByDate(date).value ?: emptyList()
+        return sessions.map { session ->
+            val course = courseDao.getCourseById(session.courseId)
+            val pattern = getPatternForSession(session.id)
+            CalendarEvent(
+                id = session.id,
+                courseId = session.courseId,
+                courseName = session.courseName,
+                courseIcon = course?.icon ?: "📚",
+                scheduledDate = session.scheduledDate,
+                scheduledTime = session.scheduledTime,
+                durationMinutes = session.durationMinutes,
+                isCompleted = session.isCompleted,
+                cardsReviewed = session.cardsReviewed,
+                cardsCorrect = session.cardsCorrect,
+                isRecurring = pattern != null,
+                recurringPatternId = pattern?.id
+            )
+        }
     }
 }
