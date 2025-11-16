@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:gravity="center_vertical">
+
+        <!-- Achievement Icon -->
+        <TextView
+            android:id="@+id/achievementIcon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/stat_icon_background"
+            android:text="🏆"
+            android:textSize="28sp"
+            android:gravity="center"
+            android:layout_marginEnd="12dp"
+            tools:text="🏆" />
+
+        <!-- Achievement Info -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/achievementName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="First Steps"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="2dp"
+                tools:text="First Steps" />
+
+            <TextView
+                android:id="@+id/achievementDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Study 10 cards"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                tools:text="Study 10 cards" />
+
+            <!-- Progress Bar (for locked achievements) -->
+            <LinearLayout
+                android:id="@+id/progressContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="4dp"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <ProgressBar
+                    android:id="@+id/achievementProgressBar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="0dp"
+                    android:layout_height="4dp"
+                    android:layout_weight="1"
+                    android:progressTint="@color/primary"
+                    android:progressBackgroundTint="@color/border"
+                    android:max="100"
+                    android:progress="60"
+                    tools:progress="60" />
+
+                <TextView
+                    android:id="@+id/achievementProgressText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="6/10"
+                    android:textColor="@color/text_hint"
+                    android:textSize="10sp"
+                    android:layout_marginStart="8dp"
+                    tools:text="6/10" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Locked/Unlocked Badge -->
+        <TextView
+            android:id="@+id/achievementBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="✓"
+            android:textColor="@color/success"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginStart="8dp"
+            tools:text="✓" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
