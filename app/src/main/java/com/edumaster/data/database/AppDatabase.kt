@@ -6,6 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.edumaster.data.content.ContentData
 import com.edumaster.data.models.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -83,106 +84,13 @@ abstract class AppDatabase : RoomDatabase() {
                 )
             )
 
-            // Insert sample courses
-            val courses = listOf(
-                Course(
-                    id = 1,
-                    name = "English Vocabulary",
-                    description = "Master 1000+ advanced English words with spaced repetition",
-                    category = "Vocabulary",
-                    icon = "📖",
-                    isOwned = true,
-                    totalCards = 500,
-                    cardsCompleted = 156,
-                    cardsDue = 12,
-                    rating = 4.8f,
-                    totalRatings = 234,
-                    lastStudied = Date()
-                ),
-                Course(
-                    id = 2,
-                    name = "Current Affairs 2024",
-                    description = "November 2024 current affairs MCQs for competitive exams",
-                    category = "Current Affairs",
-                    icon = "📰",
-                    isOwned = true,
-                    totalCards = 200,
-                    cardsCompleted = 89,
-                    cardsDue = 8,
-                    rating = 4.9f,
-                    totalRatings = 156,
-                    lastStudied = Date(System.currentTimeMillis() - 86400000)
-                ),
-                Course(
-                    id = 3,
-                    name = "General Science MCQ",
-                    description = "Essential science concepts and MCQs for exams",
-                    category = "Science",
-                    icon = "🔬",
-                    isOwned = true,
-                    totalCards = 150,
-                    cardsCompleted = 67,
-                    cardsDue = 5,
-                    rating = 4.7f,
-                    totalRatings = 89
-                ),
-                Course(
-                    id = 4,
-                    name = "Physics Fundamentals",
-                    description = "Essential physics concepts and formulas for exams",
-                    category = "Science",
-                    icon = "🔬",
-                    price = 450,
-                    isOwned = false,
-                    rating = 4.7f,
-                    totalRatings = 89
-                ),
-                Course(
-                    id = 5,
-                    name = "World Geography",
-                    description = "Countries, capitals, and geographical features",
-                    category = "Geography",
-                    icon = "🗺️",
-                    price = 350,
-                    isOwned = false,
-                    rating = 4.6f,
-                    totalRatings = 201
-                )
-            )
+            // Insert all courses from ContentData
+            val courses = ContentData.getAllCourses()
             courseDao.insertCourses(courses)
 
-            // Insert sample cards
-            val sampleCards = listOf(
-                Card(
-                    courseId = 1,
-                    question = "What is the meaning of 'Ephemeral'?",
-                    answer = "Lasting for a very short time; transitory",
-                    hint = "Think of something temporary",
-                    category = "Vocabulary"
-                ),
-                Card(
-                    courseId = 1,
-                    question = "Define 'Ubiquitous'",
-                    answer = "Present, appearing, or found everywhere",
-                    hint = "Something very common",
-                    category = "Vocabulary"
-                ),
-                Card(
-                    courseId = 2,
-                    question = "What is the process by which plants make their own food using sunlight?",
-                    answer = "Photosynthesis - The process where plants convert light energy into chemical energy, using CO₂ and water to produce glucose and oxygen.",
-                    hint = "It involves chlorophyll and produces oxygen",
-                    category = "Science"
-                ),
-                Card(
-                    courseId = 3,
-                    question = "What is Newton's First Law of Motion?",
-                    answer = "An object at rest stays at rest and an object in motion stays in motion with the same speed and in the same direction unless acted upon by an unbalanced force.",
-                    hint = "Also known as the law of inertia",
-                    category = "Science"
-                )
-            )
-            cardDao.insertCards(sampleCards)
+            // Insert all flashcards from ContentData
+            val cards = ContentData.getAllCards()
+            cardDao.insertCards(cards)
 
             // Insert achievements
             val achievements = listOf(
