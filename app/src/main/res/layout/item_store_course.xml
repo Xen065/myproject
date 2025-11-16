@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Course Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:background="@drawable/stats_background"
+            android:gravity="center_vertical">
+
+            <!-- Course Icon -->
+            <TextView
+                android:id="@+id/courseIcon"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:background="@drawable/stat_icon_background"
+                android:text="📚"
+                android:textSize="32sp"
+                android:gravity="center"
+                android:layout_marginEnd="12dp"
+                tools:text="📚" />
+
+            <!-- Course Info -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/courseName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="English Vocabulary"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    tools:text="English Vocabulary" />
+
+                <TextView
+                    android:id="@+id/courseCategory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Vocabulary"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:layout_marginTop="2dp"
+                    android:alpha="0.9"
+                    tools:text="Vocabulary" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Course Body -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Description -->
+            <TextView
+                android:id="@+id/courseDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Master essential vocabulary for competitive exams"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:layout_marginBottom="12dp"
+                tools:text="Master essential vocabulary for competitive exams" />
+
+            <!-- Stats Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+
+                <!-- Total Cards -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📝"
+                        android:textSize="14sp"
+                        android:layout_marginEnd="4dp" />
+
+                    <TextView
+                        android:id="@+id/courseCardCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="50 cards"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp"
+                        tools:text="50 cards" />
+                </LinearLayout>
+
+                <!-- Rating -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="⭐"
+                        android:textSize="14sp"
+                        android:layout_marginEnd="4dp" />
+
+                    <TextView
+                        android:id="@+id/courseRating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="4.5 (120)"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp"
+                        tools:text="4.5 (120)" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Purchase Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/purchaseButton"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="Buy for 500 coins"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:cornerRadius="8dp"
+                app:icon="@android:drawable/ic_menu_add"
+                app:iconGravity="textStart"
+                tools:text="Buy for 500 coins" />
+
+            <!-- Owned Badge -->
+            <TextView
+                android:id="@+id/ownedBadge"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="✓ Owned"
+                android:textColor="@color/success"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:background="@drawable/stat_icon_background"
+                android:backgroundTint="@color/success"
+                android:visibility="gone"
+                tools:visibility="visible" />
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
