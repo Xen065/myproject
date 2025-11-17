@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="EduMaster - Spaced Repetition Learning Platform for Effective Study">
+    <title>EduMaster - Spaced Repetition Learning</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <div class="app-header">
+            <div class="header-top">
+                <div class="app-title">
+                    <span>🎓</span>
+                    EduMaster
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn" onclick="toggleNotifications()">
+                        🔔
+                        <span class="notification-badge">3</span>
+                    </button>
+                    <button class="icon-btn" onclick="showSettings()">⚙️</button>
+                </div>
+            </div>
+            <div class="user-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="streakCount">7</div>
+                    <div class="stat-label">Day Streak</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="totalCards">248</div>
+                    <div class="stat-label">Cards</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="todayGoal">85%</div>
+                    <div class="stat-label">Today</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="userLevel">12</div>
+                    <div class="stat-label">Level</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('dashboard')">Dashboard</button>
+            <button class="nav-tab" onclick="switchTab('study')">Study</button>
+            <button class="nav-tab" onclick="switchTab('calendar')">Calendar</button>
+            <button class="nav-tab" onclick="switchTab('store')">Store</button>
+            <button class="nav-tab" onclick="switchTab('profile')">Profile</button>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div class="content-section active" id="dashboard">
+            <div class="dashboard-grid">
+                <!-- Streak Counter -->
+                <div class="streak-counter">
+                    <div class="streak-number">🔥 7</div>
+                    <div class="streak-label">Days Study Streak</div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="quick-stats">
+                    <div class="quick-stat">
+                        <div class="quick-stat-icon">📚</div>
+                        <div class="quick-stat-info">
+                            <div class="quick-stat-value">32</div>
+                            <div class="quick-stat-label">Due Today</div>
+                        </div>
+                    </div>
+                    <div class="quick-stat">
+                        <div class="quick-stat-icon">✅</div>
+                        <div class="quick-stat-info">
+                            <div class="quick-stat-value">18</div>
+                            <div class="quick-stat-label">Completed</div>
+                        </div>
+                    </div>
+                    <div class="quick-stat">
+                        <div class="quick-stat-icon">📝</div>
+                        <div class="quick-stat-info">
+                            <div class="quick-stat-value">5</div>
+                            <div class="quick-stat-label">New Cards</div>
+                        </div>
+                    </div>
+                    <div class="quick-stat">
+                        <div class="quick-stat-icon">⏱️</div>
+                        <div class="quick-stat-info">
+                            <div class="quick-stat-value">45m</div>
+                            <div class="quick-stat-label">Study Time</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Today's Progress -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Today's Progress</h3>
+                        <span>85%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 85%;"></div>
+                    </div>
+                    <p style="font-size: 12px; color: var(--text-light); margin-top: 10px;">
+                        Keep going! Only 5 more cards to reach your daily goal.
+                    </p>
+                </div>
+
+                <!-- Active Courses -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Active Courses</h3>
+                        <button class="icon-btn" style="width: 30px; height: 30px; font-size: 16px;">+</button>
+                    </div>
+                    <div class="course-list">
+                        <div class="course-item" onclick="startStudy('vocabulary')">
+                            <div class="course-icon">📖</div>
+                            <div class="course-info">
+                                <div class="course-name">English Vocabulary</div>
+                                <div class="course-progress">156/500 cards • Due: 12</div>
+                            </div>
+                        </div>
+                        <div class="course-item" onclick="startStudy('current-affairs')">
+                            <div class="course-icon">📰</div>
+                            <div class="course-info">
+                                <div class="course-name">Current Affairs 2024</div>
+                                <div class="course-progress">89/200 cards • Due: 8</div>
+                            </div>
+                        </div>
+                        <div class="course-item" onclick="startStudy('science')">
+                            <div class="course-icon">🔬</div>
+                            <div class="course-info">
+                                <div class="course-name">General Science MCQ</div>
+                                <div class="course-progress">67/150 cards • Due: 5</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Study Reminder -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Next Study Session</h3>
+                    </div>
+                    <div style="text-align: center; padding: 20px;">
+                        <div style="font-size: 24px; margin-bottom: 10px;">⏰</div>
+                        <div style="font-size: 18px; font-weight: bold;">2:00 PM</div>
+                        <div style="font-size: 12px; color: var(--text-light);">English Vocabulary Review</div>
+                        <button class="btn btn-primary" style="margin-top: 15px;">Start Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Study Section -->
+        <div class="content-section" id="study">
+            <div class="study-container">
+                <!-- Study Timer -->
+                <div class="study-timer">
+                    <div>Study Session</div>
+                    <div class="timer-display" id="timerDisplay">25:00</div>
+                    <div class="timer-controls">
+                        <button class="timer-btn" onclick="startTimer()">Start</button>
+                        <button class="timer-btn" onclick="pauseTimer()">Pause</button>
+                        <button class="timer-btn" onclick="resetTimer()">Reset</button>
+                    </div>
+                </div>
+
+                <!-- Flashcard -->
+                <div class="flashcard" id="flashcard" onclick="flipCard()">
+                    <div class="flashcard-front">
+                        <div class="card-content">
+                            <strong>Question:</strong><br><br>
+                            What is the process by which plants make their own food using sunlight?
+                        </div>
+                        <div class="card-hint">
+                            💡 Hint: It involves chlorophyll and produces oxygen
+                        </div>
+                    </div>
+                    <div class="flashcard-back">
+                        <div class="card-content">
+                            <strong>Answer:</strong><br><br>
+                            Photosynthesis
+                            <br><br>
+                            <small>The process where plants convert light energy into chemical energy, using CO₂ and water to produce glucose and oxygen.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Study Controls -->
+                <div class="study-controls">
+                    <button class="study-btn btn-again" onclick="rateCard(1)">
+                        <div>😣</div>
+                        <div style="font-size: 10px;">Again</div>
+                    </button>
+                    <button class="study-btn btn-hard" onclick="rateCard(2)">
+                        <div>😐</div>
+                        <div style="font-size: 10px;">Hard</div>
+                    </button>
+                    <button class="study-btn btn-good" onclick="rateCard(3)">
+                        <div>😊</div>
+                        <div style="font-size: 10px;">Good</div>
+                    </button>
+                    <button class="study-btn btn-easy" onclick="rateCard(4)">
+                        <div>😎</div>
+                        <div style="font-size: 10px;">Easy</div>
+                    </button>
+                </div>
+
+                <!-- Progress Info -->
+                <div class="dashboard-card" style="margin-top: 20px;">
+                    <div class="card-header">
+                        <h3 class="card-title">Session Progress</h3>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center;">
+                        <div>
+                            <div style="font-size: 20px; font-weight: bold; color: var(--primary);">12</div>
+                            <div style="font-size: 12px; color: var(--text-light);">Reviewed</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 20px; font-weight: bold; color: var(--success);">8</div>
+                            <div style="font-size: 12px; color: var(--text-light);">Correct</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 20px; font-weight: bold; color: var(--warning);">20</div>
+                            <div style="font-size: 12px; color: var(--text-light);">Remaining</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calendar Section -->
+        <div class="content-section" id="calendar">
+            <div class="calendar-section">
+                <div class="calendar-header">
+                    <button class="icon-btn" onclick="previousMonth()">◀</button>
+                    <h3 id="currentMonth">November 2024</h3>
+                    <button class="icon-btn" onclick="nextMonth()">▶</button>
+                </div>
+
+                <div class="calendar-grid" id="calendarGrid">
+                    <!-- Calendar will be generated here -->
+                </div>
+
+                <!-- Study Schedule -->
+                <div class="dashboard-card" style="margin-top: 15px;">
+                    <div class="card-header">
+                        <h3 class="card-title">Study Schedule</h3>
+                        <button class="icon-btn" style="width: 30px; height: 30px;" onclick="addStudySession()">+</button>
+                    </div>
+                    <div id="studySchedule">
+                        <!-- Schedule items will be added here -->
+                    </div>
+                </div>
+
+                <!-- Upcoming Reviews -->
+                <div class="dashboard-card" style="margin-top: 15px;">
+                    <div class="card-header">
+                        <h3 class="card-title">Upcoming Reviews</h3>
+                    </div>
+                    <div style="display: grid; gap: 10px;">
+                        <div class="course-item">
+                            <div class="course-icon">📅</div>
+                            <div class="course-info">
+                                <div class="course-name">Tomorrow</div>
+                                <div class="course-progress">45 cards due for review</div>
+                            </div>
+                        </div>
+                        <div class="course-item">
+                            <div class="course-icon">📅</div>
+                            <div class="course-info">
+                                <div class="course-name">In 2 Days</div>
+                                <div class="course-progress">23 cards due for review</div>
+                            </div>
+                        </div>
+                        <div class="course-item">
+                            <div class="course-icon">📅</div>
+                            <div class="course-info">
+                                <div class="course-name">This Week</div>
+                                <div class="course-progress">112 total cards scheduled</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Store Section -->
+        <div class="content-section" id="store">
+            <div class="store-section">
+                <div class="store-header">
+                    <h2>Course Store</h2>
+                    <div class="coins-display">
+                        <span>🪙</span>
+                        <span>2,450</span>
+                    </div>
+                </div>
+
+                <div class="store-categories">
+                    <div class="category-chip active">All</div>
+                    <div class="category-chip">Vocabulary</div>
+                    <div class="category-chip">Current Affairs</div>
+                    <div class="category-chip">Science</div>
+                    <div class="category-chip">History</div>
+                    <div class="category-chip">Mathematics</div>
+                </div>
+
+                <div class="course-grid">
+                    <div class="course-card">
+                        <div class="course-image">📚</div>
+                        <div class="course-details">
+                            <div class="course-title">Advanced English Vocabulary</div>
+                            <div class="course-description">Master 1000+ advanced English words with spaced repetition</div>
+                            <div class="course-meta">
+                                <div class="course-price">
+                                    <span>🪙</span>
+                                    <span>500</span>
+                                </div>
+                                <div class="course-rating">
+                                    <span>⭐ 4.8</span>
+                                    <span>(234)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="course-card">
+                        <div class="course-image">📰</div>
+                        <div class="course-details">
+                            <div class="course-title">Monthly Current Affairs</div>
+                            <div class="course-description">November 2024 current affairs MCQs for competitive exams</div>
+                            <div class="course-meta">
+                                <div class="course-price">
+                                    <span>🪙</span>
+                                    <span>300</span>
+                                </div>
+                                <div class="course-rating">
+                                    <span>⭐ 4.9</span>
+                                    <span>(156)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="course-card">
+                        <div class="course-image">🔬</div>
+                        <div class="course-details">
+                            <div class="course-title">Physics Fundamentals</div>
+                            <div class="course-description">Essential physics concepts and formulas for exams</div>
+                            <div class="course-meta">
+                                <div class="course-price">
+                                    <span>🪙</span>
+                                    <span>450</span>
+                                </div>
+                                <div class="course-rating">
+                                    <span>⭐ 4.7</span>
+                                    <span>(89)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="course-card">
+                        <div class="course-image">🗺️</div>
+                        <div class="course-details">
+                            <div class="course-title">World Geography</div>
+                            <div class="course-description">Countries, capitals, and geographical features</div>
+                            <div class="course-meta">
+                                <div class="course-price">
+                                    <span>🪙</span>
+                                    <span>350</span>
+                                </div>
+                                <div class="course-rating">
+                                    <span>⭐ 4.6</span>
+                                    <span>(201)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Section -->
+        <div class="content-section" id="profile">
+            <div class="profile-section">
+                <div class="profile-header">
+                    <div class="profile-avatar">👤</div>
+                    <div class="profile-name">John Doe</div>
+                    <div class="profile-level">Level 12 • Expert Learner</div>
+                    <div class="progress-bar" style="max-width: 200px; margin: 0 auto;">
+                        <div class="progress-fill" style="width: 65%;"></div>
+                    </div>
+                </div>
+
+                <div class="profile-stats-grid">
+                    <div class="profile-stat">
+                        <div class="profile-stat-value">1,234</div>
+                        <div class="profile-stat-label">Total Cards</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div class="profile-stat-value">89%</div>
+                        <div class="profile-stat-label">Accuracy</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div class="profile-stat-value">47</div>
+                        <div class="profile-stat-label">Day Streak</div>
+                    </div>
+                </div>
+
+                <div class="achievements-section">
+                    <h3 class="section-title">Achievements</h3>
+                    <div class="achievements-grid">
+                        <div class="achievement unlocked">🏆</div>
+                        <div class="achievement unlocked">🥇</div>
+                        <div class="achievement unlocked">📚</div>
+                        <div class="achievement unlocked">🔥</div>
+                        <div class="achievement">🎯</div>
+                        <div class="achievement">💎</div>
+                        <div class="achievement">🌟</div>
+                        <div class="achievement">👑</div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3 class="section-title">Settings</h3>
+                    <div class="settings-list">
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span>🔔</span>
+                                <span>Study Reminders</span>
+                            </div>
+                            <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                                <div class="toggle-slider"></div>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span>🌙</span>
+                                <span>Dark Mode</span>
+                            </div>
+                            <div class="toggle-switch" onclick="toggleSwitch(this)">
+                                <div class="toggle-slider"></div>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span>🔊</span>
+                                <span>Sound Effects</span>
+                            </div>
+                            <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                                <div class="toggle-slider"></div>
+                            </div>
+                        </div>
+                        <div class="setting-item" onclick="showAbout()">
+                            <div class="setting-label">
+                                <span>ℹ️</span>
+                                <span>About</span>
+                            </div>
+                            <span>›</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <button class="nav-item active" onclick="switchSection('dashboard')">
+                <span>🏠</span>
+                <span class="nav-label">Home</span>
+            </button>
+            <button class="nav-item" onclick="switchSection('study')">
+                <span>📚</span>
+                <span class="nav-label">Study</span>
+            </button>
+            <button class="nav-item" onclick="switchSection('calendar')">
+                <span>📅</span>
+                <span class="nav-label">Calendar</span>
+            </button>
+            <button class="nav-item" onclick="switchSection('store')">
+                <span>🛍️</span>
+                <span class="nav-label">Store</span>
+            </button>
+            <button class="nav-item" onclick="switchSection('profile')">
+                <span>👤</span>
+                <span class="nav-label">Profile</span>
+            </button>
+        </div>
+
+        <!-- Floating Action Button -->
+        <button class="fab" onclick="quickAddCard()">+</button>
+
+        <!-- Modal for Adding Study Session -->
+        <div class="modal" id="addSessionModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Add Study Session</h3>
+                    <button class="close-btn" onclick="closeModal()">&times;</button>
+                </div>
+                <form onsubmit="saveStudySession(event)">
+                    <div class="form-group">
+                        <label class="form-label">Course</label>
+                        <select class="form-input" id="sessionCourse">
+                            <option>English Vocabulary</option>
+                            <option>Current Affairs</option>
+                            <option>General Science</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Date</label>
+                        <input type="date" class="form-input" id="sessionDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Time</label>
+                        <input type="time" class="form-input" id="sessionTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Duration (minutes)</label>
+                        <input type="number" class="form-input" id="sessionDuration" value="30" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
