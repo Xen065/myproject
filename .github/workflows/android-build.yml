@@ -45,7 +45,7 @@ jobs:
 
       - name: Install required SDK packages
         run: |
-          yes | sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
+          yes | sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
 
       - name: Accept licenses
         run: yes | sdkmanager --licenses
