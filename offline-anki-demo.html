@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline Anki Clone - Works Without Internet!</title>
+
+    <!-- PWA Manifest - Makes app installable -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#6366f1">
+
+    <!-- iOS Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Anki Clone">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .offline-indicator {
+            display: inline-block;
+            padding: 5px 12px;
+            background: #10b981;
+            color: white;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .offline-indicator.offline {
+            background: #ef4444;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        .flashcard {
+            background: #f3f4f6;
+            padding: 40px;
+            border-radius: 15px;
+            margin: 20px 0;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .flashcard:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .card-content {
+            font-size: 24px;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .card-back {
+            display: none;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .flashcard.flipped .card-front {
+            display: none;
+        }
+
+        .flashcard.flipped .card-back {
+            display: block;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .btn-again { background: #ef4444; }
+        .btn-hard { background: #f59e0b; }
+        .btn-good { background: #3b82f6; }
+        .btn-easy { background: #10b981; }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            grid-column: 1 / -1;
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 14px;
+            margin-top: 5px;
+            font-family: inherit;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        label {
+            font-weight: 600;
+            color: #374151;
+            display: block;
+        }
+
+        .message {
+            padding: 15px;
+            background: #dbeafe;
+            color: #1e40af;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        h2 {
+            color: #374151;
+            margin-bottom: 15px;
+        }
+
+        .install-prompt {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .install-btn {
+            background: white;
+            color: #10b981;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Offline Indicator -->
+        <h1>
+            📚 Offline Anki Clone
+            <span class="offline-indicator" id="offlineStatus">ONLINE</span>
+        </h1>
+
+        <!-- Install Prompt -->
+        <div class="install-prompt hidden" id="installPrompt">
+            <span>📲 Install this app for offline use!</span>
+            <button class="install-btn" id="installBtn">Install</button>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats" id="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="totalCards">0</div>
+                <div class="stat-label">Total Cards</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="dueCards">0</div>
+                <div class="stat-label">Due Today</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="newCards">0</div>
+                <div class="stat-label">New</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="matureCards">0</div>
+                <div class="stat-label">Mature</div>
+            </div>
+        </div>
+
+        <!-- Study Section -->
+        <div class="section">
+            <h2>📖 Study Session</h2>
+
+            <div id="studySection">
+                <div class="flashcard" id="flashcard" onclick="flipCard()">
+                    <div class="card-content card-front" id="cardFront">
+                        Click "Start Studying" to begin!
+                    </div>
+                    <div class="card-content card-back" id="cardBack">
+                        Answer
+                    </div>
+                </div>
+
+                <div class="buttons">
+                    <button class="btn btn-primary" id="startBtn" onclick="startStudying()">
+                        🚀 Start Studying
+                    </button>
+
+                    <button class="btn btn-again hidden" id="btnAgain" onclick="reviewCard(1)">
+                        ❌ Again<br><small>&lt;10m</small>
+                    </button>
+                    <button class="btn btn-hard hidden" id="btnHard" onclick="reviewCard(2)">
+                        😐 Hard<br><small>&lt;1d</small>
+                    </button>
+                    <button class="btn btn-good hidden" id="btnGood" onclick="reviewCard(3)">
+                        ✅ Good<br><small>3-6d</small>
+                    </button>
+                    <button class="btn btn-easy hidden" id="btnEasy" onclick="reviewCard(4)">
+                        😎 Easy<br><small>15d+</small>
+                    </button>
+                </div>
+            </div>
+
+            <div class="message hidden" id="message"></div>
+        </div>
+
+        <!-- Add Card Section -->
+        <div class="section">
+            <h2>➕ Add New Card</h2>
+
+            <div class="input-group">
+                <label for="cardFrontInput">Front (Question):</label>
+                <textarea id="cardFrontInput" rows="2" placeholder="What is the capital of France?"></textarea>
+            </div>
+
+            <div class="input-group">
+                <label for="cardBackInput">Back (Answer):</label>
+                <textarea id="cardBackInput" rows="2" placeholder="Paris"></textarea>
+            </div>
+
+            <div class="input-group">
+                <label for="cardDeck">Deck:</label>
+                <input type="text" id="cardDeck" placeholder="Default" value="Default">
+            </div>
+
+            <div class="buttons">
+                <button class="btn btn-primary" onclick="addNewCard()">
+                    ➕ Add Card (Works Offline!)
+                </button>
+            </div>
+        </div>
+
+        <!-- Demo Section -->
+        <div class="section">
+            <h2>🧪 Quick Demo</h2>
+            <p style="margin-bottom: 15px; color: #6b7280;">
+                Try these to see offline features:
+            </p>
+
+            <div class="buttons">
+                <button class="btn btn-primary" onclick="testOffline()">
+                    ✅ Test Offline Mode
+                </button>
+                <button class="btn btn-primary" onclick="exportData()">
+                    💾 Export Data
+                </button>
+            </div>
+        </div>
+
+        <p style="text-align: center; color: #6b7280; font-size: 14px; margin-top: 20px;">
+            ✅ Works 100% offline - No internet needed!<br>
+            💾 All data stored on your device<br>
+            🔄 Same algorithm as Anki (SM-2)
+        </p>
+    </div>
+
+    <!-- Include the offline app -->
+    <script src="offline-anki-app.js"></script>
+
+    <script>
+        // Global app instance
+        let app = null;
+        let currentSession = null;
+
+        // Initialize app when page loads
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('🚀 Initializing Offline Anki Clone...');
+
+            // Register Service Worker for offline support
+            if ('serviceWorker' in navigator) {
+                try {
+                    await navigator.serviceWorker.register('/service-worker.js');
+                    console.log('✅ Service Worker registered - App works offline!');
+                } catch (error) {
+                    console.log('⚠️ Service Worker registration failed:', error);
+                }
+            }
+
+            // Check online/offline status
+            updateOnlineStatus();
+            window.addEventListener('online', updateOnlineStatus);
+            window.addEventListener('offline', updateOnlineStatus);
+
+            // Initialize the app
+            app = new OfflineAnkiApp();
+            await app.init();
+
+            // Update stats display
+            await updateStats();
+
+            console.log('✅ App ready! Try turning off your internet - it still works!');
+        });
+
+        // Update online/offline indicator
+        function updateOnlineStatus() {
+            const indicator = document.getElementById('offlineStatus');
+            if (navigator.onLine) {
+                indicator.textContent = 'ONLINE';
+                indicator.classList.remove('offline');
+            } else {
+                indicator.textContent = 'OFFLINE ✅';
+                indicator.classList.add('offline');
+            }
+        }
+
+        // Update statistics display
+        async function updateStats() {
+            const stats = await app.getStatistics();
+
+            document.getElementById('totalCards').textContent = stats.total;
+            document.getElementById('dueCards').textContent = stats.due;
+            document.getElementById('newCards').textContent = stats.new;
+            document.getElementById('matureCards').textContent = stats.mature;
+        }
+
+        // Start studying
+        async function startStudying() {
+            currentSession = await app.startSession();
+
+            if (currentSession.status === 'no_cards') {
+                showMessage(currentSession.message);
+                return;
+            }
+
+            // Show card
+            document.getElementById('cardFront').textContent = currentSession.card.front;
+            document.getElementById('cardBack').textContent = currentSession.card.back;
+
+            // Show review buttons
+            document.getElementById('startBtn').classList.add('hidden');
+            document.getElementById('btnAgain').classList.remove('hidden');
+            document.getElementById('btnHard').classList.remove('hidden');
+            document.getElementById('btnGood').classList.remove('hidden');
+            document.getElementById('btnEasy').classList.remove('hidden');
+
+            // Reset card flip
+            document.getElementById('flashcard').classList.remove('flipped');
+
+            hideMessage();
+        }
+
+        // Flip card to show answer
+        function flipCard() {
+            document.getElementById('flashcard').classList.toggle('flipped');
+        }
+
+        // Review card with quality rating
+        async function reviewCard(quality) {
+            const result = await app.reviewCard(quality);
+
+            await updateStats();
+
+            if (result.status === 'continue') {
+                // Show next card
+                document.getElementById('cardFront').textContent = result.card.front;
+                document.getElementById('cardBack').textContent = result.card.back;
+                document.getElementById('flashcard').classList.remove('flipped');
+            } else {
+                // Session complete
+                showMessage(`
+                    🎉 Study session complete!<br>
+                    Cards reviewed: ${result.stats.cardsReviewed}<br>
+                    Accuracy: ${Math.round((result.stats.correctAnswers / result.stats.cardsReviewed) * 100)}%
+                `);
+
+                // Hide review buttons
+                document.getElementById('btnAgain').classList.add('hidden');
+                document.getElementById('btnHard').classList.add('hidden');
+                document.getElementById('btnGood').classList.add('hidden');
+                document.getElementById('btnEasy').classList.add('hidden');
+                document.getElementById('startBtn').classList.remove('hidden');
+            }
+        }
+
+        // Add new card
+        async function addNewCard() {
+            const front = document.getElementById('cardFrontInput').value.trim();
+            const back = document.getElementById('cardBackInput').value.trim();
+            const deck = document.getElementById('cardDeck').value.trim();
+
+            if (!front || !back) {
+                alert('Please enter both front and back of the card');
+                return;
+            }
+
+            await app.addCard(front, back, deck);
+
+            // Clear inputs
+            document.getElementById('cardFrontInput').value = '';
+            document.getElementById('cardBackInput').value = '';
+
+            // Update stats
+            await updateStats();
+
+            showMessage('✅ Card added successfully (offline)!');
+        }
+
+        // Test offline functionality
+        function testOffline() {
+            alert(
+                '🧪 OFFLINE TEST:\n\n' +
+                '1. Open DevTools (F12)\n' +
+                '2. Go to Network tab\n' +
+                '3. Set to "Offline" mode\n' +
+                '4. Refresh page\n' +
+                '5. App still works! ✅\n\n' +
+                'Try adding cards, studying, etc.\n' +
+                'Everything works without internet!'
+            );
+        }
+
+        // Export data
+        async function exportData() {
+            const data = await app.db.exportData();
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `anki-backup-${Date.now()}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showMessage('✅ Data exported! (Created offline)');
+        }
+
+        // Show message
+        function showMessage(html) {
+            const msg = document.getElementById('message');
+            msg.innerHTML = html;
+            msg.classList.remove('hidden');
+        }
+
+        // Hide message
+        function hideMessage() {
+            document.getElementById('message').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
