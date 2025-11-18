@@ -6,7 +6,7 @@ Your Android project is ready at:
 
 **Windows Path:**
 ```
-\\wsl$\Ubuntu\home\xenon\myproject
+\\wsl$\Ubuntu\home\user\myproject
 ```
 
 (If you're using a different Linux distro, replace "Ubuntu" with your distro name)
@@ -15,7 +15,7 @@ Your Android project is ready at:
 
 ### Method A: From File Explorer
 1. Open **File Explorer** (Win + E)
-2. Type in address bar: `\\wsl$\Ubuntu\home\xenon\myproject`
+2. Type in address bar: `\\wsl$\Ubuntu\home\user\myproject`
 3. Press Enter
 4. **Right-click** on the `myproject` folder
 5. Select **"Open Folder as Android Studio Project"** (if available)
@@ -23,7 +23,7 @@ Your Android project is ready at:
 ### Method B: From Android Studio
 1. Launch **Android Studio**
 2. Click **"Open"** (or File → Open)
-3. In the file browser, type: `\\wsl$\Ubuntu\home\xenon\myproject`
+3. In the file browser, type: `\\wsl$\Ubuntu\home\user\myproject`
 4. Select the **myproject** folder
 5. Click **OK**
 

@@ -83,7 +83,7 @@ Before you begin, ensure you have the following installed:
 
 1. **Open Terminal**:
    ```bash
-   cd /home/xenon/myproject
+   cd /home/user/myproject
    ```
 
 2. **Make Gradlew Executable** (Linux/Mac only):
