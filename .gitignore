@@ -80,3 +80,75 @@ lint-results_files/
 
 # Zone Identifier files (Windows)
 *:Zone.Identifier
+
+# ============================================
+# Backend (Node.js) specific
+# ============================================
+
+# Dependencies
+backend/node_modules/
+backend/package-lock.json
+
+# Environment variables
+backend/.env
+backend/.env.local
+backend/.env.*.local
+
+# Logs
+backend/logs/
+backend/*.log
+backend/npm-debug.log*
+
+# Database
+backend/*.db
+backend/*.sqlite
+backend/*.sqlite3
+
+# Uploads
+backend/uploads/
+backend/temp/
+
+# ============================================
+# Frontend (React) specific
+# ============================================
+
+# Dependencies
+frontend/node_modules/
+frontend/package-lock.json
+
+# Production build
+frontend/build/
+frontend/dist/
+
+# Environment variables
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+# Logs
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# Testing
+frontend/coverage/
+
+# Misc
+frontend/.DS_Store
+frontend/.eslintcache
+
+# ============================================
+# General
+# ============================================
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+*.swp
+*.swo
+*~
