@@ -2,11 +2,13 @@ import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
+import { useAdmin } from '../contexts/AdminContext';
 import './Navigation.css';
 
 function Navigation() {
   const { user, isAuthenticated, logout } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme();
+  const { isAdmin } = useAdmin();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -48,6 +50,14 @@ function Navigation() {
               >
                 Study
               </Link>
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  className={location.pathname.startsWith('/admin') ? 'active' : ''}
+                >
+                  Admin
+                </Link>
+              )}
               <button onClick={toggleTheme} className="btn-theme-toggle" title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}>
                 {isDarkMode ? '☀️' : '🌙'}
               </button>
