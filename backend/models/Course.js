@@ -54,7 +54,8 @@ const Course = sequelize.define('Course', {
 
   difficulty: {
     type: DataTypes.ENUM('beginner', 'intermediate', 'advanced'),
-    defaultValue: 'beginner'
+    allowNull: true,
+    defaultValue: null
   },
 
   language: {

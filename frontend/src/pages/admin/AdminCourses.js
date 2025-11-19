@@ -193,9 +193,13 @@ const AdminCourses = () => {
                   </td>
                   <td>{course.category || 'General'}</td>
                   <td>
-                    <span className={`badge badge-${course.difficulty}`}>
-                      {course.difficulty}
-                    </span>
+                    {course.difficulty ? (
+                      <span className={`badge badge-${course.difficulty}`}>
+                        {course.difficulty}
+                      </span>
+                    ) : (
+                      <span className="text-muted">—</span>
+                    )}
                   </td>
                   <td>{course.totalCards || 0}</td>
                   <td>{course.enrollmentCount || 0}</td>

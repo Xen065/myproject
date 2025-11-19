@@ -64,7 +64,7 @@ function Courses() {
               <h3>{course.title}</h3>
               <p className="course-description">{course.description}</p>
               <div className="course-meta">
-                <span>📊 {course.difficulty}</span>
+                {course.difficulty && <span>📊 {course.difficulty}</span>}
                 <span>👥 {course.enrollmentCount} enrolled</span>
               </div>
               <Link to={`/courses/${course.id}`} className="btn-course">

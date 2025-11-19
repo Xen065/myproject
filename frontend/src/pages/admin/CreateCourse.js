@@ -26,7 +26,7 @@ const CreateCourse = () => {
     icon: '📚',
     color: '#6366F1',
     category: 'General',
-    difficulty: 'beginner',
+    difficulty: '',
     language: 'English',
     price: 0,
     isFree: true,
@@ -82,7 +82,7 @@ const CreateCourse = () => {
         icon: course.icon || '📚',
         color: course.color || '#6366F1',
         category: course.category || 'General',
-        difficulty: course.difficulty || 'beginner',
+        difficulty: course.difficulty || '',
         language: course.language || 'English',
         price: course.price || 0,
         isFree: course.isFree !== undefined ? course.isFree : true,
@@ -170,6 +170,7 @@ const CreateCourse = () => {
       const courseData = {
         ...formData,
         price: parseInt(formData.price) || 0,
+        difficulty: formData.difficulty || null,
       };
 
       if (isEditMode) {
@@ -370,10 +371,12 @@ const CreateCourse = () => {
               value={formData.difficulty}
               onChange={handleChange}
             >
+              <option value="">No difficulty level (hidden)</option>
               <option value="beginner">Beginner</option>
               <option value="intermediate">Intermediate</option>
               <option value="advanced">Advanced</option>
             </select>
+            <small>Select "No difficulty level" to hide the difficulty badge</small>
           </div>
         </div>
 
@@ -454,7 +457,9 @@ const CreateCourse = () => {
               <p>{formData.description || 'Course description will appear here...'}</p>
               <div className="preview-meta">
                 <span className="preview-badge">{formData.category}</span>
-                <span className="preview-badge">{formData.difficulty}</span>
+                {formData.difficulty && (
+                  <span className="preview-badge">{formData.difficulty}</span>
+                )}
                 <span className="preview-badge">
                   {formData.isFree ? 'Free' : `${formData.price} coins`}
                 </span>

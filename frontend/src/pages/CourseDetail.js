@@ -73,10 +73,12 @@ function CourseDetail() {
           <p className="course-lead">{course.description}</p>
 
           <div className="course-stats">
-            <div className="stat-item">
-              <span className="stat-label">Difficulty</span>
-              <span className="stat-value">{course.difficulty}</span>
-            </div>
+            {course.difficulty && (
+              <div className="stat-item">
+                <span className="stat-label">Difficulty</span>
+                <span className="stat-value">{course.difficulty}</span>
+              </div>
+            )}
             <div className="stat-item">
               <span className="stat-label">Students</span>
               <span className="stat-value">{course.enrollmentCount}</span>
@@ -101,7 +103,7 @@ function CourseDetail() {
           <h2>Course Details</h2>
           <ul className="course-details-list">
             <li>Category: {course.category}</li>
-            <li>Difficulty Level: {course.difficulty}</li>
+            {course.difficulty && <li>Difficulty Level: {course.difficulty}</li>}
             <li>Currently Enrolled: {course.enrollmentCount} students</li>
           </ul>
         </div>

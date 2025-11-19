@@ -259,6 +259,12 @@
   font-size: 0.875rem;
 }
 
+/* Text Utilities */
+.text-muted {
+  color: var(--text-secondary, #999);
+  font-style: italic;
+}
+
 /* No Data */
 .no-data {
   text-align: center;
