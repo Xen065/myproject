@@ -2,7 +2,7 @@
   padding: 3rem 2rem;
   max-width: 950px;
   margin: 0 auto;
-  color: white;
+  color: var(--text-primary);
   animation: fadeIn 0.5s ease;
 }
 
@@ -35,9 +35,9 @@
 
 .mode-btn {
   padding: 0.875rem 1.75rem;
-  border: 2px solid rgba(5, 191, 219, 0.4);
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
+  border: 2px solid var(--input-border);
+  background: var(--input-bg);
+  color: var(--text-primary);
   border-radius: 12px;
   cursor: pointer;
   font-weight: 600;
@@ -45,8 +45,8 @@
 }
 
 .mode-btn:hover {
-  background: rgba(5, 191, 219, 0.2);
-  border-color: rgba(5, 191, 219, 0.6);
+  background: var(--input-focus-bg);
+  border-color: var(--card-border-hover);
   transform: translateY(-2px);
 }
 
@@ -57,7 +57,7 @@
 }
 
 .progress-info {
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--text-secondary);
   font-size: 1.1rem;
 }
 
@@ -110,11 +110,11 @@
   position: absolute;
   width: 100%;
   height: 100%;
-  background: rgba(255, 255, 255, 0.12);
+  background: var(--card-bg);
   backdrop-filter: blur(15px);
   border-radius: 24px;
   padding: 3rem;
-  border: 2px solid rgba(5, 191, 219, 0.3);
+  border: 2px solid var(--card-border);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -122,7 +122,7 @@
   text-align: center;
   overflow-y: auto;
   transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-md);
 }
 
 .flashcard-front {
@@ -223,7 +223,7 @@
 .card-explanation strong {
   display: block;
   margin-bottom: 0.5rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--text-secondary);
 }
 
 .reveal-answer-button {
@@ -254,7 +254,7 @@
 }
 
 .flip-hint {
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-tertiary);
   font-size: 0.9rem;
   margin-top: auto;
   padding-top: 1rem;
@@ -277,7 +277,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  color: white;
+  color: var(--text-primary);
   font-size: 1.05rem;
 }
 
@@ -360,18 +360,18 @@
 }
 
 .course-study-card {
-  background: rgba(255, 255, 255, 0.12);
+  background: var(--card-bg);
   backdrop-filter: blur(15px);
   border-radius: 20px;
   padding: 2.5rem;
-  border: 2px solid rgba(5, 191, 219, 0.3);
+  border: 2px solid var(--card-border);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-md);
 }
 
 .course-study-card:hover {
   transform: translateY(-8px);
-  border-color: rgba(5, 191, 219, 0.5);
+  border-color: var(--card-border-hover);
   box-shadow: 0 16px 40px rgba(5, 191, 219, 0.3);
 }
 
@@ -426,7 +426,7 @@
 }
 
 .course-study-stats .stat-label {
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--text-secondary);
   font-size: 0.9rem;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -445,7 +445,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  color: white;
+  color: var(--text-primary);
   font-size: 1.05rem;
   min-height: 52px;
 }
@@ -543,9 +543,9 @@
 
 .filter-btn {
   padding: 0.75rem 1.5rem;
-  border: 2px solid rgba(5, 191, 219, 0.4);
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
+  border: 2px solid var(--input-border);
+  background: var(--input-bg);
+  color: var(--text-primary);
   border-radius: 12px;
   cursor: pointer;
   font-weight: 600;
@@ -555,8 +555,8 @@
 }
 
 .filter-btn:hover {
-  background: rgba(5, 191, 219, 0.2);
-  border-color: rgba(5, 191, 219, 0.6);
+  background: var(--input-focus-bg);
+  border-color: var(--card-border-hover);
   transform: translateY(-2px);
 }
 
@@ -571,7 +571,7 @@
   justify-content: center;
   align-items: center;
   min-height: 400px;
-  color: white;
+  color: var(--text-primary);
   font-size: 1.2rem;
 }
 
@@ -627,7 +627,7 @@
 }
 
 .stat-label {
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--text-secondary);
   font-size: 0.95rem;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -670,7 +670,7 @@
 .no-cards-message p {
   font-size: 1.2rem;
   margin-bottom: 2rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--text-secondary);
 }
 
 @media (max-width: 768px) {

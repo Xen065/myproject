@@ -1,12 +1,12 @@
 .navigation {
-  background: rgba(10, 77, 104, 0.4);
+  background: var(--nav-bg);
   backdrop-filter: blur(15px);
-  border-bottom: 1px solid rgba(5, 191, 219, 0.2);
+  border-bottom: 1px solid var(--nav-border);
   padding: 1.25rem 0;
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 .nav-container {
@@ -37,7 +37,7 @@
 }
 
 .nav-links a {
-  color: rgba(255, 255, 255, 0.85);
+  color: var(--text-secondary);
   text-decoration: none;
   font-weight: 500;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -46,12 +46,12 @@
 }
 
 .nav-links a:hover {
-  color: #05BFDB;
+  color: var(--primary-color);
   transform: translateY(-2px);
 }
 
 .nav-links a.active {
-  color: #05BFDB;
+  color: var(--primary-color);
 }
 
 .nav-links a.active::after {
@@ -98,10 +98,32 @@
   font-weight: 500;
 }
 
+.btn-theme-toggle {
+  background: var(--input-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--input-border);
+  padding: 0.5rem 0.75rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1.25rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.btn-theme-toggle:hover {
+  background: var(--input-focus-bg);
+  border-color: var(--card-border-hover);
+  transform: translateY(-2px) rotate(15deg);
+}
+
 .btn-logout {
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-  border: 1px solid rgba(5, 191, 219, 0.4);
+  background: var(--input-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--input-border);
   padding: 0.625rem 1.25rem;
   border-radius: 10px;
   cursor: pointer;
@@ -110,8 +132,8 @@
 }
 
 .btn-logout:hover {
-  background: rgba(5, 191, 219, 0.2);
-  border-color: rgba(5, 191, 219, 0.6);
+  background: var(--input-focus-bg);
+  border-color: var(--card-border-hover);
   transform: translateY(-2px);
 }
 
@@ -125,13 +147,13 @@
 }
 
 .btn-nav-login {
-  color: white;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(5, 191, 219, 0.4);
+  color: var(--text-primary);
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
 }
 
 .btn-nav-login:hover {
-  background: rgba(5, 191, 219, 0.15);
+  background: var(--input-focus-bg);
   transform: translateY(-2px);
 }
 

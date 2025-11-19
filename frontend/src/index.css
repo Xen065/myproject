@@ -4,11 +4,72 @@
   box-sizing: border-box;
 }
 
+:root {
+  /* Light Mode (Ocean/Teal Theme) - Default */
+  --bg-gradient-start: #0A4D68;
+  --bg-gradient-mid: #088395;
+  --bg-gradient-end: #05BFDB;
+
+  --primary-color: #05BFDB;
+  --primary-color-light: #00D9FF;
+
+  --card-bg: rgba(255, 255, 255, 0.12);
+  --card-border: rgba(5, 191, 219, 0.3);
+  --card-border-hover: rgba(5, 191, 219, 0.5);
+
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.85);
+  --text-tertiary: rgba(255, 255, 255, 0.7);
+
+  --nav-bg: rgba(10, 77, 104, 0.4);
+  --nav-border: rgba(5, 191, 219, 0.2);
+
+  --input-bg: rgba(255, 255, 255, 0.08);
+  --input-border: rgba(5, 191, 219, 0.3);
+  --input-focus-bg: rgba(5, 191, 219, 0.15);
+
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.3);
+  --shadow-primary: 0 4px 12px rgba(5, 191, 219, 0.3);
+}
+
+.dark-mode {
+  /* Dark Mode (True Dark Theme) */
+  --bg-gradient-start: #0a0e27;
+  --bg-gradient-mid: #16213e;
+  --bg-gradient-end: #1a1a2e;
+
+  --primary-color: #05BFDB;
+  --primary-color-light: #00D9FF;
+
+  --card-bg: rgba(255, 255, 255, 0.05);
+  --card-border: rgba(5, 191, 219, 0.2);
+  --card-border-hover: rgba(5, 191, 219, 0.4);
+
+  --text-primary: rgba(255, 255, 255, 0.95);
+  --text-secondary: rgba(255, 255, 255, 0.75);
+  --text-tertiary: rgba(255, 255, 255, 0.6);
+
+  --nav-bg: rgba(10, 14, 39, 0.6);
+  --nav-border: rgba(5, 191, 219, 0.15);
+
+  --input-bg: rgba(255, 255, 255, 0.05);
+  --input-border: rgba(5, 191, 219, 0.25);
+  --input-focus-bg: rgba(5, 191, 219, 0.1);
+
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.5);
+  --shadow-primary: 0 4px 12px rgba(5, 191, 219, 0.2);
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   -webkit-font-smoothing: antialiased;
-  background: linear-gradient(135deg, #0A4D68 0%, #088395 50%, #05BFDB 100%);
+  background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 50%, var(--bg-gradient-end) 100%);
   min-height: 100vh;
+  transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .loading-container {

@@ -1,5 +1,5 @@
 .course-detail-container {
-  color: white;
+  color: var(--text-primary);
   animation: fadeIn 0.5s ease;
 }
 
@@ -13,11 +13,11 @@
 }
 
 .course-hero {
-  background: rgba(10, 77, 104, 0.4);
+  background: var(--nav-bg);
   backdrop-filter: blur(15px);
   padding: 5rem 2rem;
-  border-bottom: 1px solid rgba(5, 191, 219, 0.3);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid var(--card-border);
+  box-shadow: var(--shadow-md);
 }
 
 .course-hero-content {
@@ -55,7 +55,7 @@
 
 .course-lead {
   font-size: 1.25rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--text-secondary);
   line-height: 1.7;
   margin-bottom: 2.5rem;
 }
@@ -73,7 +73,7 @@
 }
 
 .stat-label {
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-tertiary);
   font-size: 0.9rem;
 }
 
@@ -98,7 +98,7 @@
 }
 
 .course-section p {
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--text-secondary);
   line-height: 1.6;
   font-size: 1.05rem;
 }
@@ -111,7 +111,7 @@
 .course-details-list li {
   padding: 0.75rem 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--text-secondary);
 }
 
 .enroll-section {
@@ -153,7 +153,7 @@
 
 .enroll-note {
   margin-top: 1.5rem;
-  color: rgba(255, 255, 255, 0.75);
+  color: var(--text-secondary);
   font-size: 1rem;
   line-height: 1.5;
 }

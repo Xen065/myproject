@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import './Navigation.css';
 
 function Navigation() {
   const { user, isAuthenticated, logout } = useAuth();
+  const { isDarkMode, toggleTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -46,6 +48,9 @@ function Navigation() {
               >
                 Study
               </Link>
+              <button onClick={toggleTheme} className="btn-theme-toggle" title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}>
+                {isDarkMode ? '☀️' : '🌙'}
+              </button>
               <div className="nav-user">
                 <span className="user-name">{user?.username}</span>
                 <button onClick={handleLogout} className="btn-logout">
@@ -55,6 +60,9 @@ function Navigation() {
             </>
           ) : (
             <>
+              <button onClick={toggleTheme} className="btn-theme-toggle" title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}>
+                {isDarkMode ? '☀️' : '🌙'}
+              </button>
               <Link to="/login" className="btn-nav-login">
                 Login
               </Link>

@@ -1,6 +1,6 @@
 .dashboard-container {
   padding: 3.5rem 2rem;
-  color: white;
+  color: var(--text-primary);
   animation: fadeIn 0.5s ease;
 }
 
@@ -25,7 +25,7 @@
 }
 
 .dashboard-header p {
-  color: rgba(255, 255, 255, 0.85);
+  color: var(--text-secondary);
   font-size: 1.15rem;
   line-height: 1.6;
 }
@@ -38,21 +38,21 @@
 }
 
 .stat-card {
-  background: rgba(255, 255, 255, 0.12);
+  background: var(--card-bg);
   backdrop-filter: blur(15px);
   border-radius: 20px;
   padding: 2rem;
-  border: 1px solid rgba(5, 191, 219, 0.3);
+  border: 1px solid var(--card-border);
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-md);
 }
 
 .stat-card:hover {
   transform: translateY(-5px) scale(1.02);
-  border-color: rgba(5, 191, 219, 0.5);
+  border-color: var(--card-border-hover);
   box-shadow: 0 12px 32px rgba(5, 191, 219, 0.3);
 }
 
@@ -66,12 +66,12 @@
 }
 
 .stat-content p {
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--text-secondary);
   margin: 0;
 }
 
 .stat-link {
-  color: #05BFDB;
+  color: var(--primary-color);
   text-decoration: none;
   font-weight: 600;
   font-size: 0.95rem;
@@ -82,7 +82,7 @@
 }
 
 .stat-link:hover {
-  color: #00D9FF;
+  color: var(--primary-color-light);
   transform: translateX(5px);
 }
 
@@ -103,18 +103,18 @@
 }
 
 .progress-card {
-  background: rgba(255, 255, 255, 0.12);
+  background: var(--card-bg);
   backdrop-filter: blur(15px);
   border-radius: 20px;
   padding: 2rem;
-  border: 1px solid rgba(5, 191, 219, 0.3);
+  border: 1px solid var(--card-border);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-md);
 }
 
 .progress-card:hover {
   transform: translateY(-5px);
-  border-color: rgba(5, 191, 219, 0.5);
+  border-color: var(--card-border-hover);
   box-shadow: 0 12px 32px rgba(5, 191, 219, 0.3);
 }
 
@@ -182,15 +182,15 @@
 }
 
 .action-btn.secondary {
-  background: rgba(255, 255, 255, 0.12);
-  color: white;
-  border: 2px solid rgba(5, 191, 219, 0.4);
+  background: var(--card-bg);
+  color: var(--text-primary);
+  border: 2px solid var(--input-border);
 }
 
 .action-btn.secondary:hover {
   transform: translateY(-3px);
-  background: rgba(5, 191, 219, 0.2);
-  border-color: rgba(5, 191, 219, 0.6);
+  background: var(--input-focus-bg);
+  border-color: var(--card-border-hover);
   box-shadow: 0 8px 24px rgba(5, 191, 219, 0.3);
 }
 

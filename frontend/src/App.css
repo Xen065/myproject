@@ -23,7 +23,7 @@
   justify-content: center;
   align-items: center;
   min-height: 60vh;
-  color: white;
+  color: var(--text-primary);
   font-size: 1.2rem;
 }
 
@@ -49,12 +49,12 @@
 }
 
 .success-message {
-  background: linear-gradient(135deg, #05BFDB 0%, #00D9FF 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-light) 100%);
   color: white;
   padding: 1.25rem;
   border-radius: 12px;
   margin-bottom: 1.5rem;
-  box-shadow: 0 4px 12px rgba(5, 191, 219, 0.3);
+  box-shadow: var(--shadow-primary);
   animation: slideIn 0.3s ease;
 }
 
@@ -70,7 +70,7 @@
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #05BFDB 0%, #00D9FF 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-light) 100%);
   color: white;
   border: none;
   padding: 1rem 2rem;
@@ -80,7 +80,7 @@
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   width: 100%;
-  box-shadow: 0 4px 12px rgba(5, 191, 219, 0.3);
+  box-shadow: var(--shadow-primary);
 }
 
 .btn-primary:hover {
