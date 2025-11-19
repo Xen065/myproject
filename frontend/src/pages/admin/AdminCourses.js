@@ -162,6 +162,7 @@ const AdminCourses = () => {
               <th>Course</th>
               <th>Category</th>
               <th>Difficulty</th>
+              <th>Price</th>
               <th>Cards</th>
               <th>Enrollments</th>
               <th>Status</th>
@@ -171,7 +172,7 @@ const AdminCourses = () => {
           <tbody>
             {courses.length === 0 ? (
               <tr>
-                <td colSpan="7" className="no-data">
+                <td colSpan="8" className="no-data">
                   No courses found. {hasPermission('courses.create') && 'Create your first course!'}
                 </td>
               </tr>
@@ -193,9 +194,22 @@ const AdminCourses = () => {
                   </td>
                   <td>{course.category || 'General'}</td>
                   <td>
-                    <span className={`badge badge-${course.difficulty}`}>
-                      {course.difficulty}
-                    </span>
+                    {course.difficulty ? (
+                      <span className={`badge badge-${course.difficulty}`}>
+                        {course.difficulty}
+                      </span>
+                    ) : (
+                      <span className="text-muted">—</span>
+                    )}
+                  </td>
+                  <td>
+                    {course.isFree ? (
+                      <span className="badge badge-free">Free</span>
+                    ) : course.priceType === 'rupees' ? (
+                      <span className="price-rupees">₹{course.price}</span>
+                    ) : (
+                      <span className="price-coins">{course.price} coins</span>
+                    )}
                   </td>
                   <td>{course.totalCards || 0}</td>
                   <td>{course.enrollmentCount || 0}</td>
