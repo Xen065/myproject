@@ -11,10 +11,12 @@ import Dashboard from './pages/Dashboard';
 import Courses from './pages/Courses';
 import CourseDetail from './pages/CourseDetail';
 import Study from './pages/Study';
+import PracticeQuestions from './pages/PracticeQuestions';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import Permissions from './pages/admin/Permissions';
 import AdminCourses from './pages/admin/AdminCourses';
 import CreateCourse from './pages/admin/CreateCourse';
+import ManageCourseContent from './pages/admin/ManageCourseContent';
 import './App.css';
 
 function App() {
@@ -64,6 +66,14 @@ function App() {
                       </ProtectedRoute>
                     }
                   />
+                  <Route
+                    path="/courses/:id/practice"
+                    element={
+                      <ProtectedRoute>
+                        <PracticeQuestions />
+                      </ProtectedRoute>
+                    }
+                  />
 
                   {/* Admin routes */}
                   <Route
@@ -95,6 +105,14 @@ function App() {
                     element={
                       <ProtectedRoute>
                         <CreateCourse />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/courses/:courseId/content"
+                    element={
+                      <ProtectedRoute>
+                        <ManageCourseContent />
                       </ProtectedRoute>
                     }
                   />

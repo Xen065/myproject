@@ -223,9 +223,17 @@ const AdminCourses = () => {
                       <button
                         onClick={() => navigate(`/admin/courses/${course.id}/edit`)}
                         className="btn-icon-action"
-                        title="Edit"
+                        title="Edit Course"
                       >
                         ✏️
+                      </button>
+
+                      <button
+                        onClick={() => navigate(`/admin/courses/${course.id}/content`)}
+                        className="btn-icon-action"
+                        title="Manage Content"
+                      >
+                        📝
                       </button>
 
                       {hasPermission('courses.publish') && (

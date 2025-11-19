@@ -75,7 +75,7 @@ const CreateCourse = () => {
     try {
       setLoading(true);
       const response = await adminCourseAPI.getById(id);
-      const course = response.data.data.course;
+      const course = response.data.data;
 
       setFormData({
         title: course.title || '',

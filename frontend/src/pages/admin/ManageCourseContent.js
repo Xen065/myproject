@@ -53,10 +53,10 @@ const ManageCourseContent = () => {
         adminCardAPI.getByCourse(courseId)
       ]);
 
-      setCourse(courseRes.data.data.course);
+      setCourse(courseRes.data.data);
       setModules(modulesRes.data.data || []);
       setContents(contentsRes.data.data || []);
-      setQuestions(questionsRes.data.data.cards || []);
+      setQuestions(questionsRes.data.data || []);
     } catch (error) {
       console.error('Error loading data:', error);
       alert('Failed to load course data');
