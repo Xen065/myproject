@@ -107,6 +107,7 @@ router.get(
   async (req, res) => {
     try {
       const courseId = parseInt(req.params.courseId);
+      const { moduleId } = req.query;
 
       // Check course ownership for teachers
       if (req.user.role === 'teacher') {
@@ -119,11 +120,18 @@ router.get(
         }
       }
 
+      const where = {
+        courseId,
+        userId: null // Template cards only
+      };
+
+      // Filter by module if specified
+      if (moduleId) {
+        where.moduleId = parseInt(moduleId);
+      }
+
       const cards = await Card.findAll({
-        where: {
-          courseId,
-          userId: null // Template cards only
-        },
+        where,
         order: [['createdAt', 'ASC']]
       });
 
@@ -212,13 +220,14 @@ router.post(
     try {
       const {
         courseId,
+        moduleId,
         question,
         answer,
         hint,
-        type,
+        explanation,
+        cardType,
         options,
-        correctAnswer,
-        imageUrl
+        tags
       } = req.body;
 
       // Validation
@@ -246,17 +255,30 @@ router.post(
         });
       }
 
+      // Validate cardType
+      const validCardTypes = ['basic', 'multiple_choice', 'cloze', 'image'];
+      const finalCardType = cardType && validCardTypes.includes(cardType) ? cardType : 'basic';
+
+      // For multiple choice, ensure we have options
+      if (finalCardType === 'multiple_choice' && (!options || !Array.isArray(options) || options.length < 2)) {
+        return res.status(400).json({
+          success: false,
+          error: 'Multiple choice questions must have at least 2 options'
+        });
+      }
+
       // Create card template
       const card = await Card.create({
         courseId,
+        moduleId: moduleId || null,
         userId: null, // Template card
         question,
         answer,
         hint: hint || null,
-        type: type || 'basic',
-        options: options || null,
-        correctAnswer: correctAnswer || null,
-        imageUrl: imageUrl || null,
+        explanation: explanation || null,
+        cardType: finalCardType,
+        options: finalCardType === 'multiple_choice' ? options : null,
+        tags: tags || [],
         status: 'new',
         easeFactor: 2.5,
         interval: 0,

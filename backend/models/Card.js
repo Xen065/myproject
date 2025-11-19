@@ -79,6 +79,18 @@ const Card = sequelize.define('Card', {
     }
   },
 
+  moduleId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    field: 'module_id',
+    comment: 'Optional: Module this question belongs to',
+    references: {
+      model: 'course_modules',
+      key: 'id'
+    },
+    onDelete: 'SET NULL'
+  },
+
   // Spaced Repetition Metadata (SM-2 Algorithm)
   easeFactor: {
     type: DataTypes.FLOAT,

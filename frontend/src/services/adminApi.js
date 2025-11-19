@@ -175,6 +175,87 @@ export const adminDashboardAPI = {
 };
 
 // ============================================
+// Course Module Management
+// ============================================
+export const adminCourseModuleAPI = {
+  // Get all modules for a course
+  getByCourse: (courseId) => adminApi.get(`/course-modules/course/${courseId}`),
+
+  // Create new module
+  create: (moduleData) => adminApi.post('/course-modules', moduleData),
+
+  // Update module
+  update: (id, moduleData) => adminApi.put(`/course-modules/${id}`, moduleData),
+
+  // Delete module
+  delete: (id) => adminApi.delete(`/course-modules/${id}`),
+
+  // Reorder modules
+  reorder: (moduleOrders) => adminApi.put('/course-modules/reorder', { moduleOrders }),
+};
+
+// ============================================
+// Course Content Management
+// ============================================
+export const adminCourseContentAPI = {
+  // Get all content for a course
+  getByCourse: (courseId, moduleId = null) =>
+    adminApi.get(`/course-content/course/${courseId}`, { params: { moduleId } }),
+
+  // Create new content (with file upload)
+  create: (contentData) => {
+    const formData = new FormData();
+
+    // Append all fields to FormData
+    Object.keys(contentData).forEach(key => {
+      if (contentData[key] !== null && contentData[key] !== undefined) {
+        if (key === 'file' || key === 'thumbnail') {
+          // File upload
+          formData.append(key, contentData[key]);
+        } else {
+          formData.append(key, contentData[key]);
+        }
+      }
+    });
+
+    return adminApi.post('/course-content', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
+
+  // Update content
+  update: (id, contentData) => {
+    const formData = new FormData();
+
+    // Append all fields to FormData
+    Object.keys(contentData).forEach(key => {
+      if (contentData[key] !== null && contentData[key] !== undefined) {
+        if (key === 'file' || key === 'thumbnail') {
+          // File upload
+          formData.append(key, contentData[key]);
+        } else {
+          formData.append(key, contentData[key]);
+        }
+      }
+    });
+
+    return adminApi.put(`/course-content/${id}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
+
+  // Delete content
+  delete: (id) => adminApi.delete(`/course-content/${id}`),
+
+  // Reorder content
+  reorder: (contentOrders) => adminApi.put('/course-content/reorder', { contentOrders }),
+};
+
+// ============================================
 // Permission Management
 // ============================================
 export const adminPermissionAPI = {
