@@ -29,6 +29,7 @@ const CreateCourse = () => {
     difficulty: '',
     language: 'English',
     price: 0,
+    priceType: 'coins',
     isFree: true,
     isPublished: false,
     isFeatured: false,
@@ -85,6 +86,7 @@ const CreateCourse = () => {
         difficulty: course.difficulty || '',
         language: course.language || 'English',
         price: course.price || 0,
+        priceType: course.priceType || 'coins',
         isFree: course.isFree !== undefined ? course.isFree : true,
         isPublished: course.isPublished !== undefined ? course.isPublished : false,
         isFeatured: course.isFeatured !== undefined ? course.isFeatured : false,
@@ -384,22 +386,40 @@ const CreateCourse = () => {
         <div className="form-section">
           <h2>Pricing</h2>
 
-          <div className="form-group">
-            <label htmlFor="price">Price (in coins)</label>
-            <input
-              type="number"
-              id="price"
-              name="price"
-              value={formData.price}
-              onChange={handlePriceChange}
-              min="0"
-              step="1"
-              className={validationErrors.price ? 'error' : ''}
-            />
-            <small>Set to 0 for free courses</small>
-            {validationErrors.price && (
-              <span className="error-text">{validationErrors.price}</span>
-            )}
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="price">
+                Price {formData.priceType === 'rupees' ? '(in Rupees ₹)' : '(in Coins)'}
+              </label>
+              <input
+                type="number"
+                id="price"
+                name="price"
+                value={formData.price}
+                onChange={handlePriceChange}
+                min="0"
+                step={formData.priceType === 'rupees' ? '1' : '1'}
+                className={validationErrors.price ? 'error' : ''}
+              />
+              <small>Set to 0 for free courses</small>
+              {validationErrors.price && (
+                <span className="error-text">{validationErrors.price}</span>
+              )}
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="priceType">Currency Type</label>
+              <select
+                id="priceType"
+                name="priceType"
+                value={formData.priceType}
+                onChange={handleChange}
+              >
+                <option value="coins">Coins (In-app currency)</option>
+                <option value="rupees">Rupees (₹ Real money)</option>
+              </select>
+              <small>Choose between in-app coins or real payment gateway</small>
+            </div>
           </div>
 
           <div className="form-group checkbox-group">
@@ -461,7 +481,12 @@ const CreateCourse = () => {
                   <span className="preview-badge">{formData.difficulty}</span>
                 )}
                 <span className="preview-badge">
-                  {formData.isFree ? 'Free' : `${formData.price} coins`}
+                  {formData.isFree
+                    ? 'Free'
+                    : formData.priceType === 'rupees'
+                      ? `₹${formData.price}`
+                      : `${formData.price} coins`
+                  }
                 </span>
               </div>
             </div>

@@ -66,6 +66,14 @@ function Courses() {
               <div className="course-meta">
                 {course.difficulty && <span>📊 {course.difficulty}</span>}
                 <span>👥 {course.enrollmentCount} enrolled</span>
+                <span>
+                  💰 {course.isFree
+                    ? 'Free'
+                    : course.priceType === 'rupees'
+                      ? `₹${course.price}`
+                      : `${course.price} coins`
+                  }
+                </span>
               </div>
               <Link to={`/courses/${course.id}`} className="btn-course">
                 View Details →

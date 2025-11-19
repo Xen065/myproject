@@ -80,6 +80,17 @@ function CourseDetail() {
               </div>
             )}
             <div className="stat-item">
+              <span className="stat-label">Price</span>
+              <span className="stat-value">
+                {course.isFree
+                  ? 'Free'
+                  : course.priceType === 'rupees'
+                    ? `₹${course.price}`
+                    : `${course.price} coins`
+                }
+              </span>
+            </div>
+            <div className="stat-item">
               <span className="stat-label">Students</span>
               <span className="stat-value">{course.enrollmentCount}</span>
             </div>
@@ -104,6 +115,14 @@ function CourseDetail() {
           <ul className="course-details-list">
             <li>Category: {course.category}</li>
             {course.difficulty && <li>Difficulty Level: {course.difficulty}</li>}
+            <li>
+              Price: {course.isFree
+                ? 'Free'
+                : course.priceType === 'rupees'
+                  ? `₹${course.price}`
+                  : `${course.price} coins`
+              }
+            </li>
             <li>Currently Enrolled: {course.enrollmentCount} students</li>
           </ul>
         </div>
@@ -114,11 +133,22 @@ function CourseDetail() {
             className="btn-enroll"
             disabled={enrolling}
           >
-            {enrolling ? 'Enrolling...' : 'Enroll in This Course'}
+            {enrolling
+              ? 'Enrolling...'
+              : course.isFree
+                ? 'Enroll in This Course'
+                : course.priceType === 'rupees'
+                  ? `Purchase for ₹${course.price}`
+                  : `Enroll for ${course.price} coins`
+            }
           </button>
           <p className="enroll-note">
             {isAuthenticated
-              ? 'Click to start learning this course'
+              ? course.isFree
+                ? 'Click to start learning this course'
+                : course.priceType === 'rupees'
+                  ? 'Complete payment to access this course'
+                  : `You'll need ${course.price} coins to enroll`
               : 'You need to log in to enroll in this course'}
           </p>
         </div>
