@@ -16,6 +16,7 @@ const cardRoutes = require('./cards');
 const userRoutes = require('./users');
 const auditLogRoutes = require('./auditLogs');
 const dashboardRoutes = require('./dashboard');
+const permissionRoutes = require('./permissions');
 
 // All admin routes require authentication and admin/teacher/super_admin role
 router.use(protect);
@@ -27,6 +28,7 @@ router.use('/cards', cardRoutes);
 router.use('/users', userRoutes);
 router.use('/audit-logs', auditLogRoutes);
 router.use('/dashboard', dashboardRoutes);
+router.use('/permissions', permissionRoutes);
 
 /**
  * @route   GET /api/admin/health

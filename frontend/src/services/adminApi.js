@@ -175,6 +175,32 @@ export const adminDashboardAPI = {
 };
 
 // ============================================
+// Permission Management
+// ============================================
+export const adminPermissionAPI = {
+  // Get all permissions
+  getAll: () => adminApi.get('/permissions'),
+
+  // Get all role permissions (organized by role)
+  getRoles: () => adminApi.get('/permissions/roles'),
+
+  // Get permissions for a specific role
+  getByRole: (role) => adminApi.get(`/permissions/roles/${role}`),
+
+  // Grant a permission to a role
+  grant: (role, permission) => adminApi.post('/permissions/grant', { role, permission }),
+
+  // Revoke a permission from a role
+  revoke: (role, permission) => adminApi.post('/permissions/revoke', { role, permission }),
+
+  // Bulk grant permissions
+  bulkGrant: (role, permissions) => adminApi.post('/permissions/bulk-grant', { role, permissions }),
+
+  // Get permission matrix (all roles × all permissions)
+  getMatrix: () => adminApi.get('/permissions/matrix'),
+};
+
+// ============================================
 // Health Check
 // ============================================
 export const adminHealthAPI = {

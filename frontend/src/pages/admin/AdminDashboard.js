@@ -159,6 +159,14 @@ const AdminDashboard = () => {
               <p>View system activity logs</p>
             </Link>
           )}
+
+          {userRole === 'super_admin' && (
+            <Link to="/admin/permissions" className="action-card">
+              <div className="action-icon">🔐</div>
+              <h3>Permissions</h3>
+              <p>Manage role permissions</p>
+            </Link>
+          )}
         </div>
       </div>
 
