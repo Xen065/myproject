@@ -13,6 +13,8 @@ import CourseDetail from './pages/CourseDetail';
 import Study from './pages/Study';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import Permissions from './pages/admin/Permissions';
+import AdminCourses from './pages/admin/AdminCourses';
+import CreateCourse from './pages/admin/CreateCourse';
 import './App.css';
 
 function App() {
@@ -69,6 +71,30 @@ function App() {
                     element={
                       <ProtectedRoute>
                         <AdminDashboard />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/courses"
+                    element={
+                      <ProtectedRoute>
+                        <AdminCourses />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/courses/new"
+                    element={
+                      <ProtectedRoute>
+                        <CreateCourse />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/courses/:id/edit"
+                    element={
+                      <ProtectedRoute>
+                        <CreateCourse />
                       </ProtectedRoute>
                     }
                   />
