@@ -54,12 +54,33 @@ const ManageCourseContent = () => {
       ]);
 
       setCourse(courseRes.data.data);
-      setModules(modulesRes.data.data || []);
-      setContents(contentsRes.data.data || []);
-      setQuestions(questionsRes.data.data || []);
+
+      // Ensure we always set arrays
+      setModules(Array.isArray(modulesRes.data.data) ? modulesRes.data.data : []);
+      setContents(Array.isArray(contentsRes.data.data) ? contentsRes.data.data : []);
+
+      // Questions might be in data.data.cards or data.data
+      const questionData = questionsRes.data.data;
+      if (Array.isArray(questionData?.cards)) {
+        setQuestions(questionData.cards);
+      } else if (Array.isArray(questionData)) {
+        setQuestions(questionData);
+      } else {
+        setQuestions([]);
+      }
+
+      console.log('Loaded data:', {
+        modules: modulesRes.data.data,
+        contents: contentsRes.data.data,
+        questions: questionData
+      });
     } catch (error) {
       console.error('Error loading data:', error);
       alert('Failed to load course data');
+      // Reset to safe defaults on error
+      setModules([]);
+      setContents([]);
+      setQuestions([]);
     } finally {
       setLoading(false);
     }
