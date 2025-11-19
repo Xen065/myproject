@@ -128,11 +128,51 @@ router.post('/:id/enroll', protect, async (req, res) => {
     // Update enrollment count
     await course.increment('enrollmentCount');
 
+    // Copy template cards from the course to this user
+    // Find template cards for this course (cards owned by the course creator)
+    const templateCards = await Card.findAll({
+      where: {
+        courseId: course.id,
+        userId: course.createdBy
+      }
+    });
+
+    // Create cards for the new user based on templates
+    const newCards = [];
+    for (const template of templateCards) {
+      const cardData = {
+        question: template.question,
+        answer: template.answer,
+        hint: template.hint,
+        explanation: template.explanation,
+        cardType: template.cardType,
+        options: template.options,
+        courseId: course.id,
+        userId: req.user.id,
+        status: 'new',
+        easeFactor: 2.5,
+        interval: 0,
+        repetitions: 0,
+        nextReviewDate: new Date(),
+        isActive: true,
+        tags: template.tags
+      };
+      newCards.push(cardData);
+    }
+
+    // Bulk create all cards
+    let cardsCreated = 0;
+    if (newCards.length > 0) {
+      const createdCards = await Card.bulkCreate(newCards);
+      cardsCreated = createdCards.length;
+    }
+
     res.status(201).json({
       success: true,
-      message: 'Enrolled successfully',
+      message: `Enrolled successfully! ${cardsCreated} flashcards added to your study queue.`,
       data: {
-        enrollment
+        enrollment,
+        cardsCreated
       }
     });
   } catch (error) {

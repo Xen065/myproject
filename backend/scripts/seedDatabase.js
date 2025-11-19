@@ -210,7 +210,7 @@ async function seedDatabase() {
         requirementText: 'Enroll in 5 different courses',
         xpReward: 75,
         coinReward: 40,
-        rarity: 'uncommon',
+        rarity: 'common',
         sortOrder: 5
       },
       {

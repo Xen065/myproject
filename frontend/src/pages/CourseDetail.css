@@ -1,0 +1,133 @@
+.course-detail-container {
+  color: white;
+}
+
+.course-hero {
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  padding: 4rem 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.course-hero-content {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.featured-badge-large {
+  display: inline-block;
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  color: #333;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.course-category-large {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.course-hero h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.course-lead {
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.course-stats {
+  display: flex;
+  gap: 3rem;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.stat-label {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.course-content {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+}
+
+.course-section {
+  margin-bottom: 3rem;
+}
+
+.course-section h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+
+.course-section p {
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+  font-size: 1.05rem;
+}
+
+.course-details-list {
+  list-style: none;
+  padding: 0;
+}
+
+.course-details-list li {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.enroll-section {
+  text-align: center;
+  padding: 3rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+}
+
+.btn-enroll {
+  background: linear-gradient(135deg, #0582ca 0%, #00b4d8 100%);
+  color: white;
+  border: none;
+  padding: 1.25rem 3rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-enroll:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(5, 130, 202, 0.4);
+}
+
+.btn-enroll:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.enroll-note {
+  margin-top: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+}
