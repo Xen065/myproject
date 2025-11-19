@@ -307,6 +307,11 @@
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
+.rating-btn.skip {
+  background: linear-gradient(135deg, #9333EA 0%, #7E22CE 100%);
+  box-shadow: 0 4px 12px rgba(147, 51, 234, 0.3);
+}
+
 .rating-btn:hover:not(:disabled) {
   transform: translateY(-4px) scale(1.05);
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);

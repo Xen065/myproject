@@ -269,6 +269,32 @@ function Study() {
     }
   };
 
+  const handleSkip = async () => {
+    if (reviewing || cards.length === 0) return;
+
+    setReviewing(true);
+    const currentCard = cards[currentCardIndex];
+
+    try {
+      await studyAPI.skipCard(currentCard.id);
+
+      // Move to next card without updating stats
+      if (currentCardIndex < cards.length - 1) {
+        setCurrentCardIndex(currentCardIndex + 1);
+        setFlipped(false);
+        setShowHint(false);
+      } else {
+        // All cards reviewed
+        setCurrentCardIndex(cards.length);
+      }
+    } catch (err) {
+      console.error('Failed to skip card:', err);
+      alert('Failed to skip card. Please try again.');
+    } finally {
+      setReviewing(false);
+    }
+  };
+
   // Course Selection View
   if (view === 'course-selection') {
     if (loading) {
@@ -517,11 +543,20 @@ function Study() {
       {flipped && (
         <div className="rating-buttons">
           <button
+            onClick={handleSkip}
+            className="rating-btn skip"
+            disabled={reviewing}
+          >
+            ⏭️ Skip
+            <span className="rating-desc">Review later</span>
+            <span className="rating-time">1 hour</span>
+          </button>
+          <button
             onClick={() => handleReview(1)}
             className="rating-btn again"
             disabled={reviewing}
           >
-            Again
+            ❌ Again
             <span className="rating-desc">Didn't know</span>
             <span className="rating-time">1 day</span>
           </button>
@@ -530,7 +565,7 @@ function Study() {
             className="rating-btn hard"
             disabled={reviewing}
           >
-            Hard
+            😰 Hard
             <span className="rating-desc">Struggled</span>
             <span className="rating-time">3 days</span>
           </button>
@@ -539,7 +574,7 @@ function Study() {
             className="rating-btn good"
             disabled={reviewing}
           >
-            Good
+            ✅ Good
             <span className="rating-desc">Remembered</span>
             <span className="rating-time">6+ days</span>
           </button>
@@ -548,7 +583,7 @@ function Study() {
             className="rating-btn easy"
             disabled={reviewing}
           >
-            Easy
+            😎 Easy
             <span className="rating-desc">Too easy</span>
             <span className="rating-time">Longer</span>
           </button>

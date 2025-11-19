@@ -139,6 +139,60 @@ router.post('/review', protect, async (req, res) => {
 });
 
 /**
+ * @route   POST /api/study/skip
+ * @desc    Skip a card for 1 hour
+ * @access  Private
+ */
+router.post('/skip', protect, async (req, res) => {
+  try {
+    const { cardId } = req.body;
+
+    if (!cardId) {
+      return res.status(400).json({
+        success: false,
+        message: 'cardId is required'
+      });
+    }
+
+    const card = await Card.findOne({
+      where: {
+        id: cardId,
+        userId: req.user.id
+      }
+    });
+
+    if (!card) {
+      return res.status(404).json({
+        success: false,
+        message: 'Card not found'
+      });
+    }
+
+    // Set next review to 1 hour from now
+    const nextReviewDate = new Date();
+    nextReviewDate.setHours(nextReviewDate.getHours() + 1);
+
+    card.nextReviewDate = nextReviewDate;
+    await card.save();
+
+    res.json({
+      success: true,
+      message: 'Card skipped for 1 hour',
+      data: {
+        card,
+        nextReview: nextReviewDate
+      }
+    });
+  } catch (error) {
+    console.error('Skip card error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error skipping card'
+    });
+  }
+});
+
+/**
  * @route   POST /api/study/sessions
  * @desc    Create a study session
  * @access  Private

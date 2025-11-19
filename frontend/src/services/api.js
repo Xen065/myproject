@@ -70,6 +70,7 @@ export const cardAPI = {
 // Study endpoints
 export const studyAPI = {
   reviewCard: (cardId, quality, responseTime) => api.post('/study/review', { cardId, quality, responseTime }),
+  skipCard: (cardId) => api.post('/study/skip', { cardId }),
   createSession: (data) => api.post('/study/sessions', data),
   getSessions: (limit) => api.get('/study/sessions', { params: { limit } }),
 };
