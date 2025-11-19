@@ -566,6 +566,92 @@
   box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
 }
 
+/* Frequency Mode Selector */
+.frequency-mode-selector {
+  position: relative;
+}
+
+.frequency-btn {
+  background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+  border-color: transparent;
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.4);
+  color: white;
+}
+
+.frequency-btn:hover {
+  background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%);
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+}
+
+.frequency-menu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  background: var(--card-bg);
+  border: 2px solid var(--card-border);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  min-width: 250px;
+  z-index: 1000;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.frequency-option {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  border-bottom: 1px solid var(--input-border);
+}
+
+.frequency-option:last-child {
+  border-bottom: none;
+  border-radius: 0 0 10px 10px;
+}
+
+.frequency-option:first-child {
+  border-radius: 10px 10px 0 0;
+}
+
+.frequency-option:hover {
+  background: var(--input-focus-bg);
+}
+
+.frequency-option.active {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(124, 58, 237, 0.2) 100%);
+  border-left: 4px solid #8B5CF6;
+}
+
+.frequency-option strong {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.frequency-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
 .loading-container {
   display: flex;
   justify-content: center;

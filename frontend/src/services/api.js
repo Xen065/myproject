@@ -80,4 +80,10 @@ export const achievementAPI = {
   getUserAchievements: () => api.get('/achievements/user'),
 };
 
+// User settings endpoints
+export const userSettingsAPI = {
+  getFrequencyMode: () => api.get('/users/settings/frequency-mode'),
+  updateFrequencyMode: (frequencyMode) => api.put('/users/settings/frequency-mode', { frequencyMode }),
+};
+
 export default api;

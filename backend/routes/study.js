@@ -41,8 +41,12 @@ router.post('/review', protect, async (req, res) => {
       });
     }
 
-    // Calculate next review using SM-2 algorithm
-    const reviewData = card.calculateNextReview(quality);
+    // Get user's frequency mode preference
+    const user = await User.findByPk(req.user.id);
+    const frequencyMode = user.frequencyMode || 'normal';
+
+    // Calculate next review using SM-2 algorithm with frequency mode
+    const reviewData = card.calculateNextReview(quality, frequencyMode);
 
     // Update card
     card.easeFactor = reviewData.easeFactor;
@@ -81,8 +85,7 @@ router.post('/review', protect, async (req, res) => {
 
     await card.save();
 
-    // Update user streak
-    const user = await User.findByPk(req.user.id);
+    // Update user streak (user already fetched above)
     const today = new Date().toDateString();
     const lastStudy = user.lastStudyDate ? new Date(user.lastStudyDate).toDateString() : null;
 

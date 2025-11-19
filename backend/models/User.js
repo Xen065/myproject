@@ -110,6 +110,17 @@ const User = sequelize.define('User', {
     field: 'last_study_date'
   },
 
+  // Study Settings
+  frequencyMode: {
+    type: DataTypes.ENUM('intensive', 'normal', 'relaxed'),
+    defaultValue: 'normal',
+    field: 'frequency_mode',
+    allowNull: false,
+    validate: {
+      isIn: [['intensive', 'normal', 'relaxed']]
+    }
+  },
+
   // Account Status
   isActive: {
     type: DataTypes.BOOLEAN,

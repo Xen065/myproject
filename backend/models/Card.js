@@ -208,30 +208,40 @@ const Card = sequelize.define('Card', {
 });
 
 /**
- * Calculate next review date using SM-2 algorithm
+ * Calculate next review date using SM-2 algorithm with frequency modes
  * @param {number} quality - Quality rating (1-4)
+ * @param {string} frequencyMode - Frequency mode: 'intensive', 'normal', or 'relaxed'
  * @returns {Object} - Updated card metadata
  */
-Card.prototype.calculateNextReview = function(quality) {
+Card.prototype.calculateNextReview = function(quality, frequencyMode = 'normal') {
   let { easeFactor, interval, repetitions } = this;
 
   // Quality must be between 1 and 4
   quality = Math.max(1, Math.min(4, quality));
 
+  // Define frequency mode settings
+  const frequencySettings = {
+    intensive: { first: 1, second: 3, multiplier: 0.8 },
+    normal: { first: 1, second: 4, multiplier: 1.0 },
+    relaxed: { first: 2, second: 7, multiplier: 1.2 }
+  };
+
+  const settings = frequencySettings[frequencyMode] || frequencySettings.normal;
+
   if (quality >= 3) {
     // Correct answer
     if (repetitions === 0) {
-      interval = 1;
+      interval = settings.first;
     } else if (repetitions === 1) {
-      interval = 6;
+      interval = settings.second;
     } else {
-      interval = Math.round(interval * easeFactor);
+      interval = Math.round(interval * easeFactor * settings.multiplier);
     }
     repetitions++;
   } else {
     // Incorrect answer - reset
     repetitions = 0;
-    interval = 1;
+    interval = settings.first;
   }
 
   // Update ease factor

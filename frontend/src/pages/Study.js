@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { courseAPI, cardAPI, studyAPI } from '../services/api';
+import { courseAPI, cardAPI, studyAPI, userSettingsAPI } from '../services/api';
 import './Study.css';
 
 function Study() {
@@ -25,6 +25,8 @@ function Study() {
     shuffle: false,
   });
   const [allCards, setAllCards] = useState([]); // Store unfiltered cards
+  const [frequencyMode, setFrequencyMode] = useState('normal'); // 'intensive', 'normal', or 'relaxed'
+  const [showFrequencyMenu, setShowFrequencyMenu] = useState(false);
 
   // Calculate card difficulty level
   const getDifficultyLevel = (card) => {
@@ -39,7 +41,33 @@ function Study() {
 
   useEffect(() => {
     fetchEnrolledCourses();
+    fetchFrequencyMode();
   }, []);
+
+  const fetchFrequencyMode = async () => {
+    try {
+      const response = await userSettingsAPI.getFrequencyMode();
+      if (response.data.success) {
+        setFrequencyMode(response.data.data.frequencyMode || 'normal');
+      }
+    } catch (err) {
+      console.error('Failed to load frequency mode:', err);
+    }
+  };
+
+  const handleFrequencyModeChange = async (newMode) => {
+    try {
+      const response = await userSettingsAPI.updateFrequencyMode(newMode);
+      if (response.data.success) {
+        setFrequencyMode(newMode);
+        setShowFrequencyMenu(false);
+        alert(`Frequency mode changed to ${newMode.charAt(0).toUpperCase() + newMode.slice(1)}`);
+      }
+    } catch (err) {
+      console.error('Failed to update frequency mode:', err);
+      alert('Failed to update frequency mode. Please try again.');
+    }
+  };
 
   useEffect(() => {
     if (selectedCourse) {
@@ -399,6 +427,39 @@ function Study() {
         >
           🔀 Shuffle
         </button>
+        <div className="frequency-mode-selector">
+          <button
+            onClick={() => setShowFrequencyMenu(!showFrequencyMenu)}
+            className="filter-btn frequency-btn"
+          >
+            ⚡ Frequency: {frequencyMode.charAt(0).toUpperCase() + frequencyMode.slice(1)}
+          </button>
+          {showFrequencyMenu && (
+            <div className="frequency-menu">
+              <button
+                onClick={() => handleFrequencyModeChange('intensive')}
+                className={`frequency-option ${frequencyMode === 'intensive' ? 'active' : ''}`}
+              >
+                <strong>⚡ Intensive</strong>
+                <span className="frequency-desc">1d → 3d (faster reviews)</span>
+              </button>
+              <button
+                onClick={() => handleFrequencyModeChange('normal')}
+                className={`frequency-option ${frequencyMode === 'normal' ? 'active' : ''}`}
+              >
+                <strong>📖 Normal</strong>
+                <span className="frequency-desc">1d → 4d (standard)</span>
+              </button>
+              <button
+                onClick={() => handleFrequencyModeChange('relaxed')}
+                className={`frequency-option ${frequencyMode === 'relaxed' ? 'active' : ''}`}
+              >
+                <strong>🌙 Relaxed</strong>
+                <span className="frequency-desc">2d → 7d (slower reviews)</span>
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="progress-bar-container">
