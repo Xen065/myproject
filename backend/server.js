@@ -26,6 +26,7 @@ const cardRoutes = require('./routes/cards');
 const studyRoutes = require('./routes/study');
 const statsRoutes = require('./routes/stats');
 const achievementRoutes = require('./routes/achievements');
+const adminRoutes = require('./routes/admin');
 
 // Initialize Express app
 const app = express();
@@ -84,6 +85,9 @@ app.use('/api/stats', statsRoutes);
 
 // Achievement and gamification routes
 app.use('/api/achievements', achievementRoutes);
+
+// Admin routes (RBAC protected)
+app.use('/api/admin', adminRoutes);
 
 // 404 handler for unknown routes
 app.use((req, res) => {

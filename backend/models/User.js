@@ -121,6 +121,32 @@ const User = sequelize.define('User', {
     }
   },
 
+  // RBAC - Role-Based Access Control
+  role: {
+    type: DataTypes.ENUM('student', 'teacher', 'admin', 'super_admin'),
+    defaultValue: 'student',
+    allowNull: false,
+    validate: {
+      isIn: [['student', 'teacher', 'admin', 'super_admin']]
+    }
+  },
+
+  roleChangedAt: {
+    type: DataTypes.DATE,
+    allowNull: true,
+    field: 'role_changed_at'
+  },
+
+  roleChangedBy: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    field: 'role_changed_by',
+    references: {
+      model: 'users',
+      key: 'id'
+    }
+  },
+
   // Account Status
   isActive: {
     type: DataTypes.BOOLEAN,
@@ -175,6 +201,34 @@ User.prototype.comparePassword = async function(enteredPassword) {
 User.prototype.getPublicProfile = function() {
   const { password, ...publicData } = this.toJSON();
   return publicData;
+};
+
+/**
+ * Instance method to check if user has a specific role
+ * @param {string|string[]} roles - Role(s) to check
+ * @returns {boolean} - True if user has the role
+ */
+User.prototype.hasRole = function(roles) {
+  if (Array.isArray(roles)) {
+    return roles.includes(this.role);
+  }
+  return this.role === roles;
+};
+
+/**
+ * Instance method to check if user is admin or above
+ * @returns {boolean}
+ */
+User.prototype.isAdmin = function() {
+  return ['admin', 'super_admin'].includes(this.role);
+};
+
+/**
+ * Instance method to check if user is super admin
+ * @returns {boolean}
+ */
+User.prototype.isSuperAdmin = function() {
+  return this.role === 'super_admin';
 };
 
 module.exports = User;

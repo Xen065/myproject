@@ -12,6 +12,9 @@ const StudySession = require('./StudySession');
 const Achievement = require('./Achievement');
 const UserAchievement = require('./UserAchievement');
 const UserCourse = require('./UserCourse');
+const Permission = require('./Permission');
+const RolePermission = require('./RolePermission');
+const AuditLog = require('./AuditLog');
 
 // ============================================
 // Define Model Associations (Relationships)
@@ -142,6 +145,23 @@ User.hasMany(Course, {
   as: 'createdCourses'
 });
 
+// User -> AuditLog (One-to-Many)
+User.hasMany(AuditLog, {
+  foreignKey: 'userId',
+  as: 'auditLogs'
+});
+
+AuditLog.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'user'
+});
+
+// User self-reference for role changes
+User.belongsTo(User, {
+  foreignKey: 'roleChangedBy',
+  as: 'roleChanger'
+});
+
 // ============================================
 // Export all models
 // ============================================
@@ -153,5 +173,8 @@ module.exports = {
   StudySession,
   Achievement,
   UserAchievement,
-  UserCourse
+  UserCourse,
+  Permission,
+  RolePermission,
+  AuditLog
 };
