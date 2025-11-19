@@ -121,6 +121,13 @@
   margin-top: 4px;
 }
 
+.upload-status {
+  color: #3b82f6;
+  font-size: 14px;
+  margin-top: 8px;
+  font-weight: 500;
+}
+
 .info-box {
   background: #f0f9ff;
   border: 1px solid #bae6fd;

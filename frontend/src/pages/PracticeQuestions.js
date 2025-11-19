@@ -31,6 +31,7 @@ const PracticeQuestions = () => {
   const [showAnswer, setShowAnswer] = useState(false);
   const [loading, setLoading] = useState(true);
   const [shuffledOptions, setShuffledOptions] = useState([]);
+  const [revealedRegions, setRevealedRegions] = useState([]);
 
   // Load questions
   useEffect(() => {
@@ -48,6 +49,7 @@ const PracticeQuestions = () => {
     }
     setUserAnswer('');
     setShowAnswer(false);
+    setRevealedRegions([]);
   }, [currentIndex, questions]);
 
   const loadQuestions = async () => {
@@ -71,12 +73,33 @@ const PracticeQuestions = () => {
   };
 
   const submitAnswer = async () => {
-    if (!userAnswer.trim()) {
-      alert('Please provide an answer');
-      return;
+    const current = questions[currentIndex];
+
+    // For image occlusion, check if all regions are revealed
+    if (current.cardType === 'image') {
+      const allRevealed = current.occludedRegions?.every((_, idx) => revealedRegions.includes(idx));
+      if (!allRevealed) {
+        alert('Please click on all occluded regions to reveal them');
+        return;
+      }
+    } else {
+      if (!userAnswer.trim()) {
+        alert('Please provide an answer');
+        return;
+      }
     }
 
     setShowAnswer(true);
+  };
+
+  const toggleRegion = (index) => {
+    if (showAnswer) return; // Don't allow toggling after showing answer
+
+    if (revealedRegions.includes(index)) {
+      setRevealedRegions(revealedRegions.filter(i => i !== index));
+    } else {
+      setRevealedRegions([...revealedRegions, index]);
+    }
   };
 
   const rateAnswer = async (quality) => {
@@ -136,7 +159,11 @@ const PracticeQuestions = () => {
   }
 
   const currentQuestion = questions[currentIndex];
-  const isCorrect = userAnswer.trim().toLowerCase() === currentQuestion.answer.trim().toLowerCase();
+
+  // For image occlusion, consider it correct if all regions were revealed
+  const isCorrect = currentQuestion.cardType === 'image'
+    ? revealedRegions.length === currentQuestion.occludedRegions?.length
+    : userAnswer.trim().toLowerCase() === currentQuestion.answer.trim().toLowerCase();
 
   return (
     <div className="practice-page">
@@ -164,6 +191,7 @@ const PracticeQuestions = () => {
           {currentQuestion.cardType === 'basic' && '📝 Short Answer'}
           {currentQuestion.cardType === 'cloze' && '✍️ Fill in the Blanks'}
           {currentQuestion.cardType === 'multiple_choice' && '☑️ Multiple Choice'}
+          {currentQuestion.cardType === 'image' && '🖼️ Image Occlusion'}
         </div>
 
         <div className="question-content">
@@ -178,7 +206,53 @@ const PracticeQuestions = () => {
         {/* Answer Input */}
         {!showAnswer && (
           <div className="answer-section">
-            {currentQuestion.cardType === 'multiple_choice' ? (
+            {currentQuestion.cardType === 'image' ? (
+              // Image Occlusion
+              <div className="image-occlusion-practice">
+                <p className="occlusion-instructions">
+                  👆 Click on the blurred regions to reveal what's hidden
+                </p>
+                <div className="image-container">
+                  <img
+                    src={currentQuestion.imageUrl?.startsWith('http')
+                      ? currentQuestion.imageUrl
+                      : `${window.location.origin}${currentQuestion.imageUrl}`
+                    }
+                    alt="Question"
+                    className="practice-image"
+                  />
+                  <svg className="occlusion-overlay" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet">
+                    {currentQuestion.occludedRegions?.map((region, idx) => (
+                      <g key={idx}>
+                        <rect
+                          x={region.x}
+                          y={region.y}
+                          width={region.width}
+                          height={region.height}
+                          className={`occluded-rect ${revealedRegions.includes(idx) ? 'revealed' : ''}`}
+                          onClick={() => toggleRegion(idx)}
+                          style={{ cursor: 'pointer' }}
+                        />
+                        {revealedRegions.includes(idx) && (
+                          <text
+                            x={region.x + region.width / 2}
+                            y={region.y + region.height / 2}
+                            className="revealed-text"
+                            textAnchor="middle"
+                            dominantBaseline="middle"
+                          >
+                            {region.answer}
+                          </text>
+                        )}
+                      </g>
+                    ))}
+                  </svg>
+                </div>
+                <div className="regions-status">
+                  Revealed: {revealedRegions.length} / {currentQuestion.occludedRegions?.length || 0}
+                </div>
+              </div>
+            ) : currentQuestion.cardType === 'multiple_choice' ? (
               // MCQ with SHUFFLED options
               <div className="mcq-options">
                 <p className="shuffle-notice">
@@ -219,27 +293,80 @@ const PracticeQuestions = () => {
         {/* Answer Feedback */}
         {showAnswer && (
           <div className="feedback-section">
-            <div className={`result ${isCorrect ? 'correct' : 'incorrect'}`}>
-              {isCorrect ? (
-                <>
+            {currentQuestion.cardType === 'image' ? (
+              <>
+                <div className="result correct">
                   <div className="result-icon">✅</div>
-                  <h3>Correct!</h3>
-                </>
-              ) : (
-                <>
-                  <div className="result-icon">❌</div>
-                  <h3>Not quite right</h3>
-                  <p>Your answer: <strong>{userAnswer}</strong></p>
-                  <p>Correct answer: <strong>{currentQuestion.answer}</strong></p>
-                </>
-              )}
-            </div>
+                  <h3>All regions revealed!</h3>
+                </div>
+                <div className="image-occlusion-answers">
+                  <h4>Complete Answers:</h4>
+                  <div className="image-container">
+                    <img
+                      src={currentQuestion.imageUrl?.startsWith('http')
+                        ? currentQuestion.imageUrl
+                        : `${window.location.origin}${currentQuestion.imageUrl}`
+                      }
+                      alt="Question with answers"
+                      className="practice-image"
+                    />
+                    <svg className="occlusion-overlay" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet">
+                      {currentQuestion.occludedRegions?.map((region, idx) => (
+                        <g key={idx}>
+                          <rect
+                            x={region.x}
+                            y={region.y}
+                            width={region.width}
+                            height={region.height}
+                            className="occluded-rect revealed"
+                          />
+                          <text
+                            x={region.x + region.width / 2}
+                            y={region.y + region.height / 2}
+                            className="revealed-text"
+                            textAnchor="middle"
+                            dominantBaseline="middle"
+                          >
+                            {region.answer}
+                          </text>
+                        </g>
+                      ))}
+                    </svg>
+                  </div>
+                  <div className="answers-list">
+                    {currentQuestion.occludedRegions?.map((region, idx) => (
+                      <div key={idx} className="answer-item">
+                        <strong>Region {idx + 1}:</strong> {region.answer}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className={`result ${isCorrect ? 'correct' : 'incorrect'}`}>
+                  {isCorrect ? (
+                    <>
+                      <div className="result-icon">✅</div>
+                      <h3>Correct!</h3>
+                    </>
+                  ) : (
+                    <>
+                      <div className="result-icon">❌</div>
+                      <h3>Not quite right</h3>
+                      <p>Your answer: <strong>{userAnswer}</strong></p>
+                      <p>Correct answer: <strong>{currentQuestion.answer}</strong></p>
+                    </>
+                  )}
+                </div>
 
-            {currentQuestion.explanation && (
-              <div className="explanation">
-                <h4>💡 Explanation:</h4>
-                <p>{currentQuestion.explanation}</p>
-              </div>
+                {currentQuestion.explanation && (
+                  <div className="explanation">
+                    <h4>💡 Explanation:</h4>
+                    <p>{currentQuestion.explanation}</p>
+                  </div>
+                )}
+              </>
             )}
 
             {/* SM-2 Rating Buttons */}
