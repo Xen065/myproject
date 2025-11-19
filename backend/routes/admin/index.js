@@ -17,6 +17,8 @@ const userRoutes = require('./users');
 const auditLogRoutes = require('./auditLogs');
 const dashboardRoutes = require('./dashboard');
 const permissionRoutes = require('./permissions');
+const courseModuleRoutes = require('./courseModules');
+const courseContentRoutes = require('./courseContent');
 
 // All admin routes require authentication and admin/teacher/super_admin role
 router.use(protect);
@@ -29,6 +31,8 @@ router.use('/users', userRoutes);
 router.use('/audit-logs', auditLogRoutes);
 router.use('/dashboard', dashboardRoutes);
 router.use('/permissions', permissionRoutes);
+router.use('/course-modules', courseModuleRoutes);
+router.use('/course-content', courseContentRoutes);
 
 /**
  * @route   GET /api/admin/health
