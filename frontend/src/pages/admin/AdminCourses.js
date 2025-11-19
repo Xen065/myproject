@@ -220,47 +220,58 @@ const AdminCourses = () => {
                   </td>
                   <td>
                     <div className="action-buttons">
+                      {/* PROMINENT Manage Content Button */}
                       <button
-                        onClick={() => navigate(`/admin/courses/${course.id}/edit`)}
-                        className="btn-icon-action"
-                        title="Edit"
+                        onClick={() => navigate(`/admin/courses/${course.id}/content`)}
+                        className="btn-manage-content"
+                        title="Manage course content, videos, and questions"
                       >
-                        ✏️
+                        📚 Manage Content
                       </button>
 
-                      {hasPermission('courses.publish') && (
+                      <div className="secondary-actions">
                         <button
-                          onClick={() => handleTogglePublish(course.id, course.isPublished)}
+                          onClick={() => navigate(`/admin/courses/${course.id}/edit`)}
                           className="btn-icon-action"
-                          title={course.isPublished ? 'Unpublish' : 'Publish'}
+                          title="Edit course details"
                         >
-                          {course.isPublished ? '👁️' : '🚀'}
+                          ✏️
                         </button>
-                      )}
 
-                      <button
-                        onClick={() => handleDuplicate(course.id, course.title)}
-                        className="btn-icon-action"
-                        title="Duplicate"
-                      >
-                        📋
-                      </button>
+                        {hasPermission('courses.publish') && (
+                          <button
+                            onClick={() => handleTogglePublish(course.id, course.isPublished)}
+                            className="btn-icon-action"
+                            title={course.isPublished ? 'Unpublish' : 'Publish'}
+                          >
+                            {course.isPublished ? '👁️' : '🚀'}
+                          </button>
+                        )}
 
-                      <button
-                        onClick={() => navigate(`/courses/${course.id}`)}
-                        className="btn-icon-action"
-                        title="View"
-                      >
-                        👁️
-                      </button>
+                        <button
+                          onClick={() => handleDuplicate(course.id, course.title)}
+                          className="btn-icon-action"
+                          title="Duplicate"
+                        >
+                          📋
+                        </button>
 
-                      <button
-                        onClick={() => handleDelete(course.id, course.title)}
-                        className="btn-icon-action btn-danger"
-                        title="Delete"
-                      >
-                        🗑️
-                      </button>
+                        <button
+                          onClick={() => navigate(`/courses/${course.id}`)}
+                          className="btn-icon-action"
+                          title="View"
+                        >
+                          👁️
+                        </button>
+
+                        <button
+                          onClick={() => handleDelete(course.id, course.title)}
+                          className="btn-icon-action btn-danger"
+                          title="Delete"
+                        >
+                          🗑️
+                        </button>
+                      </div>
                     </div>
                   </td>
                 </tr>

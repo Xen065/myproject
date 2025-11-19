@@ -141,15 +141,38 @@ const ContentModal = ({ courseId, content, modules, onClose, onSave }) => {
           </div>
 
           {formData.contentType === 'link' ? (
-            <div className="form-group">
-              <label>External URL (YouTube, Vimeo, etc.) *</label>
-              <input
-                type="url"
-                value={formData.externalUrl}
-                onChange={(e) => setFormData({ ...formData, externalUrl: e.target.value })}
-                placeholder="https://..."
-                required
-              />
+            <div className="youtube-section">
+              <div className="feature-highlight">
+                <div className="highlight-icon">🎥</div>
+                <div className="highlight-content">
+                  <h4>Embed YouTube & Online Videos</h4>
+                  <p>Paste any video URL from YouTube, Vimeo, or other platforms</p>
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Video URL *</label>
+                <input
+                  type="url"
+                  value={formData.externalUrl}
+                  onChange={(e) => setFormData({ ...formData, externalUrl: e.target.value })}
+                  placeholder="https://www.youtube.com/watch?v=..."
+                  required
+                  className="url-input-large"
+                />
+                <small className="help-text">
+                  💡 Supports: YouTube, Vimeo, Google Drive, and direct video links
+                </small>
+              </div>
+
+              <div className="examples-box">
+                <strong>Example URLs:</strong>
+                <ul>
+                  <li>YouTube: https://www.youtube.com/watch?v=dQw4w9WgXcQ</li>
+                  <li>Vimeo: https://vimeo.com/123456789</li>
+                  <li>Direct: https://example.com/video.mp4</li>
+                </ul>
+              </div>
             </div>
           ) : (
             <>

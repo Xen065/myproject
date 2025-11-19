@@ -75,7 +75,10 @@ const ModuleModal = ({ courseId, module, onClose, onSave }) => {
               value={formData.icon}
               onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
               maxLength={2}
+              className="emoji-input"
+              placeholder="📝"
             />
+            <small className="help-text">Single emoji only</small>
           </div>
 
           <div className="form-group">
