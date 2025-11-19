@@ -35,6 +35,19 @@ const CreateCourse = () => {
   });
 
   const [validationErrors, setValidationErrors] = useState({});
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
+  // Pre-defined emoji options for courses
+  const courseEmojis = [
+    '📚', '📖', '📝', '📕', '📗', '📘', '📙', '📓', '📔', '📒',
+    '🎓', '🎯', '🏆', '⭐', '💡', '🔬', '🔭', '🧪', '🧬', '🔍',
+    '💻', '⌨️', '🖥️', '📱', '🎨', '🎭', '🎪', '🎬', '🎵', '🎸',
+    '🌍', '🌎', '🌏', '🗺️', '🧭', '✈️', '🚀', '🛸', '🏛️', '🏰',
+    '💰', '💳', '📊', '📈', '📉', '💼', '🏢', '🏭', '🏗️', '⚙️',
+    '🩺', '💊', '🧬', '🦠', '🧠', '❤️', '🫀', '🫁', '🦷', '👁️',
+    '⚽', '🏀', '🏈', '⚾', '🎾', '🏐', '🏓', '🥊', '🥋', '🎯',
+    '🍎', '🥗', '🍕', '🍔', '🍜', '🍳', '👨‍🍳', '🍰', '🧁', '☕',
+  ];
 
   // Load course data if in edit mode
   useEffect(() => {
@@ -42,6 +55,20 @@ const CreateCourse = () => {
       fetchCourse();
     }
   }, [id]);
+
+  // Close emoji picker when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showEmojiPicker && !event.target.closest('.emoji-input-group') && !event.target.closest('.emoji-picker')) {
+        setShowEmojiPicker(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showEmojiPicker]);
 
   const fetchCourse = async () => {
     try {
@@ -95,6 +122,14 @@ const CreateCourse = () => {
       price,
       isFree: price === 0
     }));
+  };
+
+  const handleEmojiSelect = (emoji) => {
+    setFormData(prev => ({
+      ...prev,
+      icon: emoji
+    }));
+    setShowEmojiPicker(false);
   };
 
   const validateForm = () => {
@@ -216,16 +251,55 @@ const CreateCourse = () => {
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="icon">Icon (Emoji)</label>
-              <input
-                type="text"
-                id="icon"
-                name="icon"
-                value={formData.icon}
-                onChange={handleChange}
-                placeholder="📚"
-                maxLength="50"
-              />
+              <div className="emoji-input-group">
+                <div className="emoji-preview" onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
+                  {formData.icon || '📚'}
+                </div>
+                <input
+                  type="text"
+                  id="icon"
+                  name="icon"
+                  value={formData.icon}
+                  onChange={handleChange}
+                  placeholder="📚"
+                  maxLength="50"
+                />
+                <button
+                  type="button"
+                  className="btn-emoji-picker"
+                  onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                >
+                  Choose
+                </button>
+              </div>
               <small>Choose an emoji to represent this course</small>
+
+              {showEmojiPicker && (
+                <div className="emoji-picker">
+                  <div className="emoji-picker-header">
+                    <span>Choose an icon</span>
+                    <button
+                      type="button"
+                      className="btn-close"
+                      onClick={() => setShowEmojiPicker(false)}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  <div className="emoji-grid">
+                    {courseEmojis.map((emoji, index) => (
+                      <button
+                        key={index}
+                        type="button"
+                        className={`emoji-option ${formData.icon === emoji ? 'selected' : ''}`}
+                        onClick={() => handleEmojiSelect(emoji)}
+                      >
+                        {emoji}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="form-group">
