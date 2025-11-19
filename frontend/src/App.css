@@ -6,10 +6,16 @@
 
 .main-content {
   flex: 1;
-  padding: 0;
+  padding: 1.5rem;
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    padding: 1rem;
+  }
 }
 
 .loading-container {
@@ -33,37 +39,66 @@
 }
 
 .error-message {
-  background: #ff6b6b;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
   color: white;
-  padding: 1rem;
-  border-radius: 8px;
-  margin-bottom: 1rem;
+  padding: 1.25rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+  animation: slideIn 0.3s ease;
 }
 
 .success-message {
-  background: #51cf66;
+  background: linear-gradient(135deg, #05BFDB 0%, #00D9FF 100%);
   color: white;
-  padding: 1rem;
-  border-radius: 8px;
-  margin-bottom: 1rem;
+  padding: 1.25rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 12px rgba(5, 191, 219, 0.3);
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #0582ca 0%, #00b4d8 100%);
+  background: linear-gradient(135deg, #05BFDB 0%, #00D9FF 100%);
   color: white;
   border: none;
-  padding: 0.875rem 2rem;
+  padding: 1rem 2rem;
   font-size: 1rem;
   font-weight: 600;
-  border-radius: 8px;
+  border-radius: 12px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   width: 100%;
+  box-shadow: 0 4px 12px rgba(5, 191, 219, 0.3);
 }
 
 .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(5, 130, 202, 0.4);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 24px rgba(5, 191, 219, 0.4);
+}
+
+.btn-primary:active {
+  transform: translateY(-1px) scale(0.98);
+  transition: all 0.1s ease;
+}
+
+@media (max-width: 768px) {
+  .btn-primary {
+    padding: 1.125rem 2rem;
+    font-size: 1.05rem;
+    min-height: 48px; /* Better touch target */
+  }
 }
 
 .btn-primary:disabled {
