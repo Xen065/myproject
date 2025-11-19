@@ -498,23 +498,20 @@ function Study() {
             <div className={`difficulty-badge ${difficulty.color}`}>
               {difficulty.level}
             </div>
+            {currentCard.hint && !flipped && !showHint && (
+              <button
+                onClick={handleShowHint}
+                className="hint-button-corner"
+              >
+                💡 Hint
+              </button>
+            )}
             <h2>Question</h2>
             <p className="card-content">{currentCard.question}</p>
 
-            {currentCard.hint && !flipped && (
-              <div className="hint-section">
-                {!showHint ? (
-                  <button
-                    onClick={handleShowHint}
-                    className="hint-button"
-                  >
-                    💡 Show Hint
-                  </button>
-                ) : (
-                  <div className="card-hint">
-                    <strong>Hint:</strong> {currentCard.hint}
-                  </div>
-                )}
+            {currentCard.hint && !flipped && showHint && (
+              <div className="card-hint">
+                <strong>Hint:</strong> {currentCard.hint}
               </div>
             )}
 

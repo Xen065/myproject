@@ -194,6 +194,32 @@
   transform: translateY(0);
 }
 
+.hint-button-corner {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  padding: 0.5rem 0.875rem;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(240, 147, 251, 0.4);
+  z-index: 10;
+}
+
+.hint-button-corner:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(240, 147, 251, 0.5);
+}
+
+.hint-button-corner:active {
+  transform: translateY(0);
+}
+
 .card-hint,
 .card-explanation {
   margin-top: 1rem;
@@ -842,6 +868,11 @@
     padding: 0.4rem 0.8rem;
   }
 
+  .hint-button-corner {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.7rem;
+  }
+
   .reveal-answer-button {
     padding: 1rem 2rem;
     font-size: 1.05rem;
@@ -930,6 +961,11 @@
   .hint-button {
     padding: 1rem 1.5rem;
     min-height: 52px; /* Extra large touch target */
+  }
+
+  .hint-button-corner {
+    font-size: 0.7rem;
+    padding: 0.375rem 0.625rem;
   }
 
   .btn-study {
