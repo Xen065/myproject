@@ -56,7 +56,7 @@
   outline: none;
   border-color: var(--primary-color);
   background: var(--input-focus-bg);
-  box-shadow: 0 0 0 4px rgba(5, 191, 219, 0.1);
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
   transform: translateY(-2px);
 }
 
@@ -83,7 +83,7 @@
 
 .course-card:hover {
   transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 16px 40px rgba(5, 191, 219, 0.3);
+  box-shadow: 0 16px 40px rgba(16, 185, 129, 0.3);
   border-color: var(--card-border-hover);
 }
 
@@ -101,13 +101,13 @@
 
 .course-category {
   display: inline-block;
-  background: rgba(5, 191, 219, 0.25);
+  background: rgba(16, 185, 129, 0.25);
   padding: 0.375rem 1rem;
   border-radius: 10px;
   font-size: 0.875rem;
   margin-bottom: 1.25rem;
   font-weight: 600;
-  border: 1px solid rgba(5, 191, 219, 0.4);
+  border: 1px solid rgba(16, 185, 129, 0.4);
 }
 
 .course-card h3 {
@@ -133,25 +133,25 @@
 
 .btn-course {
   display: inline-block;
-  background: linear-gradient(135deg, #05BFDB 0%, #00D9FF 100%);
+  background: linear-gradient(135deg, #10B981 0%, #14B8A6 100%);
   color: white;
   padding: 0.875rem 1.75rem;
   border-radius: 12px;
   text-decoration: none;
   font-weight: 600;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 12px rgba(5, 191, 219, 0.3);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
 .btn-course:hover {
   transform: translateX(5px) scale(1.05);
-  box-shadow: 0 6px 20px rgba(5, 191, 219, 0.4);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
 }
 
 .no-results {
   text-align: center;
   padding: 4rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-secondary);
   font-size: 1.15rem;
 }
 

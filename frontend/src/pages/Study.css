@@ -51,9 +51,9 @@
 }
 
 .mode-btn.active {
-  background: linear-gradient(135deg, #05BFDB 0%, #00D9FF 100%);
+  background: linear-gradient(135deg, #10B981 0%, #14B8A6 100%);
   border-color: transparent;
-  box-shadow: 0 4px 16px rgba(5, 191, 219, 0.4);
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
 }
 
 .progress-info {
@@ -73,9 +73,9 @@
 
 .progress-bar {
   height: 100%;
-  background: linear-gradient(90deg, #05BFDB 0%, #00D9FF 100%);
+  background: linear-gradient(90deg, #10B981 0%, #14B8A6 100%);
   transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 0 12px rgba(5, 191, 219, 0.5);
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
 }
 
 .card-course-info {
@@ -153,7 +153,7 @@
 .flashcard-back h2 {
   font-size: 1.3rem;
   margin-bottom: 2rem;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 2px;
 }
@@ -229,7 +229,7 @@
 .reveal-answer-button {
   margin-top: auto;
   padding: 1.125rem 2.5rem;
-  background: linear-gradient(135deg, #05BFDB 0%, #00D9FF 100%);
+  background: linear-gradient(135deg, #10B981 0%, #14B8A6 100%);
   border: none;
   border-radius: 14px;
   color: white;
@@ -237,7 +237,7 @@
   font-size: 1.1rem;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 6px 16px rgba(5, 191, 219, 0.4);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
   display: flex;
   align-items: center;
   gap: 0.625rem;
@@ -246,7 +246,7 @@
 
 .reveal-answer-button:hover {
   transform: translateY(-4px) scale(1.05);
-  box-shadow: 0 12px 32px rgba(5, 191, 219, 0.5);
+  box-shadow: 0 12px 32px rgba(16, 185, 129, 0.5);
 }
 
 .reveal-answer-button:active {
@@ -303,8 +303,8 @@
 }
 
 .rating-btn.easy {
-  background: linear-gradient(135deg, #05BFDB 0%, #00D9FF 100%);
-  box-shadow: 0 4px 12px rgba(5, 191, 219, 0.3);
+  background: linear-gradient(135deg, #10B981 0%, #14B8A6 100%);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
 .rating-btn:hover:not(:disabled) {
@@ -332,7 +332,7 @@
   display: flex;
   justify-content: center;
   gap: 2rem;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--text-secondary);
   font-size: 0.95rem;
   padding: 1rem;
   background: rgba(255, 255, 255, 0.05);
@@ -346,7 +346,7 @@
 }
 
 .info-text {
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-tertiary);
   font-size: 0.9rem;
   font-style: italic;
 }
@@ -372,7 +372,7 @@
 .course-study-card:hover {
   transform: translateY(-8px);
   border-color: var(--card-border-hover);
-  box-shadow: 0 16px 40px rgba(5, 191, 219, 0.3);
+  box-shadow: 0 16px 40px rgba(16, 185, 129, 0.3);
 }
 
 .course-study-header {
@@ -409,12 +409,12 @@
   display: block;
   font-size: 2.75rem;
   font-weight: bold;
-  background: linear-gradient(135deg, #05BFDB 0%, #00D9FF 100%);
+  background: linear-gradient(135deg, #10B981 0%, #14B8A6 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   margin-bottom: 0.5rem;
-  text-shadow: 0 2px 8px rgba(5, 191, 219, 0.3);
+  text-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
 }
 
 .course-study-stats .stat-number.due {
@@ -456,8 +456,8 @@
 }
 
 .btn-study.all {
-  background: linear-gradient(135deg, #05BFDB 0%, #00D9FF 100%);
-  box-shadow: 0 4px 12px rgba(5, 191, 219, 0.3);
+  background: linear-gradient(135deg, #10B981 0%, #14B8A6 100%);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
 .btn-study:hover:not(:disabled) {
@@ -478,7 +478,7 @@
 .back-button {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  color: white;
+  color: var(--text-primary);
   padding: 0.5rem 1rem;
   border-radius: 8px;
   cursor: pointer;
@@ -561,9 +561,9 @@
 }
 
 .filter-btn.active {
-  background: linear-gradient(135deg, #05BFDB 0%, #00D9FF 100%);
+  background: linear-gradient(135deg, #10B981 0%, #14B8A6 100%);
   border-color: transparent;
-  box-shadow: 0 4px 16px rgba(5, 191, 219, 0.4);
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
 }
 
 .loading-container {
@@ -578,7 +578,7 @@
 .study-complete-container {
   padding: 4rem 2rem;
   text-align: center;
-  color: white;
+  color: var(--text-primary);
   max-width: 800px;
   margin: 0 auto;
 }
@@ -619,11 +619,11 @@
 .stat-number {
   font-size: 3.25rem;
   font-weight: bold;
-  background: linear-gradient(135deg, #05BFDB 0%, #00D9FF 100%);
+  background: linear-gradient(135deg, #10B981 0%, #14B8A6 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-shadow: 0 2px 12px rgba(5, 191, 219, 0.3);
+  text-shadow: 0 2px 12px rgba(16, 185, 129, 0.3);
 }
 
 .stat-label {
@@ -645,7 +645,7 @@
   padding: 1rem 2rem;
   background: rgba(255, 255, 255, 0.1);
   border: 2px solid rgba(255, 255, 255, 0.3);
-  color: white;
+  color: var(--text-primary);
   border-radius: 8px;
   cursor: pointer;
   font-weight: 600;

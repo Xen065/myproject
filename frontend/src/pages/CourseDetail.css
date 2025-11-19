@@ -37,12 +37,12 @@
 
 .course-category-large {
   display: inline-block;
-  background: rgba(5, 191, 219, 0.25);
+  background: rgba(16, 185, 129, 0.25);
   padding: 0.625rem 1.25rem;
   border-radius: 12px;
   margin-bottom: 1.5rem;
   font-weight: 600;
-  border: 2px solid rgba(5, 191, 219, 0.4);
+  border: 2px solid rgba(16, 185, 129, 0.4);
   font-size: 1rem;
 }
 
@@ -117,14 +117,14 @@
 .enroll-section {
   text-align: center;
   padding: 4rem;
-  background: rgba(5, 191, 219, 0.1);
+  background: rgba(16, 185, 129, 0.1);
   border-radius: 24px;
-  border: 1px solid rgba(5, 191, 219, 0.3);
+  border: 1px solid rgba(16, 185, 129, 0.3);
   backdrop-filter: blur(10px);
 }
 
 .btn-enroll {
-  background: linear-gradient(135deg, #05BFDB 0%, #00D9FF 100%);
+  background: linear-gradient(135deg, #10B981 0%, #14B8A6 100%);
   color: white;
   border: none;
   padding: 1.5rem 4rem;
@@ -133,12 +133,12 @@
   border-radius: 16px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 8px 24px rgba(5, 191, 219, 0.4);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
 }
 
 .btn-enroll:hover:not(:disabled) {
   transform: translateY(-4px) scale(1.05);
-  box-shadow: 0 16px 40px rgba(5, 191, 219, 0.5);
+  box-shadow: 0 16px 40px rgba(16, 185, 129, 0.5);
 }
 
 .btn-enroll:active:not(:disabled) {

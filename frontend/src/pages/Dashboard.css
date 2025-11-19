@@ -53,7 +53,7 @@
 .stat-card:hover {
   transform: translateY(-5px) scale(1.02);
   border-color: var(--card-border-hover);
-  box-shadow: 0 12px 32px rgba(5, 191, 219, 0.3);
+  box-shadow: 0 12px 32px rgba(16, 185, 129, 0.3);
 }
 
 .stat-icon {
@@ -115,7 +115,7 @@
 .progress-card:hover {
   transform: translateY(-5px);
   border-color: var(--card-border-hover);
-  box-shadow: 0 12px 32px rgba(5, 191, 219, 0.3);
+  box-shadow: 0 12px 32px rgba(16, 185, 129, 0.3);
 }
 
 .progress-card h3 {
@@ -171,14 +171,14 @@
 }
 
 .action-btn.primary {
-  background: linear-gradient(135deg, #05BFDB 0%, #00D9FF 100%);
+  background: linear-gradient(135deg, #10B981 0%, #14B8A6 100%);
   color: white;
-  box-shadow: 0 4px 16px rgba(5, 191, 219, 0.3);
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
 }
 
 .action-btn.primary:hover {
   transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 12px 32px rgba(5, 191, 219, 0.4);
+  box-shadow: 0 12px 32px rgba(16, 185, 129, 0.4);
 }
 
 .action-btn.secondary {
@@ -191,7 +191,7 @@
   transform: translateY(-3px);
   background: var(--input-focus-bg);
   border-color: var(--card-border-hover);
-  box-shadow: 0 8px 24px rgba(5, 191, 219, 0.3);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
 }
 
 /* Mobile responsiveness */
