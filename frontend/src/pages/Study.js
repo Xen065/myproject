@@ -441,21 +441,21 @@ function Study() {
                 className={`frequency-option ${frequencyMode === 'intensive' ? 'active' : ''}`}
               >
                 <strong>⚡ Intensive</strong>
-                <span className="frequency-desc">1d → 3d (faster reviews)</span>
+                <span className="frequency-desc">(Faster Reviews)</span>
               </button>
               <button
                 onClick={() => handleFrequencyModeChange('normal')}
                 className={`frequency-option ${frequencyMode === 'normal' ? 'active' : ''}`}
               >
                 <strong>📖 Normal</strong>
-                <span className="frequency-desc">1d → 4d (standard)</span>
+                <span className="frequency-desc">(Standard Reviews)</span>
               </button>
               <button
                 onClick={() => handleFrequencyModeChange('relaxed')}
                 className={`frequency-option ${frequencyMode === 'relaxed' ? 'active' : ''}`}
               >
                 <strong>🌙 Relaxed</strong>
-                <span className="frequency-desc">2d → 7d (slower reviews)</span>
+                <span className="frequency-desc">(Slower Reviews)</span>
               </button>
             </div>
           )}
