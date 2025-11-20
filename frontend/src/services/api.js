@@ -87,4 +87,32 @@ export const userSettingsAPI = {
   updateFrequencyMode: (frequencyMode) => api.put('/users/settings/frequency-mode', { frequencyMode }),
 };
 
+// Study Tasks (Todo List) endpoints
+export const studyTaskAPI = {
+  getAll: (params) => api.get('/study/tasks', { params }),
+  getById: (id) => api.get(`/study/tasks/${id}`),
+  create: (taskData) => api.post('/study/tasks', taskData),
+  update: (id, taskData) => api.put(`/study/tasks/${id}`, taskData),
+  delete: (id) => api.delete(`/study/tasks/${id}`),
+  complete: (id) => api.post(`/study/tasks/${id}/complete`),
+};
+
+// Exam Reminders endpoints
+export const examReminderAPI = {
+  getAll: (params) => api.get('/study/exams', { params }),
+  getUpcoming: () => api.get('/study/exams/upcoming'),
+  getById: (id) => api.get(`/study/exams/${id}`),
+  create: (examData) => api.post('/study/exams', examData),
+  update: (id, examData) => api.put(`/study/exams/${id}`, examData),
+  delete: (id) => api.delete(`/study/exams/${id}`),
+  markPassed: (id) => api.post(`/study/exams/${id}/mark-passed`),
+};
+
+// Calendar endpoints
+export const calendarAPI = {
+  getEvents: (params) => api.get('/calendar/events', { params }),
+  getEventsByDay: (date) => api.get(`/calendar/events/day/${date}`),
+  getSummary: () => api.get('/calendar/summary'),
+};
+
 export default api;

@@ -24,6 +24,9 @@ const userRoutes = require('./routes/users');
 const courseRoutes = require('./routes/courses');
 const cardRoutes = require('./routes/cards');
 const studyRoutes = require('./routes/study');
+const studyTasksRoutes = require('./routes/studyTasks');
+const examRemindersRoutes = require('./routes/examReminders');
+const calendarRoutes = require('./routes/calendar');
 const statsRoutes = require('./routes/stats');
 const achievementRoutes = require('./routes/achievements');
 const adminRoutes = require('./routes/admin');
@@ -82,6 +85,15 @@ app.use('/api/cards', cardRoutes);
 
 // Study session routes (spaced repetition)
 app.use('/api/study', studyRoutes);
+
+// Study tasks (todo list) routes
+app.use('/api/study/tasks', studyTasksRoutes);
+
+// Exam reminders routes
+app.use('/api/study/exams', examRemindersRoutes);
+
+// Calendar integration routes
+app.use('/api/calendar', calendarRoutes);
 
 // Statistics and progress routes
 app.use('/api/stats', statsRoutes);

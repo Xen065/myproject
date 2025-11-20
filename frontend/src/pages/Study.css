@@ -790,6 +790,142 @@
   color: var(--text-secondary);
 }
 
+/* Study Tools Section */
+.study-tools-section {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 2.5rem;
+  border: 1px solid var(--card-border);
+  box-shadow: var(--shadow-md);
+}
+
+.tools-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.study-tools-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.tool-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  background: var(--input-bg);
+  border: 2px solid var(--card-border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.tool-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0;
+  transition: opacity 0.3s;
+  border-radius: 12px;
+}
+
+.tool-btn.calendar::before {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05));
+}
+
+.tool-btn.todo::before {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+}
+
+.tool-btn.exam::before {
+  background: linear-gradient(135deg, rgba(245, 87, 108, 0.1), rgba(245, 87, 108, 0.05));
+}
+
+.tool-btn:hover {
+  transform: translateY(-4px);
+  border-color: var(--card-border-hover);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.tool-btn:hover::before {
+  opacity: 1;
+}
+
+.tool-btn.calendar:hover {
+  border-color: #3b82f6;
+}
+
+.tool-btn.todo:hover {
+  border-color: #10B981;
+}
+
+.tool-btn.exam:hover {
+  border-color: #f5576c;
+}
+
+.tool-icon {
+  font-size: 3rem;
+  position: relative;
+  z-index: 1;
+}
+
+.tool-label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  position: relative;
+  z-index: 1;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+  overflow-y: auto;
+  animation: fadeIn 0.2s ease;
+}
+
+.modal-overlay > div {
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (max-width: 768px) {
   .study-container {
     padding: 2rem 1.5rem;
@@ -900,6 +1036,15 @@
 
   .complete-actions button {
     width: 100%;
+  }
+
+  .study-tools-buttons {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .modal-overlay {
+    padding: 1rem;
   }
 }
 

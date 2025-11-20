@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { courseAPI, cardAPI, studyAPI, userSettingsAPI } from '../services/api';
 import PictureQuizStudy from '../components/PictureQuizStudy';
+import StudyCalendar from '../components/StudyCalendar';
+import StudyTodoList from '../components/StudyTodoList';
+import ExamReminder from '../components/ExamReminder';
 import './Study.css';
 
 function Study() {
@@ -28,6 +31,11 @@ function Study() {
   const [allCards, setAllCards] = useState([]); // Store unfiltered cards
   const [frequencyMode, setFrequencyMode] = useState('normal'); // 'intensive', 'normal', or 'relaxed'
   const [showFrequencyMenu, setShowFrequencyMenu] = useState(false);
+
+  // Study Tools state
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [showTodoList, setShowTodoList] = useState(false);
+  const [showExamReminder, setShowExamReminder] = useState(false);
 
   // Calculate card difficulty level
   const getDifficultyLevel = (card) => {
@@ -325,6 +333,37 @@ function Study() {
           <p className="info-text">Choose a course and study mode to begin your practice session</p>
         </div>
 
+        {/* Study Tools Section */}
+        <div className="study-tools-section">
+          <h3 className="tools-title">Study Tools</h3>
+          <div className="study-tools-buttons">
+            <button
+              className="tool-btn calendar"
+              onClick={() => setShowCalendar(true)}
+              title="View study calendar with tasks and exams"
+            >
+              <span className="tool-icon">📅</span>
+              <span className="tool-label">Calendar</span>
+            </button>
+            <button
+              className="tool-btn todo"
+              onClick={() => setShowTodoList(true)}
+              title="Manage your study tasks"
+            >
+              <span className="tool-icon">✅</span>
+              <span className="tool-label">Todo List</span>
+            </button>
+            <button
+              className="tool-btn exam"
+              onClick={() => setShowExamReminder(true)}
+              title="View and manage exam reminders"
+            >
+              <span className="tool-icon">🔔</span>
+              <span className="tool-label">Exam Reminders</span>
+            </button>
+          </div>
+        </div>
+
         <div className="course-selection-grid">
           {enrolledCourses.map((course) => (
             <div key={course.id} className="course-study-card">
@@ -363,6 +402,25 @@ function Study() {
             </div>
           ))}
         </div>
+
+        {/* Study Tool Modals */}
+        {showCalendar && (
+          <div className="modal-overlay">
+            <StudyCalendar onClose={() => setShowCalendar(false)} />
+          </div>
+        )}
+
+        {showTodoList && (
+          <div className="modal-overlay">
+            <StudyTodoList onClose={() => setShowTodoList(false)} />
+          </div>
+        )}
+
+        {showExamReminder && (
+          <div className="modal-overlay">
+            <ExamReminder onClose={() => setShowExamReminder(false)} />
+          </div>
+        )}
       </div>
     );
   }

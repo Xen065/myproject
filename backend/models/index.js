@@ -9,6 +9,8 @@ const User = require('./User');
 const Course = require('./Course');
 const Card = require('./Card');
 const StudySession = require('./StudySession');
+const StudyTask = require('./StudyTask');
+const ExamReminder = require('./ExamReminder');
 const Achievement = require('./Achievement');
 const UserAchievement = require('./UserAchievement');
 const UserCourse = require('./UserCourse');
@@ -212,6 +214,50 @@ Card.belongsTo(CourseModule, {
   as: 'module'
 });
 
+// User -> StudyTask (One-to-Many)
+User.hasMany(StudyTask, {
+  foreignKey: 'userId',
+  as: 'studyTasks'
+});
+
+StudyTask.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'student'
+});
+
+// Course -> StudyTask (One-to-Many)
+Course.hasMany(StudyTask, {
+  foreignKey: 'courseId',
+  as: 'tasks'
+});
+
+StudyTask.belongsTo(Course, {
+  foreignKey: 'courseId',
+  as: 'course'
+});
+
+// User -> ExamReminder (One-to-Many)
+User.hasMany(ExamReminder, {
+  foreignKey: 'userId',
+  as: 'examReminders'
+});
+
+ExamReminder.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'student'
+});
+
+// Course -> ExamReminder (One-to-Many)
+Course.hasMany(ExamReminder, {
+  foreignKey: 'courseId',
+  as: 'exams'
+});
+
+ExamReminder.belongsTo(Course, {
+  foreignKey: 'courseId',
+  as: 'course'
+});
+
 // ============================================
 // Export all models
 // ============================================
@@ -221,6 +267,8 @@ module.exports = {
   Course,
   Card,
   StudySession,
+  StudyTask,
+  ExamReminder,
   Achievement,
   UserAchievement,
   UserCourse,
