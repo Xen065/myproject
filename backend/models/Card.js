@@ -85,9 +85,9 @@ const Card = sequelize.define('Card', {
 
   userId: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true, // Allow null for template cards
     field: 'user_id',
-    comment: 'The student who owns/is learning this card',
+    comment: 'The student who owns/is learning this card (null for template cards)',
     references: {
       model: 'users',
       key: 'id'
