@@ -1,12 +1,12 @@
 /**
- * Picture Quiz Editor Component
+ * Image Occlusion Editor Component
  * Allows teachers to draw shapes on an image to create quiz regions
  * Enhanced with zoom, pan, and keyboard shortcuts
  */
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import './PictureQuizEditor.css';
+import './ImageOcclusionEditor.css';
 
-const PictureQuizEditor = ({ imageUrl, regions, onChange }) => {
+const ImageOcclusionEditor = ({ imageUrl, regions, onChange }) => {
   const canvasRef = useRef(null);
   const imageRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -662,4 +662,4 @@ const PictureQuizEditor = ({ imageUrl, regions, onChange }) => {
   );
 };
 
-export default PictureQuizEditor;
+export default ImageOcclusionEditor;
