@@ -28,11 +28,12 @@ const Card = sequelize.define('Card', {
     type: DataTypes.TEXT,
     allowNull: true,
     validate: {
-      // For non-image cards, answer is required
+      // For non-image and non-ordered cards, answer is required
       // For image cards, answers are stored in occludedRegions
+      // For ordered cards, answers are stored in orderedItems
       notEmpty: function(value) {
-        if (this.cardType !== 'image' && (!value || value.trim() === '')) {
-          throw new Error('Answer is required for non-image card types');
+        if (this.cardType !== 'image' && this.cardType !== 'ordered' && (!value || value.trim() === '')) {
+          throw new Error('Answer is required for this card type');
         }
       }
     }
