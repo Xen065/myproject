@@ -59,7 +59,7 @@ const QuestionManagement = () => {
       ]);
 
       // Ensure we always set arrays, handling various response structures
-      const questionsData = questionsRes?.data?.data || questionsRes?.data || [];
+      const questionsData = questionsRes?.data?.cards || questionsRes?.data?.data || questionsRes?.data || [];
       const coursesData = coursesRes?.data?.data || coursesRes?.data || [];
 
       setQuestions(Array.isArray(questionsData) ? questionsData : []);

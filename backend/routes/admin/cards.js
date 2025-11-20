@@ -28,7 +28,7 @@ router.get(
     try {
       const { courseId, type, search, limit = 100, offset = 0 } = req.query;
 
-      const where = {}; // Template cards query
+      const where = { userId: null }; // Template cards only (not student cards)
 
       if (courseId) {
         where.courseId = parseInt(courseId);
@@ -42,8 +42,6 @@ router.get(
               error: 'You can only view cards from your own courses'
             });
           }
-          // Teachers only see their own template cards
-          where.userId = req.user.id;
         }
       } else if (req.user.role === 'teacher') {
         // Teachers only see cards from their own courses
@@ -53,7 +51,6 @@ router.get(
         });
         const courseIds = teacherCourses.map(c => c.id);
         where.courseId = { [Op.in]: courseIds };
-        where.userId = req.user.id;
       }
 
       if (type) {
@@ -479,7 +476,7 @@ router.post(
       const card = await Card.create({
         courseId,
         moduleId: moduleId || null,
-        userId: course.createdBy, // Template card belongs to course creator
+        userId: null, // Template cards have no userId (not tied to a specific student)
         question,
         answer: answer || '',
         hint: hint || null,
