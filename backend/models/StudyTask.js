@@ -11,7 +11,7 @@ const StudyTask = sequelize.define('StudyTask', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'Users',
+      model: 'users',
       key: 'id'
     }
   },
@@ -19,7 +19,7 @@ const StudyTask = sequelize.define('StudyTask', {
     type: DataTypes.INTEGER,
     allowNull: true,
     references: {
-      model: 'Courses',
+      model: 'courses',
       key: 'id'
     }
   },
