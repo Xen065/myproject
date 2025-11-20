@@ -74,6 +74,9 @@ export const adminCourseAPI = {
 
   // Get course statistics
   getStats: (id) => adminApi.get(`/courses/${id}/stats`),
+
+  // Sync template cards to enrolled students
+  syncCards: (id) => adminApi.post(`/courses/${id}/sync-cards`),
 };
 
 // ============================================

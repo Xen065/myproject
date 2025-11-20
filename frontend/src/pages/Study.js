@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { courseAPI, cardAPI, studyAPI, userSettingsAPI } from '../services/api';
+import ImageOcclusionStudy from '../components/ImageOcclusionStudy';
 import './Study.css';
 
 function Study() {
@@ -507,7 +508,11 @@ function Study() {
               </button>
             )}
             <h2>Question</h2>
-            <p className="card-content">{currentCard.question}</p>
+            {currentCard.cardType === 'image' ? (
+              <ImageOcclusionStudy card={currentCard} isRevealed={false} />
+            ) : (
+              <p className="card-content">{currentCard.question}</p>
+            )}
 
             {currentCard.hint && !flipped && showHint && (
               <div className="card-hint">
@@ -527,11 +532,17 @@ function Study() {
               {difficulty.level}
             </div>
             <h2>Answer</h2>
-            <p className="card-content">{currentCard.answer}</p>
-            {currentCard.explanation && (
-              <div className="card-explanation">
-                <strong>Explanation:</strong> {currentCard.explanation}
-              </div>
+            {currentCard.cardType === 'image' ? (
+              <ImageOcclusionStudy card={currentCard} isRevealed={true} />
+            ) : (
+              <>
+                <p className="card-content">{currentCard.answer}</p>
+                {currentCard.explanation && (
+                  <div className="card-explanation">
+                    <strong>Explanation:</strong> {currentCard.explanation}
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

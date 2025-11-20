@@ -129,11 +129,11 @@ router.post('/:id/enroll', protect, async (req, res) => {
     await course.increment('enrollmentCount');
 
     // Copy template cards from the course to this user
-    // Find template cards for this course (cards owned by the course creator)
+    // Find template cards for this course (cards with userId: null are templates)
     const templateCards = await Card.findAll({
       where: {
         courseId: course.id,
-        userId: course.createdBy
+        userId: null
       }
     });
 
@@ -147,6 +147,8 @@ router.post('/:id/enroll', protect, async (req, res) => {
         explanation: template.explanation,
         cardType: template.cardType,
         options: template.options,
+        imageUrl: template.imageUrl,
+        occludedRegions: template.occludedRegions,
         courseId: course.id,
         userId: req.user.id,
         status: 'new',

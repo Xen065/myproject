@@ -526,4 +526,149 @@ router.get(
   }
 );
 
+/**
+ * @route   POST /api/admin/courses/:id/sync-cards
+ * @desc    Sync new template cards to all enrolled students
+ * @access  Admin, Teacher (own courses)
+ */
+router.post(
+  '/:id/sync-cards',
+  protect,
+  requirePermission('courses.manage'),
+  auditLog('course.sync_cards', 'course'),
+  async (req, res) => {
+    try {
+      const course = await Course.findByPk(req.params.id);
+
+      if (!course) {
+        return res.status(404).json({
+          success: false,
+          error: 'Course not found'
+        });
+      }
+
+      // Check ownership for teachers
+      if (req.user.role === 'teacher' && course.createdBy !== req.user.id) {
+        return res.status(403).json({
+          success: false,
+          error: 'You can only sync cards for your own courses'
+        });
+      }
+
+      // Get all enrolled students
+      const enrollments = await UserCourse.findAll({
+        where: { courseId: course.id }
+      });
+
+      if (enrollments.length === 0) {
+        return res.json({
+          success: true,
+          message: 'No enrolled students to sync',
+          data: {
+            studentsProcessed: 0,
+            totalCardsCreated: 0
+          }
+        });
+      }
+
+      // Get all template cards for this course
+      const templateCards = await Card.findAll({
+        where: {
+          courseId: course.id,
+          userId: null
+        }
+      });
+
+      if (templateCards.length === 0) {
+        return res.json({
+          success: true,
+          message: 'No template cards to sync',
+          data: {
+            studentsProcessed: 0,
+            totalCardsCreated: 0
+          }
+        });
+      }
+
+      let totalCardsCreated = 0;
+      let studentsProcessed = 0;
+
+      // Process each enrolled student
+      for (const enrollment of enrollments) {
+        const userId = enrollment.userId;
+
+        // Get IDs of template cards
+        const templateCardIds = templateCards.map(tc => tc.id);
+
+        // Find which template cards this student already has
+        // We'll check by matching question+courseId since student cards are copies
+        const existingCards = await Card.findAll({
+          where: {
+            userId: userId,
+            courseId: course.id
+          },
+          attributes: ['question', 'cardType']
+        });
+
+        // Create a Set of existing card signatures for quick lookup
+        const existingSignatures = new Set(
+          existingCards.map(c => `${c.question}|${c.cardType}`)
+        );
+
+        // Find template cards that the student doesn't have yet
+        const missingTemplates = templateCards.filter(template => {
+          const signature = `${template.question}|${template.cardType}`;
+          return !existingSignatures.has(signature);
+        });
+
+        if (missingTemplates.length > 0) {
+          // Create new cards for this student
+          const newCards = missingTemplates.map(template => ({
+            question: template.question,
+            answer: template.answer,
+            hint: template.hint,
+            explanation: template.explanation,
+            cardType: template.cardType,
+            options: template.options,
+            imageUrl: template.imageUrl,
+            occludedRegions: template.occludedRegions,
+            courseId: course.id,
+            userId: userId,
+            status: 'new',
+            easeFactor: 2.5,
+            interval: 0,
+            repetitions: 0,
+            nextReviewDate: new Date(),
+            isActive: true,
+            tags: template.tags
+          }));
+
+          await Card.bulkCreate(newCards);
+          totalCardsCreated += newCards.length;
+        }
+
+        studentsProcessed++;
+      }
+
+      res.json({
+        success: true,
+        message: `Synced successfully! ${totalCardsCreated} cards added across ${studentsProcessed} students.`,
+        data: {
+          studentsProcessed,
+          totalCardsCreated,
+          averageCardsPerStudent: studentsProcessed > 0
+            ? Math.round((totalCardsCreated / studentsProcessed) * 10) / 10
+            : 0
+        }
+      });
+    } catch (error) {
+      console.error('Error syncing cards:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Error syncing cards to students'
+      });
+    }
+  }
+);
+
 module.exports = router;

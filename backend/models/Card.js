@@ -26,9 +26,15 @@ const Card = sequelize.define('Card', {
 
   answer: {
     type: DataTypes.TEXT,
-    allowNull: false,
+    allowNull: true,
     validate: {
-      notEmpty: true
+      // For non-image cards, answer is required
+      // For image cards, answers are stored in occludedRegions
+      notEmpty: function(value) {
+        if (this.cardType !== 'image' && (!value || value.trim() === '')) {
+          throw new Error('Answer is required for non-image card types');
+        }
+      }
     }
   },
 

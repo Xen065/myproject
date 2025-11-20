@@ -27,6 +27,124 @@
   margin: 0.25rem 0;
 }
 
+/* Editor Toolbar */
+.editor-toolbar {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+/* Shape Selector */
+.shape-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.shape-selector label {
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+.shape-selector select {
+  padding: 6px 12px;
+  border: 2px solid #E5E7EB;
+  border-radius: 6px;
+  background: white;
+  color: #333;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.shape-selector select:hover {
+  border-color: #6366F1;
+}
+
+.shape-selector select:focus {
+  outline: none;
+  border-color: #6366F1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.complete-polygon-btn {
+  padding: 6px 12px;
+  background: #10B981;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 13px;
+}
+
+.complete-polygon-btn:hover {
+  background: #059669;
+  transform: translateY(-1px);
+}
+
+/* Zoom Controls */
+.zoom-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.zoom-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: #6366F1;
+  color: white;
+  border-radius: 6px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zoom-btn:hover {
+  background: #4F46E5;
+  transform: translateY(-1px);
+}
+
+.zoom-btn:active {
+  transform: translateY(0);
+}
+
+.zoom-btn.reset-btn {
+  background: #64748b;
+  margin-left: 4px;
+}
+
+.zoom-btn.reset-btn:hover {
+  background: #475569;
+}
+
+.zoom-level {
+  min-width: 50px;
+  text-align: center;
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
 .canvas-container {
   border: 2px dashed #cbd5e1;
   border-radius: 8px;
@@ -35,12 +153,17 @@
   display: flex;
   justify-content: center;
   margin-bottom: 1rem;
+  overflow: hidden;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .canvas-container canvas {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 4px;
   background: white;
+  touch-action: none;
 }
 
 .regions-list {
