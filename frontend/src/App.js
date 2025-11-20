@@ -11,6 +11,7 @@ import Dashboard from './pages/Dashboard';
 import Courses from './pages/Courses';
 import CourseDetail from './pages/CourseDetail';
 import Study from './pages/Study';
+import StudyTools from './pages/StudyTools';
 import PracticeQuestions from './pages/PracticeQuestions';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import Permissions from './pages/admin/Permissions';
@@ -64,6 +65,14 @@ function App() {
                     element={
                       <ProtectedRoute>
                         <Study />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/study-tools"
+                    element={
+                      <ProtectedRoute>
+                        <StudyTools />
                       </ProtectedRoute>
                     }
                   />

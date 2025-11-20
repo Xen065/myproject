@@ -50,6 +50,12 @@ function Navigation() {
               >
                 Study
               </Link>
+              <Link
+                to="/study-tools"
+                className={location.pathname === '/study-tools' ? 'active' : ''}
+              >
+                Study Tools
+              </Link>
               {isAdmin && (
                 <Link
                   to="/admin"
