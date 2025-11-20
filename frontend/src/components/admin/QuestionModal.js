@@ -41,7 +41,12 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
         tags: question.tags || [],
       });
       if (question.imageUrl) {
-        setPreviewUrl(question.imageUrl);
+        // Construct full URL if it's a relative path
+        const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+        const fullImageUrl = question.imageUrl.startsWith('http')
+          ? question.imageUrl
+          : `${API_BASE_URL}${question.imageUrl}`;
+        setPreviewUrl(fullImageUrl);
       }
     } else if (question?.moduleId) {
       setFormData({ ...formData, moduleId: question.moduleId });
@@ -81,7 +86,11 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
       const response = await adminCardAPI.uploadImage(formDataObj);
 
       if (response.data && response.data.imageUrl) {
+        // Construct full URL for image preview
+        const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+        const fullImageUrl = `${API_BASE_URL}${response.data.imageUrl}`;
         setFormData({ ...formData, imageUrl: response.data.imageUrl });
+        setPreviewUrl(fullImageUrl);
       }
 
       setUploading(false);
