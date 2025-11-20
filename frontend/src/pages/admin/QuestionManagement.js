@@ -38,7 +38,7 @@ const QuestionManagement = () => {
     basic: '📝 Short Answer',
     cloze: '✍️ Fill in the Blanks',
     multiple_choice: '☑️ Multiple Choice',
-    multi_select: '☑️☑️ Multi-Select',
+    multi_select: '☑️ Multiple Choice (Multi-Select)', // Legacy type - now unified with multiple_choice
     true_false: '✓✗ True/False',
     matching: '🔗 Matching Pairs',
     categorization: '📦 Categorization',

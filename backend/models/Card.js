@@ -99,6 +99,14 @@ const Card = sequelize.define('Card', {
     comment: 'Array of correct answers for multi-select: ["answer1", "answer2"]'
   },
 
+  // MCQ configuration
+  allowMultipleCorrect: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+    field: 'allow_multiple_correct',
+    comment: 'For multiple_choice: true = multiple correct answers allowed (checkboxes), false = single correct answer (radio buttons)'
+  },
+
   // Matching pairs fields
   matchingPairs: {
     type: DataTypes.JSON,

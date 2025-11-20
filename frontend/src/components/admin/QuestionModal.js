@@ -13,17 +13,18 @@ import './Modal.css';
 
 const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
   const [formData, setFormData] = useState({
-    cardType: 'basic', // basic, cloze, multiple_choice, image, ordered, true_false, multi_select, matching, categorization
+    cardType: 'basic', // basic, cloze, multiple_choice, image, ordered, true_false, matching, categorization
     moduleId: '',
     question: '',
     answer: '',
     hint: '',
     explanation: '',
-    options: ['', '', '', ''], // For MCQ and multi-select
+    options: ['', '', '', ''], // For MCQ
+    allowMultipleCorrect: false, // For MCQ: true = multiple correct answers, false = single correct answer
     imageUrl: '', // For image quiz
     occludedRegions: [], // For image quiz
     orderedItems: [], // For ordered questions
-    multiSelectAnswers: [], // For multi-select correct answers
+    multiSelectAnswers: [], // For multiple correct answers in MCQ
     matchingPairs: [], // For matching pairs
     categories: {}, // For categorization
     tags: [],
@@ -36,14 +37,19 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
 
   useEffect(() => {
     if (question?.id) {
+      // Convert old multi_select type to multiple_choice with allowMultipleCorrect = true
+      const cardType = question.cardType === 'multi_select' ? 'multiple_choice' : question.cardType;
+      const allowMultipleCorrect = question.cardType === 'multi_select' || question.allowMultipleCorrect || false;
+
       setFormData({
-        cardType: question.cardType || 'basic',
+        cardType: cardType || 'basic',
         moduleId: question.moduleId || '',
         question: question.question || '',
         answer: question.answer || '',
         hint: question.hint || '',
         explanation: question.explanation || '',
         options: question.options || ['', '', '', ''],
+        allowMultipleCorrect: allowMultipleCorrect,
         imageUrl: question.imageUrl || '',
         occludedRegions: question.occludedRegions || [],
         orderedItems: question.orderedItems || [],
@@ -129,9 +135,29 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
         setError('Multiple choice questions must have at least 2 options');
         return;
       }
-      if (!validOptions.includes(formData.answer.trim())) {
-        setError('The correct answer must be one of the options');
-        return;
+
+      if (formData.allowMultipleCorrect) {
+        // Multiple correct answers
+        if (!formData.multiSelectAnswers || formData.multiSelectAnswers.length === 0) {
+          setError('Please select at least one correct answer');
+          return;
+        }
+        // Verify all selected answers are in the options
+        const invalidAnswer = formData.multiSelectAnswers.find(ans => !validOptions.includes(ans));
+        if (invalidAnswer) {
+          setError('All correct answers must be in the options list');
+          return;
+        }
+      } else {
+        // Single correct answer
+        if (!formData.answer || !formData.answer.trim()) {
+          setError('Please select the correct answer');
+          return;
+        }
+        if (!validOptions.includes(formData.answer.trim())) {
+          setError('The correct answer must be one of the options');
+          return;
+        }
       }
     } else if (formData.cardType === 'image') {
       if (!formData.imageUrl) {
@@ -155,16 +181,6 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
     } else if (formData.cardType === 'true_false') {
       if (!formData.answer || !['true', 'false'].includes(formData.answer.toLowerCase())) {
         setError('Please select True or False');
-        return;
-      }
-    } else if (formData.cardType === 'multi_select') {
-      const validOptions = formData.options.filter(opt => opt.trim());
-      if (validOptions.length < 2) {
-        setError('Multi-select questions must have at least 2 options');
-        return;
-      }
-      if (!formData.multiSelectAnswers || formData.multiSelectAnswers.length === 0) {
-        setError('Please select at least one correct answer');
         return;
       }
     } else if (formData.cardType === 'matching') {
@@ -201,13 +217,16 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
         hint: formData.hint || null,
         explanation: formData.explanation || null,
         cardType: formData.cardType,
-        options: (formData.cardType === 'multiple_choice' || formData.cardType === 'multi_select')
+        options: formData.cardType === 'multiple_choice'
           ? formData.options.filter(opt => opt.trim())
           : null,
+        allowMultipleCorrect: formData.cardType === 'multiple_choice' ? formData.allowMultipleCorrect : null,
         imageUrl: formData.cardType === 'image' ? formData.imageUrl : null,
         occludedRegions: formData.cardType === 'image' ? formData.occludedRegions : null,
         orderedItems: formData.cardType === 'ordered' ? formData.orderedItems : null,
-        multiSelectAnswers: formData.cardType === 'multi_select' ? formData.multiSelectAnswers : null,
+        multiSelectAnswers: (formData.cardType === 'multiple_choice' && formData.allowMultipleCorrect)
+          ? formData.multiSelectAnswers
+          : null,
         matchingPairs: formData.cardType === 'matching' ? formData.matchingPairs : null,
         categories: formData.cardType === 'categorization' ? formData.categories : null,
         tags: formData.tags,
@@ -268,7 +287,6 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
                 <option value="basic">📝 Short Answer</option>
                 <option value="cloze">✍️ Fill in the Blanks</option>
                 <option value="multiple_choice">☑️ Multiple Choice (MCQ)</option>
-                <option value="multi_select">☑️☑️ Multi-Select</option>
                 <option value="true_false">✓✗ True/False</option>
                 <option value="matching">🔗 Matching Pairs</option>
                 <option value="categorization">📦 Categorization</option>
@@ -358,59 +376,98 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
           {formData.cardType === 'multiple_choice' ? (
             <>
               <div className="form-group">
-                <label>Options * (at least 2)</label>
-                <div className="options-list">
-                  {formData.options.map((option, index) => (
-                    <div key={index} className="option-item">
-                      <input
-                        type="text"
-                        value={option}
-                        onChange={(e) => handleOptionChange(index, e.target.value)}
-                        placeholder={`Option ${index + 1}`}
-                      />
-                      {formData.options.length > 2 && (
-                        <button
-                          type="button"
-                          className="btn-remove-option"
-                          onClick={() => removeOption(index)}
-                        >
-                          ×
-                        </button>
-                      )}
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={formData.allowMultipleCorrect}
+                    onChange={(e) => setFormData({
+                      ...formData,
+                      allowMultipleCorrect: e.target.checked,
+                      // Reset answers when switching modes
+                      multiSelectAnswers: e.target.checked ? [] : formData.multiSelectAnswers,
+                      answer: !e.target.checked ? '' : formData.answer
+                    })}
+                  />
+                  <span>Allow multiple correct answers</span>
+                </label>
+                <small className="help-text">
+                  {formData.allowMultipleCorrect
+                    ? 'Students will use checkboxes and must select ALL correct answers'
+                    : 'Students will use radio buttons and select ONE correct answer'}
+                </small>
+              </div>
+
+              {formData.allowMultipleCorrect ? (
+                <>
+                  <MultiSelectEditor
+                    options={formData.options}
+                    correctAnswers={formData.multiSelectAnswers}
+                    onOptionsChange={(options) => setFormData({ ...formData, options })}
+                    onAnswersChange={(answers) => setFormData({ ...formData, multiSelectAnswers: answers })}
+                  />
+                  <div className="info-box">
+                    <strong>☑️ Students must select ALL correct answers!</strong>
+                    <p>Options will be shuffled. Students need to check all answers you marked as correct.</p>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="form-group">
+                    <label>Options * (at least 2)</label>
+                    <div className="options-list">
+                      {formData.options.map((option, index) => (
+                        <div key={index} className="option-item">
+                          <input
+                            type="text"
+                            value={option}
+                            onChange={(e) => handleOptionChange(index, e.target.value)}
+                            placeholder={`Option ${index + 1}`}
+                          />
+                          {formData.options.length > 2 && (
+                            <button
+                              type="button"
+                              className="btn-remove-option"
+                              onClick={() => removeOption(index)}
+                            >
+                              ×
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                      <button
+                        type="button"
+                        className="btn-add-option"
+                        onClick={addOption}
+                      >
+                        + Add Option
+                      </button>
                     </div>
-                  ))}
-                  <button
-                    type="button"
-                    className="btn-add-option"
-                    onClick={addOption}
-                  >
-                    + Add Option
-                  </button>
-                </div>
-              </div>
+                  </div>
 
-              <div className="form-group">
-                <label>Correct Answer *</label>
-                <select
-                  value={formData.answer}
-                  onChange={(e) => setFormData({ ...formData, answer: e.target.value })}
-                  required
-                >
-                  <option value="">Select the correct answer</option>
-                  {formData.options
-                    .filter(opt => opt.trim())
-                    .map((option, index) => (
-                      <option key={index} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                </select>
-              </div>
+                  <div className="form-group">
+                    <label>Correct Answer *</label>
+                    <select
+                      value={formData.answer}
+                      onChange={(e) => setFormData({ ...formData, answer: e.target.value })}
+                      required
+                    >
+                      <option value="">Select the correct answer</option>
+                      {formData.options
+                        .filter(opt => opt.trim())
+                        .map((option, index) => (
+                          <option key={index} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
 
-              <div className="info-box">
-                <strong>🔀 Options will be shuffled for students!</strong>
-                <p>The order of options will be randomized each time a student sees this question.</p>
-              </div>
+                  <div className="info-box">
+                    <strong>🔀 Options will be shuffled for students!</strong>
+                    <p>The order of options will be randomized each time a student sees this question.</p>
+                  </div>
+                </>
+              )}
             </>
           ) : formData.cardType === 'ordered' ? (
             <>
@@ -449,19 +506,6 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
                 </label>
               </div>
             </div>
-          ) : formData.cardType === 'multi_select' ? (
-            <>
-              <MultiSelectEditor
-                options={formData.options}
-                correctAnswers={formData.multiSelectAnswers}
-                onOptionsChange={(options) => setFormData({ ...formData, options })}
-                onAnswersChange={(answers) => setFormData({ ...formData, multiSelectAnswers: answers })}
-              />
-              <div className="info-box">
-                <strong>☑️☑️ Students must select ALL correct answers!</strong>
-                <p>Options will be shuffled. Students need to check all answers you marked as correct.</p>
-              </div>
-            </>
           ) : formData.cardType === 'matching' ? (
             <>
               <MatchingPairsEditor

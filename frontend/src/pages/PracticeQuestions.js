@@ -28,6 +28,7 @@ const PracticeQuestions = () => {
   const [questions, setQuestions] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userAnswer, setUserAnswer] = useState('');
+  const [selectedMultipleAnswers, setSelectedMultipleAnswers] = useState([]); // For MCQ with multiple correct answers
   const [showAnswer, setShowAnswer] = useState(false);
   const [loading, setLoading] = useState(true);
   const [shuffledOptions, setShuffledOptions] = useState([]);
@@ -57,6 +58,7 @@ const PracticeQuestions = () => {
     }
 
     setUserAnswer('');
+    setSelectedMultipleAnswers([]);
     setShowAnswer(false);
     setRevealedRegions([]);
   }, [currentIndex, questions]);
@@ -91,7 +93,14 @@ const PracticeQuestions = () => {
         alert('Please click on all occluded regions to reveal them');
         return;
       }
+    } else if (current.cardType === 'multiple_choice' && current.allowMultipleCorrect) {
+      // For multi-select MCQ
+      if (selectedMultipleAnswers.length === 0) {
+        alert('Please select at least one answer');
+        return;
+      }
     } else {
+      // For other types including single-answer MCQ
       if (!userAnswer.trim()) {
         alert('Please provide an answer');
         return;
@@ -190,6 +199,12 @@ const PracticeQuestions = () => {
   } else if (currentQuestion.cardType === 'ordered') {
     // Check if the order matches exactly
     isCorrect = JSON.stringify(shuffledOrderedItems) === JSON.stringify(currentQuestion.orderedItems);
+  } else if (currentQuestion.cardType === 'multiple_choice' && currentQuestion.allowMultipleCorrect) {
+    // For multi-select MCQ, check if student selected ALL and ONLY the correct answers
+    const correctAnswers = currentQuestion.multiSelectAnswers || [];
+    const sortedSelected = [...selectedMultipleAnswers].sort();
+    const sortedCorrect = [...correctAnswers].sort();
+    isCorrect = JSON.stringify(sortedSelected) === JSON.stringify(sortedCorrect);
   } else {
     isCorrect = userAnswer.trim().toLowerCase() === currentQuestion.answer.trim().toLowerCase();
   }
@@ -219,7 +234,9 @@ const PracticeQuestions = () => {
         <div className="question-type-badge">
           {currentQuestion.cardType === 'basic' && '📝 Short Answer'}
           {currentQuestion.cardType === 'cloze' && '✍️ Fill in the Blanks'}
-          {currentQuestion.cardType === 'multiple_choice' && '☑️ Multiple Choice'}
+          {currentQuestion.cardType === 'multiple_choice' && (
+            currentQuestion.allowMultipleCorrect ? '☑️ Multiple Choice (Multi-Select)' : '☑️ Multiple Choice'
+          )}
           {currentQuestion.cardType === 'image' && '🖼️ Image Quiz'}
           {currentQuestion.cardType === 'ordered' && '🔢 Ordered Sequence'}
         </div>
@@ -283,20 +300,39 @@ const PracticeQuestions = () => {
                 </div>
               </div>
             ) : currentQuestion.cardType === 'multiple_choice' ? (
-              // MCQ with SHUFFLED options
+              // MCQ with SHUFFLED options - single or multiple correct answers
               <div className="mcq-options">
                 <p className="shuffle-notice">
-                  🔀 Options are shuffled for better learning!
+                  {currentQuestion.allowMultipleCorrect
+                    ? '☑️ Select ALL correct answers (options are shuffled)'
+                    : '🔀 Options are shuffled for better learning!'}
                 </p>
                 {shuffledOptions.map((option, index) => (
                   <label key={index} className="mcq-option">
-                    <input
-                      type="radio"
-                      name="mcq-answer"
-                      value={option}
-                      checked={userAnswer === option}
-                      onChange={(e) => setUserAnswer(e.target.value)}
-                    />
+                    {currentQuestion.allowMultipleCorrect ? (
+                      // Multiple correct answers - use checkboxes
+                      <input
+                        type="checkbox"
+                        value={option}
+                        checked={selectedMultipleAnswers.includes(option)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedMultipleAnswers([...selectedMultipleAnswers, option]);
+                          } else {
+                            setSelectedMultipleAnswers(selectedMultipleAnswers.filter(ans => ans !== option));
+                          }
+                        }}
+                      />
+                    ) : (
+                      // Single correct answer - use radio buttons
+                      <input
+                        type="radio"
+                        name="mcq-answer"
+                        value={option}
+                        checked={userAnswer === option}
+                        onChange={(e) => setUserAnswer(e.target.value)}
+                      />
+                    )}
                     <span className="option-text">{option}</span>
                   </label>
                 ))}
@@ -417,8 +453,17 @@ const PracticeQuestions = () => {
                     <>
                       <div className="result-icon">❌</div>
                       <h3>Not quite right</h3>
-                      <p>Your answer: <strong>{userAnswer}</strong></p>
-                      <p>Correct answer: <strong>{currentQuestion.answer}</strong></p>
+                      {currentQuestion.cardType === 'multiple_choice' && currentQuestion.allowMultipleCorrect ? (
+                        <>
+                          <p>Your answers: <strong>{selectedMultipleAnswers.length > 0 ? selectedMultipleAnswers.join(', ') : 'None selected'}</strong></p>
+                          <p>Correct answers: <strong>{currentQuestion.multiSelectAnswers?.join(', ')}</strong></p>
+                        </>
+                      ) : (
+                        <>
+                          <p>Your answer: <strong>{userAnswer}</strong></p>
+                          <p>Correct answer: <strong>{currentQuestion.answer}</strong></p>
+                        </>
+                      )}
                     </>
                   )}
                 </div>

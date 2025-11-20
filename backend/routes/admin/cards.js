@@ -273,6 +273,7 @@ router.post(
         explanation,
         cardType,
         options,
+        allowMultipleCorrect,
         imageUrl,
         occludedRegions,
         orderedItems,
@@ -313,18 +314,44 @@ router.post(
 
       // Type-specific validation
       if (finalCardType === 'multiple_choice') {
-        // For multiple choice, ensure we have options and answer is one of them
+        // For multiple choice, ensure we have options
         if (!options || !Array.isArray(options) || options.length < 2) {
           return res.status(400).json({
             success: false,
             error: 'Multiple choice questions must have at least 2 options'
           });
         }
-        if (!answer) {
-          return res.status(400).json({
-            success: false,
-            error: 'Answer is required for multiple choice questions'
-          });
+
+        if (allowMultipleCorrect) {
+          // Multiple correct answers - validate multiSelectAnswers
+          if (!multiSelectAnswers || !Array.isArray(multiSelectAnswers) || multiSelectAnswers.length < 1) {
+            return res.status(400).json({
+              success: false,
+              error: 'Multiple choice questions with multiple correct answers must have at least 1 correct answer'
+            });
+          }
+          // Validate all correct answers are in options
+          const invalidAnswer = multiSelectAnswers.find(ans => !options.includes(ans));
+          if (invalidAnswer) {
+            return res.status(400).json({
+              success: false,
+              error: 'All correct answers must be in the options list'
+            });
+          }
+        } else {
+          // Single correct answer - validate answer field
+          if (!answer) {
+            return res.status(400).json({
+              success: false,
+              error: 'Answer is required for multiple choice questions'
+            });
+          }
+          if (!options.includes(answer)) {
+            return res.status(400).json({
+              success: false,
+              error: 'The correct answer must be one of the options'
+            });
+          }
         }
       } else if (finalCardType === 'image') {
         // For image quiz, ensure we have imageUrl and occludedRegions
@@ -459,10 +486,11 @@ router.post(
         explanation: explanation || null,
         cardType: finalCardType,
         options: (finalCardType === 'multiple_choice' || finalCardType === 'multi_select') ? options : null,
+        allowMultipleCorrect: finalCardType === 'multiple_choice' ? (allowMultipleCorrect || false) : null,
         imageUrl: finalCardType === 'image' ? imageUrl : null,
         occludedRegions: finalCardType === 'image' ? occludedRegions : null,
         orderedItems: finalCardType === 'ordered' ? orderedItems : null,
-        multiSelectAnswers: finalCardType === 'multi_select' ? multiSelectAnswers : null,
+        multiSelectAnswers: (finalCardType === 'multiple_choice' && allowMultipleCorrect) || finalCardType === 'multi_select' ? multiSelectAnswers : null,
         matchingPairs: finalCardType === 'matching' ? matchingPairs : null,
         categories: finalCardType === 'categorization' ? categories : null,
         tags: tags || [],
@@ -617,6 +645,7 @@ router.put(
         explanation,
         cardType,
         options,
+        allowMultipleCorrect,
         imageUrl,
         occludedRegions,
         orderedItems,
@@ -631,6 +660,7 @@ router.put(
       if (explanation !== undefined) card.explanation = explanation;
       if (cardType !== undefined) card.cardType = cardType;
       if (options !== undefined) card.options = options;
+      if (allowMultipleCorrect !== undefined) card.allowMultipleCorrect = allowMultipleCorrect;
       if (imageUrl !== undefined) card.imageUrl = imageUrl;
       if (occludedRegions !== undefined) card.occludedRegions = occludedRegions;
       if (orderedItems !== undefined) card.orderedItems = orderedItems;
