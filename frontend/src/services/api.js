@@ -115,4 +115,14 @@ export const calendarAPI = {
   getSummary: () => api.get('/calendar/summary'),
 };
 
+// Math Trick endpoints
+export const mathTrickAPI = {
+  getProgress: () => api.get('/math-trick/progress'),
+  getQuestions: (topic, level, count) => api.get('/math-trick/questions', { params: { topic, level, count } }),
+  submitGame: (gameData) => api.post('/math-trick/submit-game', gameData),
+  getLeaderboard: (period, limit) => api.get('/math-trick/leaderboard', { params: { period, limit } }),
+  getAchievements: () => api.get('/math-trick/achievements'),
+  getStats: () => api.get('/math-trick/stats'),
+};
+
 export default api;

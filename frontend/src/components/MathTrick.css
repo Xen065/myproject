@@ -1,0 +1,1190 @@
+/* Math Trick - Main Overlay */
+.mathtrick-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.mathtrick-modal {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  padding: 30px;
+  max-width: 900px;
+  width: 100%;
+  max-height: 95vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Header */
+.mathtrick-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  color: white;
+}
+
+.mathtrick-header h1 {
+  font-size: 2rem;
+  margin: 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.mathtrick-header h2 {
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.mathtrick-close-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  font-size: 2rem;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.mathtrick-close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+.mathtrick-back-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s;
+}
+
+.mathtrick-back-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateX(-5px);
+}
+
+/* Progress Card */
+.mathtrick-progress-card {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 15px;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  margin-bottom: 25px;
+  backdrop-filter: blur(10px);
+}
+
+.progress-stat {
+  text-align: center;
+  color: white;
+}
+
+.progress-label {
+  display: block;
+  font-size: 0.9rem;
+  opacity: 0.9;
+  margin-bottom: 5px;
+}
+
+.progress-value {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+/* Game Modes */
+.mathtrick-modes-section h3 {
+  color: white;
+  margin-bottom: 15px;
+  font-size: 1.3rem;
+}
+
+.mathtrick-modes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.mathtrick-mode-card {
+  background: rgba(255, 255, 255, 0.95);
+  border: 3px solid transparent;
+  border-radius: 15px;
+  padding: 25px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.mathtrick-mode-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  border-color: inherit;
+}
+
+.mode-icon {
+  font-size: 3rem;
+  margin-bottom: 10px;
+}
+
+.mode-name {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.mode-desc {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Topic Selection */
+.mathtrick-level-selector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  color: white;
+  justify-content: center;
+}
+
+.level-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 8px 15px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 1rem;
+}
+
+.level-btn.active {
+  background: rgba(255, 255, 255, 0.9);
+  color: #667eea;
+  font-weight: bold;
+}
+
+.level-btn.locked {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.mathtrick-topics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 15px;
+}
+
+.mathtrick-topic-card {
+  background: rgba(255, 255, 255, 0.95);
+  border: none;
+  border-radius: 15px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.mathtrick-topic-card:hover:not(.locked) {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.mathtrick-topic-card.locked {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.topic-icon {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.topic-name {
+  font-size: 0.95rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.topic-desc {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.lock-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 1.5rem;
+}
+
+/* Game View */
+.mathtrick-modal.game {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  max-width: 700px;
+}
+
+.mathtrick-game-header {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 15px;
+  padding: 15px;
+  margin-bottom: 15px;
+  backdrop-filter: blur(10px);
+}
+
+.mathtrick-game-stats {
+  display: flex;
+  justify-content: space-around;
+  color: white;
+  margin-top: 10px;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.8rem;
+  opacity: 0.9;
+}
+
+.stat-value {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-top: 3px;
+}
+
+.mathtrick-progress-container {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  height: 30px;
+  position: relative;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.mathtrick-progress-bar {
+  background: linear-gradient(90deg, #4ecdc4, #44a08d);
+  height: 100%;
+  transition: width 0.5s ease;
+  border-radius: 10px;
+}
+
+.mathtrick-progress-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-weight: bold;
+  font-size: 0.9rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Question */
+.mathtrick-question-container {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  margin-bottom: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.mathtrick-timer {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 15px;
+  background: #e8f5e9;
+  border-radius: 20px;
+  font-weight: bold;
+  color: #4caf50;
+}
+
+.mathtrick-timer.warning {
+  background: #fff3e0;
+  color: #ff9800;
+  animation: pulse 1s infinite;
+}
+
+.mathtrick-timer.over {
+  background: #ffebee;
+  color: #f44336;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.mathtrick-question {
+  font-size: 2.5rem;
+  text-align: center;
+  color: #333;
+  margin: 30px 0;
+  font-weight: bold;
+}
+
+.mathtrick-answer-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin: 30px 0;
+}
+
+.equals-sign {
+  font-size: 2rem;
+  color: #666;
+}
+
+.mathtrick-answer-input {
+  border: 3px solid #667eea;
+  border-radius: 15px;
+  padding: 15px 25px;
+  font-size: 2rem;
+  text-align: center;
+  width: 250px;
+  font-weight: bold;
+  color: #333;
+  background: #f8f9fa;
+}
+
+.mathtrick-answer-input:focus {
+  outline: none;
+  border-color: #764ba2;
+  box-shadow: 0 0 15px rgba(118, 75, 162, 0.3);
+}
+
+.cursor-blink {
+  font-size: 2rem;
+  animation: blink 1s infinite;
+  color: #667eea;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* Celebration/Error */
+.mathtrick-celebration {
+  text-align: center;
+  margin: 20px 0;
+  animation: celebrationPop 0.5s ease-out;
+}
+
+@keyframes celebrationPop {
+  0% { transform: scale(0); opacity: 0; }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.mathtrick-celebration.correct {
+  color: #4caf50;
+}
+
+.mathtrick-celebration.wrong {
+  color: #f44336;
+}
+
+.celebration-message {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.celebration-points {
+  font-size: 1.3rem;
+  color: #ff9800;
+  font-weight: bold;
+}
+
+/* Hint */
+.mathtrick-hint {
+  background: #fff9c4;
+  border-left: 4px solid #fbc02d;
+  padding: 15px;
+  margin: 20px 0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.mathtrick-hint-btn {
+  background: linear-gradient(135deg, #fbc02d, #f57c00);
+  border: none;
+  color: white;
+  padding: 10px 25px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: bold;
+  transition: all 0.3s;
+  margin-top: 15px;
+}
+
+.mathtrick-hint-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(251, 192, 45, 0.4);
+}
+
+/* Numpad */
+.mathtrick-numpad {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 20px auto;
+  max-width: 350px;
+}
+
+.mathtrick-numpad.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.numpad-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.numpad-btn {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  width: 70px;
+  height: 70px;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.numpad-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.numpad-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.numpad-btn.backspace {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+}
+
+.numpad-btn.clear {
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+  flex: 2;
+}
+
+.numpad-btn.negative {
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  flex: 1;
+}
+
+.mathtrick-skip-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid white;
+  color: white;
+  padding: 12px 30px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin: 10px auto;
+  display: block;
+  transition: all 0.3s;
+}
+
+.mathtrick-skip-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+/* Results */
+.mathtrick-modal.results {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.mathtrick-grade {
+  background: white;
+  border: 5px solid;
+  border-radius: 20px;
+  padding: 30px;
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.grade-icon {
+  font-size: 4rem;
+  margin-bottom: 10px;
+}
+
+.grade-letter {
+  font-size: 5rem;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.grade-text {
+  font-size: 1.5rem;
+  color: #666;
+}
+
+.mathtrick-results-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.result-stat {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.result-stat .stat-icon {
+  font-size: 2.5rem;
+}
+
+.result-stat .stat-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.result-stat .stat-label {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+/* XP Progress */
+.mathtrick-xp-progress {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 15px;
+  padding: 15px;
+  margin-bottom: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.xp-label {
+  display: flex;
+  justify-content: space-between;
+  color: white;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+}
+
+.xp-bar-container {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  height: 20px;
+  overflow: hidden;
+}
+
+.xp-bar-fill {
+  background: linear-gradient(90deg, #4ecdc4, #44a08d);
+  height: 100%;
+  transition: width 0.5s ease;
+  border-radius: 10px;
+}
+
+/* Review */
+.mathtrick-review-toggle {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid white;
+  color: white;
+  padding: 12px 30px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 1rem;
+  width: 100%;
+  margin-bottom: 15px;
+  transition: all 0.3s;
+}
+
+.mathtrick-review-toggle:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.mathtrick-review-section {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 20px;
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.review-item {
+  background: white;
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-left: 5px solid;
+}
+
+.review-item.correct {
+  border-color: #4caf50;
+}
+
+.review-item.wrong {
+  border-color: #f44336;
+}
+
+.review-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+}
+
+.review-number {
+  background: #667eea;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: bold;
+}
+
+.review-points {
+  background: #ff9800;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: bold;
+  margin-left: auto;
+}
+
+.review-question {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.review-answers {
+  margin-bottom: 10px;
+}
+
+.review-answer {
+  display: flex;
+  gap: 10px;
+  margin: 5px 0;
+  font-size: 0.95rem;
+}
+
+.answer-label {
+  color: #666;
+  font-weight: 600;
+}
+
+.answer-correct {
+  color: #4caf50;
+  font-weight: bold;
+}
+
+.answer-wrong {
+  color: #f44336;
+  font-weight: bold;
+  text-decoration: line-through;
+}
+
+.review-trick {
+  background: #fff9c4;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+/* Action Buttons */
+.mathtrick-results-actions {
+  display: flex;
+  gap: 15px;
+}
+
+.mathtrick-btn {
+  flex: 1;
+  padding: 15px;
+  border: none;
+  border-radius: 25px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.mathtrick-btn.primary {
+  background: linear-gradient(135deg, #4ecdc4, #44a08d);
+  color: white;
+}
+
+.mathtrick-btn.secondary {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid white;
+  color: white;
+}
+
+.mathtrick-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Leaderboard */
+.leaderboard-period-selector {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.period-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 10px 25px;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.period-btn.active {
+  background: white;
+  color: #667eea;
+  font-weight: bold;
+}
+
+.leaderboard-user-rank {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 15px;
+  padding: 15px;
+  margin-bottom: 20px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.user-rank-info {
+  color: white;
+  font-size: 1.2rem;
+}
+
+.rank-badge {
+  font-size: 2rem;
+  margin-right: 10px;
+}
+
+.leaderboard-list {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 20px;
+  max-height: 500px;
+  overflow-y: auto;
+  backdrop-filter: blur(10px);
+}
+
+.leaderboard-item {
+  background: white;
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  transition: all 0.3s;
+}
+
+.leaderboard-item:hover {
+  transform: translateX(5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.leaderboard-item.current-user {
+  background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+  border: 3px solid #f39c12;
+}
+
+.leaderboard-item.top-three {
+  background: linear-gradient(135deg, #ffffff, #f8f9fa);
+  border: 2px solid #ffd700;
+}
+
+.leaderboard-rank {
+  font-size: 1.5rem;
+  font-weight: bold;
+  min-width: 50px;
+  text-align: center;
+}
+
+.leaderboard-user {
+  flex: 1;
+}
+
+.user-name {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.you-badge {
+  background: #f39c12;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.7rem;
+}
+
+.user-stats {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 3px;
+}
+
+.leaderboard-score {
+  text-align: right;
+}
+
+.score-value {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #667eea;
+}
+
+.score-label {
+  font-size: 0.8rem;
+  color: #999;
+}
+
+/* Analytics */
+.mathtrick-modal.analytics {
+  max-width: 1000px;
+}
+
+.analytics-content {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 20px;
+  max-height: 600px;
+  overflow-y: auto;
+  backdrop-filter: blur(10px);
+}
+
+.analytics-section {
+  margin-bottom: 30px;
+}
+
+.analytics-section h2 {
+  color: white;
+  margin-bottom: 15px;
+  font-size: 1.3rem;
+}
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 15px;
+}
+
+.analytics-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+}
+
+.analytics-card .card-icon {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.analytics-card .card-value {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.analytics-card .card-label {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+/* Topic Stats */
+.topic-stats-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.topic-stat-item {
+  background: white;
+  border-radius: 12px;
+  padding: 15px;
+}
+
+.topic-stat-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.topic-stat-name {
+  font-weight: bold;
+  color: #333;
+}
+
+.topic-stat-accuracy {
+  font-weight: bold;
+  color: #667eea;
+}
+
+.topic-stat-bar {
+  background: #e0e0e0;
+  border-radius: 10px;
+  height: 10px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.topic-stat-fill {
+  background: linear-gradient(90deg, #4ecdc4, #44a08d);
+  height: 100%;
+  transition: width 0.5s ease;
+  border-radius: 10px;
+}
+
+.topic-stat-details {
+  display: flex;
+  gap: 15px;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+/* Achievements */
+.achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 15px;
+}
+
+.achievement-card {
+  background: white;
+  border-radius: 12px;
+  padding: 15px;
+  text-align: center;
+}
+
+.achievement-icon {
+  font-size: 2.5rem;
+  margin-bottom: 8px;
+}
+
+.achievement-name {
+  font-weight: bold;
+  color: #333;
+  font-size: 0.95rem;
+  margin-bottom: 5px;
+}
+
+.achievement-desc {
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.achievement-date {
+  font-size: 0.75rem;
+  color: #999;
+}
+
+/* Recent Games */
+.recent-games-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.recent-game-item {
+  background: white;
+  border-radius: 12px;
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.game-rank {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #667eea;
+  min-width: 40px;
+}
+
+.game-info {
+  flex: 1;
+}
+
+.game-mode {
+  font-weight: bold;
+  color: #333;
+  font-size: 0.95rem;
+  margin-bottom: 3px;
+}
+
+.game-details {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.game-score {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #4caf50;
+}
+
+/* Quick Links */
+.mathtrick-quick-links {
+  display: flex;
+  gap: 15px;
+}
+
+.quick-link-btn {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid white;
+  color: white;
+  padding: 15px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+
+.quick-link-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-3px);
+}
+
+/* Loading & Empty States */
+.loading-message,
+.empty-message {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+/* Scrollbar Styling */
+.mathtrick-modal::-webkit-scrollbar,
+.mathtrick-review-section::-webkit-scrollbar,
+.leaderboard-list::-webkit-scrollbar,
+.analytics-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.mathtrick-modal::-webkit-scrollbar-track,
+.mathtrick-review-section::-webkit-scrollbar-track,
+.leaderboard-list::-webkit-scrollbar-track,
+.analytics-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.mathtrick-modal::-webkit-scrollbar-thumb,
+.mathtrick-review-section::-webkit-scrollbar-thumb,
+.leaderboard-list::-webkit-scrollbar-thumb,
+.analytics-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+}
+
+.mathtrick-modal::-webkit-scrollbar-thumb:hover,
+.mathtrick-review-section::-webkit-scrollbar-thumb:hover,
+.leaderboard-list::-webkit-scrollbar-thumb:hover,
+.analytics-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .mathtrick-modal {
+    padding: 20px;
+    margin: 10px;
+  }
+
+  .mathtrick-question {
+    font-size: 2rem;
+  }
+
+  .mathtrick-answer-input {
+    width: 180px;
+    font-size: 1.5rem;
+  }
+
+  .numpad-btn {
+    width: 60px;
+    height: 60px;
+    font-size: 1.3rem;
+  }
+
+  .mathtrick-modes-grid,
+  .mathtrick-topics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .analytics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

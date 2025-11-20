@@ -21,6 +21,9 @@ const CourseModule = require('./CourseModule');
 const CourseContent = require('./CourseContent');
 const StudyGoal = require('./StudyGoal');
 const StudyNote = require('./StudyNote');
+const MathTrickProgress = require('./MathTrickProgress');
+const MathTrickScore = require('./MathTrickScore');
+const MathTrickAchievement = require('./MathTrickAchievement');
 
 // ============================================
 // Define Model Associations (Relationships)
@@ -337,6 +340,39 @@ StudyNote.belongsTo(StudyTask, {
   as: 'task'
 });
 
+// User -> MathTrickProgress (One-to-One)
+User.hasOne(MathTrickProgress, {
+  foreignKey: 'userId',
+  as: 'mathTrickProgress'
+});
+
+MathTrickProgress.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'student'
+});
+
+// User -> MathTrickScore (One-to-Many)
+User.hasMany(MathTrickScore, {
+  foreignKey: 'userId',
+  as: 'mathTrickScores'
+});
+
+MathTrickScore.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'student'
+});
+
+// User -> MathTrickAchievement (One-to-Many)
+User.hasMany(MathTrickAchievement, {
+  foreignKey: 'userId',
+  as: 'mathTrickAchievements'
+});
+
+MathTrickAchievement.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'student'
+});
+
 // ============================================
 // Export all models
 // ============================================
@@ -357,5 +393,8 @@ module.exports = {
   CourseModule,
   CourseContent,
   StudyGoal,
-  StudyNote
+  StudyNote,
+  MathTrickProgress,
+  MathTrickScore,
+  MathTrickAchievement
 };

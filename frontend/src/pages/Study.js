@@ -9,6 +9,7 @@ import StudyGoals from '../components/StudyGoals';
 import ProgressDashboard from '../components/ProgressDashboard';
 import SmartStudyPlanner from '../components/SmartStudyPlanner';
 import NotesManager from '../components/NotesManager';
+import MathTrick from '../components/MathTrick';
 import './Study.css';
 
 function Study() {
@@ -47,6 +48,7 @@ function Study() {
   const [showPlanner, setShowPlanner] = useState(false);
   const [showNotes, setShowNotes] = useState(false);
   const [showQuickNote, setShowQuickNote] = useState(false);
+  const [showMathTrick, setShowMathTrick] = useState(false);
 
   // Calculate card difficulty level
   const getDifficultyLevel = (card) => {
@@ -412,6 +414,14 @@ function Study() {
               <span className="tool-icon">📝</span>
               <span className="tool-label">Notes</span>
             </button>
+            <button
+              className="tool-btn mathtrick"
+              onClick={() => setShowMathTrick(true)}
+              title="Math Trick - Boost Your Calculation Speed"
+            >
+              <span className="tool-icon">🧮</span>
+              <span className="tool-label">Math Trick</span>
+            </button>
           </div>
         </div>
 
@@ -500,6 +510,10 @@ function Study() {
             onClose={() => setShowNotes(false)}
             courses={enrolledCourses.map(c => ({ id: c.id, name: c.title }))}
           />
+        )}
+
+        {showMathTrick && (
+          <MathTrick onClose={() => setShowMathTrick(false)} />
         )}
       </div>
     );
