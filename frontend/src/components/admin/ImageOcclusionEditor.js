@@ -34,7 +34,13 @@ const ImageOcclusionEditor = ({ imageUrl, regions, onChange }) => {
       redrawCanvas();
     };
 
-    img.src = imageUrl.startsWith('http') ? imageUrl : `${window.location.origin}${imageUrl}`;
+    img.onerror = () => {
+      console.error('Failed to load image:', imageUrl);
+    };
+
+    // Use the imageUrl directly - QuestionModal now provides full URLs
+    img.crossOrigin = 'anonymous'; // Enable CORS for canvas manipulation
+    img.src = imageUrl;
   }, [imageUrl]);
 
   // Redraw canvas whenever regions change
