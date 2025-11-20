@@ -59,8 +59,8 @@ const ManageCourseContent = () => {
       setModules(Array.isArray(modulesRes.data.data) ? modulesRes.data.data : []);
       setContents(Array.isArray(contentsRes.data.data) ? contentsRes.data.data : []);
 
-      // Questions might be in data.data.cards or data.data
-      const questionData = questionsRes.data.data;
+      // Questions might be in data.cards, data.data.cards, or data.data
+      const questionData = questionsRes.data.data || questionsRes.data;
       if (Array.isArray(questionData?.cards)) {
         setQuestions(questionData.cards);
       } else if (Array.isArray(questionData)) {
