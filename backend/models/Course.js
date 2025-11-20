@@ -95,8 +95,7 @@ const Course = sequelize.define('Course', {
   priceType: {
     type: DataTypes.ENUM('coins', 'rupees'),
     defaultValue: 'coins',
-    field: 'price_type',
-    comment: 'Currency type: coins (in-app) or rupees (real money)'
+    field: 'price_type'
   },
 
   isFree: {
