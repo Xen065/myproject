@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { authenticate } = require('../middleware/auth');
+const { protect } = require('../middleware/auth');
 const { Op } = require('sequelize');
 const StudyNote = require('../models/StudyNote');
 const Course = require('../models/Course');
@@ -9,7 +9,7 @@ const StudySession = require('../models/StudySession');
 const StudyTask = require('../models/StudyTask');
 
 // Get all notes for the authenticated user
-router.get('/', authenticate, async (req, res) => {
+router.get('/', protect, async (req, res) => {
   try {
     const {
       courseId,
@@ -92,7 +92,7 @@ router.get('/', authenticate, async (req, res) => {
 });
 
 // Get a single note by ID
-router.get('/:id', authenticate, async (req, res) => {
+router.get('/:id', protect, async (req, res) => {
   try {
     const note = await StudyNote.findOne({
       where: {
@@ -138,7 +138,7 @@ router.get('/:id', authenticate, async (req, res) => {
 });
 
 // Create a new note
-router.post('/', authenticate, async (req, res) => {
+router.post('/', protect, async (req, res) => {
   try {
     const {
       courseId,
@@ -230,7 +230,7 @@ router.post('/', authenticate, async (req, res) => {
 });
 
 // Update a note
-router.put('/:id', authenticate, async (req, res) => {
+router.put('/:id', protect, async (req, res) => {
   try {
     const note = await StudyNote.findOne({
       where: {
@@ -317,7 +317,7 @@ router.put('/:id', authenticate, async (req, res) => {
 });
 
 // Delete a note
-router.delete('/:id', authenticate, async (req, res) => {
+router.delete('/:id', protect, async (req, res) => {
   try {
     const note = await StudyNote.findOne({
       where: {
@@ -340,7 +340,7 @@ router.delete('/:id', authenticate, async (req, res) => {
 });
 
 // Get all unique folders
-router.get('/meta/folders', authenticate, async (req, res) => {
+router.get('/meta/folders', protect, async (req, res) => {
   try {
     const notes = await StudyNote.findAll({
       where: {
@@ -361,7 +361,7 @@ router.get('/meta/folders', authenticate, async (req, res) => {
 });
 
 // Get all unique tags
-router.get('/meta/tags', authenticate, async (req, res) => {
+router.get('/meta/tags', protect, async (req, res) => {
   try {
     const notes = await StudyNote.findAll({
       where: {
@@ -386,7 +386,7 @@ router.get('/meta/tags', authenticate, async (req, res) => {
 });
 
 // Search notes (advanced full-text search)
-router.post('/search', authenticate, async (req, res) => {
+router.post('/search', protect, async (req, res) => {
   try {
     const { query, filters } = req.body;
 
@@ -438,7 +438,7 @@ router.post('/search', authenticate, async (req, res) => {
 });
 
 // Toggle pin status
-router.post('/:id/pin', authenticate, async (req, res) => {
+router.post('/:id/pin', protect, async (req, res) => {
   try {
     const note = await StudyNote.findOne({
       where: {
@@ -462,7 +462,7 @@ router.post('/:id/pin', authenticate, async (req, res) => {
 });
 
 // Toggle favorite status
-router.post('/:id/favorite', authenticate, async (req, res) => {
+router.post('/:id/favorite', protect, async (req, res) => {
   try {
     const note = await StudyNote.findOne({
       where: {
@@ -486,7 +486,7 @@ router.post('/:id/favorite', authenticate, async (req, res) => {
 });
 
 // Toggle archive status
-router.post('/:id/archive', authenticate, async (req, res) => {
+router.post('/:id/archive', protect, async (req, res) => {
   try {
     const note = await StudyNote.findOne({
       where: {
@@ -510,7 +510,7 @@ router.post('/:id/archive', authenticate, async (req, res) => {
 });
 
 // Get notes statistics
-router.get('/stats/summary', authenticate, async (req, res) => {
+router.get('/stats/summary', protect, async (req, res) => {
   try {
     const userId = req.user.id;
 

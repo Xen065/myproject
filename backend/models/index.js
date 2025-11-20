@@ -318,7 +318,7 @@ StudyNote.belongsTo(Card, {
 // StudySession -> StudyNote (One-to-Many)
 StudySession.hasMany(StudyNote, {
   foreignKey: 'studySessionId',
-  as: 'notes'
+  as: 'studyNotes'
 });
 
 StudyNote.belongsTo(StudySession, {
@@ -329,7 +329,7 @@ StudyNote.belongsTo(StudySession, {
 // StudyTask -> StudyNote (One-to-Many)
 StudyTask.hasMany(StudyNote, {
   foreignKey: 'taskId',
-  as: 'notes'
+  as: 'taskNotes'
 });
 
 StudyNote.belongsTo(StudyTask, {

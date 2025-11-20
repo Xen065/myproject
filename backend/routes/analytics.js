@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { authenticate } = require('../middleware/auth');
+const { protect } = require('../middleware/auth');
 const { Op, fn, col, literal } = require('sequelize');
 const sequelize = require('../config/database');
 const StudySession = require('../models/StudySession');
@@ -11,7 +11,7 @@ const ExamReminder = require('../models/ExamReminder');
 const User = require('../models/User');
 
 // Get study heatmap data (GitHub-style)
-router.get('/heatmap', authenticate, async (req, res) => {
+router.get('/heatmap', protect, async (req, res) => {
   try {
     const { year, months } = req.query;
     const currentYear = year ? parseInt(year) : new Date().getFullYear();
@@ -51,7 +51,7 @@ router.get('/heatmap', authenticate, async (req, res) => {
 });
 
 // Get course performance breakdown
-router.get('/courses/performance', authenticate, async (req, res) => {
+router.get('/courses/performance', protect, async (req, res) => {
   try {
     const courses = await Course.findAll({
       where: { userId: req.user.id },
@@ -103,7 +103,7 @@ router.get('/courses/performance', authenticate, async (req, res) => {
 });
 
 // Get study time statistics
-router.get('/time/stats', authenticate, async (req, res) => {
+router.get('/time/stats', protect, async (req, res) => {
   try {
     const { period } = req.query; // 'week', 'month', 'year', 'all'
     let startDate;
@@ -155,7 +155,7 @@ router.get('/time/stats', authenticate, async (req, res) => {
 });
 
 // Get daily study time for a period (for charts)
-router.get('/time/daily', authenticate, async (req, res) => {
+router.get('/time/daily', protect, async (req, res) => {
   try {
     const { days } = req.query; // Number of days to look back
     const daysBack = days ? parseInt(days) : 30;
@@ -192,7 +192,7 @@ router.get('/time/daily', authenticate, async (req, res) => {
 });
 
 // Get study time per course (pie chart data)
-router.get('/time/by-course', authenticate, async (req, res) => {
+router.get('/time/by-course', protect, async (req, res) => {
   try {
     const { period } = req.query;
     let startDate;
@@ -248,7 +248,7 @@ router.get('/time/by-course', authenticate, async (req, res) => {
 });
 
 // Get flashcard mastery rate over time
-router.get('/cards/mastery-trend', authenticate, async (req, res) => {
+router.get('/cards/mastery-trend', protect, async (req, res) => {
   try {
     const { months } = req.query;
     const monthsBack = months ? parseInt(months) : 6;
@@ -297,7 +297,7 @@ router.get('/cards/mastery-trend', authenticate, async (req, res) => {
 });
 
 // Get upcoming workload (next 7 or 30 days)
-router.get('/workload/upcoming', authenticate, async (req, res) => {
+router.get('/workload/upcoming', protect, async (req, res) => {
   try {
     const { days } = req.query;
     const daysAhead = days ? parseInt(days) : 7;
@@ -427,7 +427,7 @@ router.get('/workload/upcoming', authenticate, async (req, res) => {
 });
 
 // Get streak data and milestones
-router.get('/streak', authenticate, async (req, res) => {
+router.get('/streak', protect, async (req, res) => {
   try {
     const user = await User.findByPk(req.user.id, {
       attributes: ['currentStreak', 'longestStreak', 'lastStudyDate', 'level', 'experiencePoints', 'coins']
@@ -473,7 +473,7 @@ router.get('/streak', authenticate, async (req, res) => {
 });
 
 // Get comprehensive analytics summary
-router.get('/summary', authenticate, async (req, res) => {
+router.get('/summary', protect, async (req, res) => {
   try {
     const user = await User.findByPk(req.user.id);
 

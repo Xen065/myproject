@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const { authenticate } = require('../middleware/auth');
+const { protect } = require('../middleware/auth');
 const StudyGoal = require('../models/StudyGoal');
 const Course = require('../models/Course');
 const User = require('../models/User');
 const { Op } = require('sequelize');
 
 // Get all goals for the authenticated user
-router.get('/', authenticate, async (req, res) => {
+router.get('/', protect, async (req, res) => {
   try {
     const {
       goalType,
@@ -65,7 +65,7 @@ router.get('/', authenticate, async (req, res) => {
 });
 
 // Get a single goal by ID
-router.get('/:id', authenticate, async (req, res) => {
+router.get('/:id', protect, async (req, res) => {
   try {
     const goal = await StudyGoal.findOne({
       where: {
@@ -96,7 +96,7 @@ router.get('/:id', authenticate, async (req, res) => {
 });
 
 // Create a new study goal
-router.post('/', authenticate, async (req, res) => {
+router.post('/', protect, async (req, res) => {
   try {
     const {
       courseId,
@@ -187,7 +187,7 @@ router.post('/', authenticate, async (req, res) => {
 });
 
 // Update a study goal
-router.put('/:id', authenticate, async (req, res) => {
+router.put('/:id', protect, async (req, res) => {
   try {
     const goal = await StudyGoal.findOne({
       where: {
@@ -296,7 +296,7 @@ router.put('/:id', authenticate, async (req, res) => {
 });
 
 // Update goal progress
-router.post('/:id/progress', authenticate, async (req, res) => {
+router.post('/:id/progress', protect, async (req, res) => {
   try {
     const { increment } = req.body;
 
@@ -354,7 +354,7 @@ router.post('/:id/progress', authenticate, async (req, res) => {
 });
 
 // Mark goal as completed
-router.post('/:id/complete', authenticate, async (req, res) => {
+router.post('/:id/complete', protect, async (req, res) => {
   try {
     const goal = await StudyGoal.findOne({
       where: {
@@ -408,7 +408,7 @@ router.post('/:id/complete', authenticate, async (req, res) => {
 });
 
 // Delete a study goal
-router.delete('/:id', authenticate, async (req, res) => {
+router.delete('/:id', protect, async (req, res) => {
   try {
     const goal = await StudyGoal.findOne({
       where: {
@@ -431,7 +431,7 @@ router.delete('/:id', authenticate, async (req, res) => {
 });
 
 // Get goal statistics
-router.get('/stats/summary', authenticate, async (req, res) => {
+router.get('/stats/summary', protect, async (req, res) => {
   try {
     const userId = req.user.id;
 

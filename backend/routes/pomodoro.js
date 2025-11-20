@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { authenticate } = require('../middleware/auth');
+const { protect } = require('../middleware/auth');
 const { Op, fn, col } = require('sequelize');
 const StudySession = require('../models/StudySession');
 const StudyTask = require('../models/StudyTask');
@@ -9,7 +9,7 @@ const User = require('../models/User');
 const StudyGoal = require('../models/StudyGoal');
 
 // Start a new pomodoro/timer session
-router.post('/start', authenticate, async (req, res) => {
+router.post('/start', protect, async (req, res) => {
   try {
     const {
       courseId,
@@ -89,7 +89,7 @@ router.post('/start', authenticate, async (req, res) => {
 });
 
 // Update timer session (log pomodoro completion, switch phases)
-router.put('/:id/update', authenticate, async (req, res) => {
+router.put('/:id/update', protect, async (req, res) => {
   try {
     const session = await StudySession.findOne({
       where: {
@@ -140,7 +140,7 @@ router.put('/:id/update', authenticate, async (req, res) => {
 });
 
 // Complete a timer session
-router.post('/:id/complete', authenticate, async (req, res) => {
+router.post('/:id/complete', protect, async (req, res) => {
   try {
     const session = await StudySession.findOne({
       where: {
@@ -300,7 +300,7 @@ router.post('/:id/complete', authenticate, async (req, res) => {
 });
 
 // Cancel a timer session
-router.post('/:id/cancel', authenticate, async (req, res) => {
+router.post('/:id/cancel', protect, async (req, res) => {
   try {
     const session = await StudySession.findOne({
       where: {
@@ -324,7 +324,7 @@ router.post('/:id/cancel', authenticate, async (req, res) => {
 });
 
 // Get active timer session for user
-router.get('/active', authenticate, async (req, res) => {
+router.get('/active', protect, async (req, res) => {
   try {
     const session = await StudySession.findOne({
       where: {
@@ -361,7 +361,7 @@ router.get('/active', authenticate, async (req, res) => {
 });
 
 // Get session history (recent timer sessions)
-router.get('/history', authenticate, async (req, res) => {
+router.get('/history', protect, async (req, res) => {
   try {
     const { limit, courseId } = req.query;
     const queryLimit = limit ? parseInt(limit) : 20;
@@ -405,7 +405,7 @@ router.get('/history', authenticate, async (req, res) => {
 });
 
 // Get timer statistics
-router.get('/stats', authenticate, async (req, res) => {
+router.get('/stats', protect, async (req, res) => {
   try {
     const { period } = req.query; // 'today', 'week', 'month', 'all'
     let startDate;

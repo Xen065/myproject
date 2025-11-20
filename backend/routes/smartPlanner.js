@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { authenticate } = require('../middleware/auth');
+const { protect } = require('../middleware/auth');
 const { Op, fn, col } = require('sequelize');
 const StudyTask = require('../models/StudyTask');
 const ExamReminder = require('../models/ExamReminder');
@@ -9,7 +9,7 @@ const Course = require('../models/Course');
 const StudySession = require('../models/StudySession');
 
 // Generate smart study plan for a week
-router.post('/plan-week', authenticate, async (req, res) => {
+router.post('/plan-week', protect, async (req, res) => {
   try {
     const { startDate, availableHoursPerDay, preferredStudyTimes } = req.body;
 
@@ -329,7 +329,7 @@ router.post('/plan-week', authenticate, async (req, res) => {
 });
 
 // Get priority recommendations for today
-router.get('/today-priorities', authenticate, async (req, res) => {
+router.get('/today-priorities', protect, async (req, res) => {
   try {
     const today = new Date().toISOString().split('T')[0];
     const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
@@ -445,7 +445,7 @@ router.get('/today-priorities', authenticate, async (req, res) => {
 });
 
 // Get suggested study schedule based on past patterns
-router.get('/optimal-times', authenticate, async (req, res) => {
+router.get('/optimal-times', protect, async (req, res) => {
   try {
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
