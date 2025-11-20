@@ -89,7 +89,7 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
         // Construct full URL for image preview
         const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
         const fullImageUrl = `${API_BASE_URL}${response.data.imageUrl}`;
-        setFormData({ ...formData, imageUrl: response.data.imageUrl });
+        setFormData(prev => ({ ...prev, imageUrl: response.data.imageUrl }));
         setPreviewUrl(fullImageUrl);
       }
 
