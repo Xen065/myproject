@@ -58,19 +58,26 @@ const QuestionManagement = () => {
         adminCourseAPI.getAll()
       ]);
 
-      setQuestions(questionsRes.data.data || []);
-      setCourses(coursesRes.data.data || []);
+      // Ensure we always set arrays, handling various response structures
+      const questionsData = questionsRes?.data?.data || questionsRes?.data || [];
+      const coursesData = coursesRes?.data?.data || coursesRes?.data || [];
+
+      setQuestions(Array.isArray(questionsData) ? questionsData : []);
+      setCourses(Array.isArray(coursesData) ? coursesData : []);
       setError(null);
     } catch (err) {
       console.error('Error fetching data:', err);
       setError('Failed to load questions');
+      // Ensure arrays are set even on error
+      setQuestions([]);
+      setCourses([]);
     } finally {
       setLoading(false);
     }
   };
 
   // Filter questions
-  const filteredQuestions = questions.filter(q => {
+  const filteredQuestions = Array.isArray(questions) ? questions.filter(q => {
     const matchesSearch = searchTerm === '' ||
       q.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (q.answer && q.answer.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -83,7 +90,7 @@ const QuestionManagement = () => {
       (selectedStatus === 'inactive' && !q.isActive);
 
     return matchesSearch && matchesCourse && matchesType && matchesStatus;
-  });
+  }) : [];
 
   // Pagination
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -93,7 +100,9 @@ const QuestionManagement = () => {
 
   const handleToggleActive = async (questionId) => {
     try {
-      const question = questions.find(q => q.id === questionId);
+      const question = Array.isArray(questions) ? questions.find(q => q.id === questionId) : null;
+      if (!question) return;
+
       await adminCardAPI.update(questionId, {
         isActive: !question.isActive
       });
@@ -106,7 +115,9 @@ const QuestionManagement = () => {
 
   const handleToggleSuspended = async (questionId) => {
     try {
-      const question = questions.find(q => q.id === questionId);
+      const question = Array.isArray(questions) ? questions.find(q => q.id === questionId) : null;
+      if (!question) return;
+
       await adminCardAPI.update(questionId, {
         isSuspended: !question.isSuspended
       });
