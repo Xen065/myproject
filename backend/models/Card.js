@@ -51,7 +51,7 @@ const Card = sequelize.define('Card', {
 
   // Card Type
   cardType: {
-    type: DataTypes.ENUM('basic', 'multiple_choice', 'cloze', 'image'),
+    type: DataTypes.ENUM('basic', 'multiple_choice', 'cloze', 'image', 'ordered'),
     defaultValue: 'basic',
     field: 'card_type'
   },
@@ -76,6 +76,14 @@ const Card = sequelize.define('Card', {
     allowNull: true,
     field: 'occluded_regions',
     comment: 'Array of occluded regions: [{id, x, y, width, height, answer}]'
+  },
+
+  // Ordered question fields
+  orderedItems: {
+    type: DataTypes.JSON,
+    allowNull: true,
+    field: 'ordered_items',
+    comment: 'Array of items in correct order: ["item1", "item2", "item3"]'
   },
 
   // Relationships
