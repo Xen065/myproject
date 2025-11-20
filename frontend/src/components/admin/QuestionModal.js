@@ -210,8 +210,8 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
     try {
       setSaving(true);
       const data = {
-        courseId,
-        moduleId: formData.moduleId || null,
+        courseId: parseInt(courseId),
+        moduleId: formData.moduleId ? parseInt(formData.moduleId) : null,
         question: formData.question,
         answer: formData.answer || '',
         hint: formData.hint || null,
@@ -232,16 +232,24 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
         tags: formData.tags,
       };
 
+      console.log('Saving question with data:', data);
+
+      let response;
       if (question?.id) {
-        await adminCardAPI.update(question.id, data);
+        console.log('Updating existing question:', question.id);
+        response = await adminCardAPI.update(question.id, data);
       } else {
-        await adminCardAPI.create(data);
+        console.log('Creating new question');
+        response = await adminCardAPI.create(data);
       }
 
+      console.log('Save response:', response.data);
       onSave();
       onClose();
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to save question');
+      console.error('Error saving question:', err);
+      console.error('Error response:', err.response?.data);
+      setError(err.response?.data?.error || err.message || 'Failed to save question');
       setSaving(false);
     }
   };
