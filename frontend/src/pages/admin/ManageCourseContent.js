@@ -46,12 +46,15 @@ const ManageCourseContent = () => {
   const loadData = async () => {
     try {
       setLoading(true);
+      console.log('Loading course data for courseId:', courseId);
       const [courseRes, modulesRes, contentsRes, questionsRes] = await Promise.all([
         adminCourseAPI.getById(courseId),
         adminCourseModuleAPI.getByCourse(courseId),
         adminCourseContentAPI.getByCourse(courseId),
         adminCardAPI.getByCourse(courseId)
       ]);
+
+      console.log('Raw questions response:', questionsRes.data);
 
       setCourse(courseRes.data.data);
 
@@ -61,18 +64,25 @@ const ManageCourseContent = () => {
 
       // Questions might be in data.cards, data.data.cards, or data.data
       const questionData = questionsRes.data.data || questionsRes.data;
+      console.log('Parsed questionData:', questionData);
+
+      let finalQuestions = [];
       if (Array.isArray(questionData?.cards)) {
-        setQuestions(questionData.cards);
+        finalQuestions = questionData.cards;
       } else if (Array.isArray(questionData)) {
-        setQuestions(questionData);
+        finalQuestions = questionData;
       } else {
-        setQuestions([]);
+        finalQuestions = [];
       }
+
+      console.log('Final questions to display:', finalQuestions);
+      console.log('Number of questions:', finalQuestions.length);
+      setQuestions(finalQuestions);
 
       console.log('Loaded data:', {
         modules: modulesRes.data.data,
         contents: contentsRes.data.data,
-        questions: questionData
+        questionsCount: finalQuestions.length
       });
     } catch (error) {
       console.error('Error loading data:', error);
