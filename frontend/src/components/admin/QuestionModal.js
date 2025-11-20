@@ -364,25 +364,27 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
           )}
 
           {formData.cardType !== 'image' && (
-            <div className="form-group">
-            <label>Hint (optional)</label>
-            <input
-              type="text"
-              value={formData.hint}
-              onChange={(e) => setFormData({ ...formData, hint: e.target.value })}
-              placeholder="A helpful hint for students"
-            />
-          </div>
+            <>
+              <div className="form-group">
+                <label>Hint (optional)</label>
+                <input
+                  type="text"
+                  value={formData.hint}
+                  onChange={(e) => setFormData({ ...formData, hint: e.target.value })}
+                  placeholder="A helpful hint for students"
+                />
+              </div>
 
-          <div className="form-group">
-            <label>Explanation (optional)</label>
-            <textarea
-              value={formData.explanation}
-              onChange={(e) => setFormData({ ...formData, explanation: e.target.value })}
-              rows={2}
-              placeholder="Explain why this is the correct answer (shown after answering)"
-            />
-          </div>
+              <div className="form-group">
+                <label>Explanation (optional)</label>
+                <textarea
+                  value={formData.explanation}
+                  onChange={(e) => setFormData({ ...formData, explanation: e.target.value })}
+                  rows={2}
+                  placeholder="Explain why this is the correct answer (shown after answering)"
+                />
+              </div>
+            </>
           )}
 
           <div className="info-box sm2-info">
