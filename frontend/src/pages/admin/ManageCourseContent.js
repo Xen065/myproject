@@ -72,6 +72,7 @@ const ManageCourseContent = () => {
       } else if (Array.isArray(questionData)) {
         finalQuestions = questionData;
       } else {
+        console.warn('Unexpected question data structure:', questionData);
         finalQuestions = [];
       }
 
@@ -79,14 +80,16 @@ const ManageCourseContent = () => {
       console.log('Number of questions:', finalQuestions.length);
       setQuestions(finalQuestions);
 
-      console.log('Loaded data:', {
-        modules: modulesRes.data.data,
-        contents: contentsRes.data.data,
+      console.log('Successfully loaded course data:', {
+        course: courseRes.data.data?.title,
+        modulesCount: modulesRes.data.data?.length || 0,
+        contentsCount: contentsRes.data.data?.length || 0,
         questionsCount: finalQuestions.length
       });
     } catch (error) {
       console.error('Error loading data:', error);
-      alert('Failed to load course data');
+      console.error('Error details:', error.response?.data || error.message);
+      alert(`Failed to load course data: ${error.response?.data?.error || error.message}`);
       // Reset to safe defaults on error
       setModules([]);
       setContents([]);
@@ -295,8 +298,13 @@ const ManageCourseContent = () => {
           courseId={courseId}
           question={editingQuestion}
           modules={modules}
-          onClose={() => setShowQuestionModal(false)}
-          onSave={loadData}
+          onClose={() => {
+            setShowQuestionModal(false);
+            setEditingQuestion(null);
+          }}
+          onSave={async () => {
+            await loadData();
+          }}
         />
       )}
     </div>

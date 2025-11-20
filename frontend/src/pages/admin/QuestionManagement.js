@@ -454,10 +454,10 @@ const QuestionManagement = () => {
             setShowModal(false);
             setEditingQuestion(null);
           }}
-          onSave={() => {
+          onSave={async () => {
+            await fetchData();
             setShowModal(false);
             setEditingQuestion(null);
-            fetchData();
           }}
         />
       )}

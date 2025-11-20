@@ -472,10 +472,17 @@ router.post(
         }
       }
 
+      console.log('Creating card with data:', {
+        courseId,
+        moduleId,
+        question: question?.substring(0, 50),
+        cardType: finalCardType
+      });
+
       // Create card template
       const card = await Card.create({
-        courseId,
-        moduleId: moduleId || null,
+        courseId: parseInt(courseId),
+        moduleId: moduleId ? parseInt(moduleId) : null,
         userId: null, // Template cards have no userId (not tied to a specific student)
         question,
         answer: answer || '',
@@ -497,8 +504,12 @@ router.post(
         repetitions: 0
       });
 
+      console.log('Card created successfully with ID:', card.id);
+
       // Update course total cards count
       await course.increment('totalCards');
+
+      console.log('Course totalCards incremented');
 
       res.status(201).json({
         success: true,
@@ -507,9 +518,15 @@ router.post(
       });
     } catch (error) {
       console.error('Error creating card:', error);
+      console.error('Error name:', error.name);
+      console.error('Error message:', error.message);
+      if (error.errors) {
+        console.error('Validation errors:', error.errors);
+      }
       res.status(500).json({
         success: false,
-        error: 'Error creating card'
+        error: error.message || 'Error creating card',
+        details: error.errors ? error.errors.map(e => e.message) : undefined
       });
     }
   }

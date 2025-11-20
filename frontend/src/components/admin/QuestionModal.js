@@ -128,6 +128,12 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
       return;
     }
 
+    // Validate courseId is present
+    if (!courseId) {
+      setError('Course ID is required');
+      return;
+    }
+
     // Type-specific validation
     if (formData.cardType === 'multiple_choice') {
       const validOptions = formData.options.filter(opt => opt.trim());
@@ -244,7 +250,14 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
       }
 
       console.log('Save response:', response.data);
-      onSave();
+
+      // Call onSave and wait a moment for parent to process
+      if (onSave) {
+        await onSave();
+      }
+
+      // Reset saving state before closing
+      setSaving(false);
       onClose();
     } catch (err) {
       console.error('Error saving question:', err);
