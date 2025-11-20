@@ -9,37 +9,53 @@
 const { Sequelize } = require('sequelize');
 
 // Create a new Sequelize instance with PostgreSQL connection
-const sequelize = new Sequelize(
-  process.env.DB_NAME,     // Database name
-  process.env.DB_USER,     // Database user
-  process.env.DB_PASSWORD, // Database password
-  {
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT || 5432,
-    dialect: 'postgres',
-
-    // Logging configuration
-    logging: process.env.NODE_ENV === 'development' ? console.log : false,
-
-    // Connection pool configuration
-    pool: {
-      max: 5,           // Maximum number of connections
-      min: 0,           // Minimum number of connections
-      acquire: 30000,   // Maximum time to get a connection (30 seconds)
-      idle: 10000       // Maximum time a connection can be idle (10 seconds)
-    },
-
-    // Timezone
-    timezone: '+00:00',
-
-    // Define options
-    define: {
-      timestamps: true,        // Automatically add createdAt and updatedAt fields
-      underscored: true,       // Use snake_case for column names
-      freezeTableName: false,  // Allow Sequelize to pluralize table names
-    }
-  }
-);
+// Support both DATABASE_URL (Render/Heroku style) and individual credentials
+const sequelize = process.env.DATABASE_URL
+  ? new Sequelize(process.env.DATABASE_URL, {
+      dialect: 'postgres',
+      dialectOptions: {
+        ssl: process.env.NODE_ENV === 'production' ? {
+          require: true,
+          rejectUnauthorized: false
+        } : false
+      },
+      logging: process.env.NODE_ENV === 'development' ? console.log : false,
+      pool: {
+        max: 5,
+        min: 0,
+        acquire: 30000,
+        idle: 10000
+      },
+      timezone: '+00:00',
+      define: {
+        timestamps: true,
+        underscored: true,
+        freezeTableName: false,
+      }
+    })
+  : new Sequelize(
+      process.env.DB_NAME,
+      process.env.DB_USER,
+      process.env.DB_PASSWORD,
+      {
+        host: process.env.DB_HOST,
+        port: process.env.DB_PORT || 5432,
+        dialect: 'postgres',
+        logging: process.env.NODE_ENV === 'development' ? console.log : false,
+        pool: {
+          max: 5,
+          min: 0,
+          acquire: 30000,
+          idle: 10000
+        },
+        timezone: '+00:00',
+        define: {
+          timestamps: true,
+          underscored: true,
+          freezeTableName: false,
+        }
+      }
+    );
 
 // Test the database connection
 const testConnection = async () => {
