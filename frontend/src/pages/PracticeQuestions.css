@@ -316,8 +316,8 @@
   font-size: 18px;
 }
 
-/* Image Occlusion Styles */
-.image-occlusion-practice {
+/* Picture Quiz Styles */
+.picture-quiz-practice {
   margin-top: 16px;
 }
 
@@ -397,11 +397,11 @@
   color: #374151;
 }
 
-.image-occlusion-answers {
+.picture-quiz-answers {
   margin-top: 16px;
 }
 
-.image-occlusion-answers h4 {
+.picture-quiz-answers h4 {
   margin: 0 0 16px 0;
   color: #1f2937;
   font-size: 18px;

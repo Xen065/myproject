@@ -1,12 +1,12 @@
 /**
- * Image Occlusion Editor Component
- * Allows teachers to draw rectangles on an image to create occlusion regions
+ * Picture Quiz Editor Component
+ * Allows teachers to draw shapes on an image to create quiz regions
  * Enhanced with zoom, pan, and keyboard shortcuts
  */
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import './ImageOcclusionEditor.css';
+import './PictureQuizEditor.css';
 
-const ImageOcclusionEditor = ({ imageUrl, regions, onChange }) => {
+const PictureQuizEditor = ({ imageUrl, regions, onChange }) => {
   const canvasRef = useRef(null);
   const imageRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -555,9 +555,9 @@ const ImageOcclusionEditor = ({ imageUrl, regions, onChange }) => {
   };
 
   return (
-    <div className="image-occlusion-editor">
+    <div className="picture-quiz-editor">
       <div className="editor-instructions">
-        <h4>How to create occlusions:</h4>
+        <h4>How to create quizs:</h4>
         <ol>
           <li>Select a shape (Rectangle, Circle, or Polygon) from the toolbar</li>
           <li>Click and drag to draw rectangles/circles, or click points for polygons</li>
@@ -655,11 +655,11 @@ const ImageOcclusionEditor = ({ imageUrl, regions, onChange }) => {
 
       {regions.length === 0 && imageUrl && (
         <div className="no-regions-message">
-          <p>No regions created yet. Draw rectangles on the image to create occlusions.</p>
+          <p>No regions created yet. Draw rectangles on the image to create quizs.</p>
         </div>
       )}
     </div>
   );
 };
 
-export default ImageOcclusionEditor;
+export default PictureQuizEditor;

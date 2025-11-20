@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { courseAPI, cardAPI, studyAPI, userSettingsAPI } from '../services/api';
-import ImageOcclusionStudy from '../components/ImageOcclusionStudy';
+import PictureQuizStudy from '../components/PictureQuizStudy';
 import './Study.css';
 
 function Study() {
@@ -509,7 +509,7 @@ function Study() {
             )}
             <h2>Question</h2>
             {currentCard.cardType === 'image' ? (
-              <ImageOcclusionStudy card={currentCard} isRevealed={false} />
+              <PictureQuizStudy card={currentCard} isRevealed={false} />
             ) : (
               <p className="card-content">{currentCard.question}</p>
             )}
@@ -533,7 +533,7 @@ function Study() {
             </div>
             <h2>Answer</h2>
             {currentCard.cardType === 'image' ? (
-              <ImageOcclusionStudy card={currentCard} isRevealed={true} />
+              <PictureQuizStudy card={currentCard} isRevealed={true} />
             ) : (
               <>
                 <p className="card-content">{currentCard.answer}</p>

@@ -75,7 +75,7 @@ const PracticeQuestions = () => {
   const submitAnswer = async () => {
     const current = questions[currentIndex];
 
-    // For image occlusion, check if all regions are revealed
+    // For picture quiz, check if all regions are revealed
     if (current.cardType === 'image') {
       const allRevealed = current.occludedRegions?.every((_, idx) => revealedRegions.includes(idx));
       if (!allRevealed) {
@@ -160,7 +160,7 @@ const PracticeQuestions = () => {
 
   const currentQuestion = questions[currentIndex];
 
-  // For image occlusion, consider it correct if all regions were revealed
+  // For picture quiz, consider it correct if all regions were revealed
   const isCorrect = currentQuestion.cardType === 'image'
     ? revealedRegions.length === currentQuestion.occludedRegions?.length
     : userAnswer.trim().toLowerCase() === currentQuestion.answer.trim().toLowerCase();
@@ -191,7 +191,7 @@ const PracticeQuestions = () => {
           {currentQuestion.cardType === 'basic' && '📝 Short Answer'}
           {currentQuestion.cardType === 'cloze' && '✍️ Fill in the Blanks'}
           {currentQuestion.cardType === 'multiple_choice' && '☑️ Multiple Choice'}
-          {currentQuestion.cardType === 'image' && '🖼️ Image Occlusion'}
+          {currentQuestion.cardType === 'image' && '🖼️ Picture Quiz'}
         </div>
 
         <div className="question-content">
@@ -207,8 +207,8 @@ const PracticeQuestions = () => {
         {!showAnswer && (
           <div className="answer-section">
             {currentQuestion.cardType === 'image' ? (
-              // Image Occlusion
-              <div className="image-occlusion-practice">
+              // Picture Quiz
+              <div className="picture-quiz-practice">
                 <p className="occlusion-instructions">
                   👆 Click on the blurred regions to reveal what's hidden
                 </p>
@@ -299,7 +299,7 @@ const PracticeQuestions = () => {
                   <div className="result-icon">✅</div>
                   <h3>All regions revealed!</h3>
                 </div>
-                <div className="image-occlusion-answers">
+                <div className="picture-quiz-answers">
                   <h4>Complete Answers:</h4>
                   <div className="image-container">
                     <img

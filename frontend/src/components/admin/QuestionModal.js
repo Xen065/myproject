@@ -1,10 +1,10 @@
 /**
  * Question Modal Component
- * Supports: Short Questions, Fill in the Blanks, Multiple Choice, Image Occlusion
+ * Supports: Short Questions, Fill in the Blanks, Multiple Choice, Picture Quiz
  */
 import React, { useState, useEffect } from 'react';
 import { adminCardAPI } from '../../services/adminApi';
-import ImageOcclusionEditor from './ImageOcclusionEditor';
+import PictureQuizEditor from './PictureQuizEditor';
 import './Modal.css';
 
 const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
@@ -16,8 +16,8 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
     hint: '',
     explanation: '',
     options: ['', '', '', ''], // For MCQ
-    imageUrl: '', // For image occlusion
-    occludedRegions: [], // For image occlusion
+    imageUrl: '', // For picture quiz
+    occludedRegions: [], // For picture quiz
     tags: [],
   });
   const [saving, setSaving] = useState(false);
@@ -216,7 +216,7 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
                 <option value="basic">📝 Short Answer</option>
                 <option value="cloze">✍️ Fill in the Blanks</option>
                 <option value="multiple_choice">☑️ Multiple Choice (MCQ)</option>
-                <option value="image">🖼️ Image Occlusion</option>
+                <option value="image">🖼️ Picture Quiz</option>
               </select>
             </div>
 
@@ -253,7 +253,7 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
               </div>
 
               {previewUrl && (
-                <ImageOcclusionEditor
+                <PictureQuizEditor
                   imageUrl={previewUrl}
                   regions={formData.occludedRegions}
                   onChange={(regions) => setFormData({ ...formData, occludedRegions: regions })}
@@ -263,7 +263,7 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
               <div className="form-group">
                 <label>Question Title *</label>
                 <small className="help-text">
-                  Give this image occlusion a descriptive title (e.g., "Parts of a Cell", "Countries in Europe")
+                  Give this picture quiz a descriptive title (e.g., "Parts of a Cell", "Countries in Europe")
                 </small>
                 <input
                   type="text"

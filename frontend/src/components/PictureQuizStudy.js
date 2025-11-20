@@ -1,12 +1,12 @@
 /**
- * Image Occlusion Study Component
- * Displays image occlusion cards during study sessions
+ * Picture Quiz Study Component
+ * Displays picture quiz cards during study sessions
  * Enhanced with zoom, pan, keyboard shortcuts, and touch support
  */
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import './ImageOcclusionStudy.css';
+import './PictureQuizStudy.css';
 
-const ImageOcclusionStudy = ({ card, isRevealed }) => {
+const PictureQuizStudy = ({ card, isRevealed }) => {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
   const imageRef = useRef(null);
@@ -321,8 +321,8 @@ const ImageOcclusionStudy = ({ card, isRevealed }) => {
 
   if (regions.length === 0) {
     return (
-      <div className="image-occlusion-study-error">
-        <p>No occlusion regions defined for this card.</p>
+      <div className="picture-quiz-study-error">
+        <p>No quiz regions defined for this card.</p>
       </div>
     );
   }
@@ -330,7 +330,7 @@ const ImageOcclusionStudy = ({ card, isRevealed }) => {
   const currentRegion = regions[currentRegionIndex];
 
   return (
-    <div className="image-occlusion-study">
+    <div className="picture-quiz-study">
       {/* Progress Bar */}
       {regions.length > 0 && (
         <div className="progress-container">
@@ -435,4 +435,4 @@ const ImageOcclusionStudy = ({ card, isRevealed }) => {
   );
 };
 
-export default ImageOcclusionStudy;
+export default PictureQuizStudy;
