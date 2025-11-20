@@ -431,7 +431,7 @@ const QuestionsTab = ({ questions, modules, onAdd, onEdit, onDelete }) => {
       basic: 'Short Answer',
       multiple_choice: 'Multiple Choice',
       cloze: 'Fill in the Blanks',
-      image: 'Image Question'
+      image: 'Image Occlusion'
     };
     return labels[type] || type;
   };

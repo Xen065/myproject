@@ -103,6 +103,13 @@ export const adminCardAPI = {
 
   // Bulk delete cards
   bulkDelete: (cardIds) => adminApi.delete('/cards/bulk/delete', { data: { cardIds } }),
+
+  // Upload image for image occlusion
+  uploadImage: (formData) => adminApi.post('/cards/upload-image', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  }),
 };
 
 // ============================================

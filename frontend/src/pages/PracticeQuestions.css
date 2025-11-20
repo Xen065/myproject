@@ -316,6 +316,121 @@
   font-size: 18px;
 }
 
+/* Image Occlusion Styles */
+.image-occlusion-practice {
+  margin-top: 16px;
+}
+
+.occlusion-instructions {
+  background: #f0f9ff;
+  color: #0369a1;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+.image-container {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.practice-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+}
+
+.occlusion-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: all;
+}
+
+.occluded-rect {
+  fill: rgba(0, 0, 0, 0.7);
+  stroke: #ffffff;
+  stroke-width: 2;
+  transition: all 0.3s ease;
+}
+
+.occluded-rect:hover {
+  fill: rgba(0, 0, 0, 0.85);
+  stroke: #fbbf24;
+  stroke-width: 3;
+}
+
+.occluded-rect.revealed {
+  fill: rgba(59, 130, 246, 0.3);
+  stroke: #3b82f6;
+  stroke-width: 2;
+}
+
+.revealed-text {
+  fill: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  pointer-events: none;
+}
+
+.regions-status {
+  background: #f9fafb;
+  border: 2px solid #e5e7eb;
+  padding: 12px;
+  margin-top: 12px;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: 600;
+  color: #374151;
+}
+
+.image-occlusion-answers {
+  margin-top: 16px;
+}
+
+.image-occlusion-answers h4 {
+  margin: 0 0 16px 0;
+  color: #1f2937;
+  font-size: 18px;
+}
+
+.answers-list {
+  background: #f9fafb;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.answer-item {
+  padding: 8px 0;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 14px;
+  color: #374151;
+}
+
+.answer-item:last-child {
+  border-bottom: none;
+}
+
+.answer-item strong {
+  color: #1f2937;
+  margin-right: 8px;
+}
+
 @media (max-width: 768px) {
   .rating-buttons {
     grid-template-columns: repeat(2, 1fr);
@@ -323,5 +438,13 @@
 
   .question-stats {
     grid-template-columns: 1fr;
+  }
+
+  .revealed-text {
+    font-size: 12px;
+  }
+
+  .image-container {
+    max-width: 100%;
   }
 }

@@ -1,24 +1,30 @@
 /**
  * Question Modal Component
- * Supports: Short Questions, Fill in the Blanks, Multiple Choice
+ * Supports: Short Questions, Fill in the Blanks, Multiple Choice, Image Occlusion
  */
 import React, { useState, useEffect } from 'react';
 import { adminCardAPI } from '../../services/adminApi';
+import ImageOcclusionEditor from './ImageOcclusionEditor';
 import './Modal.css';
 
 const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
   const [formData, setFormData] = useState({
-    cardType: 'basic', // basic, cloze, multiple_choice
+    cardType: 'basic', // basic, cloze, multiple_choice, image
     moduleId: '',
     question: '',
     answer: '',
     hint: '',
     explanation: '',
     options: ['', '', '', ''], // For MCQ
+    imageUrl: '', // For image occlusion
+    occludedRegions: [], // For image occlusion
     tags: [],
   });
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState('');
 
   useEffect(() => {
     if (question?.id) {
@@ -30,12 +36,60 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
         hint: question.hint || '',
         explanation: question.explanation || '',
         options: question.options || ['', '', '', ''],
+        imageUrl: question.imageUrl || '',
+        occludedRegions: question.occludedRegions || [],
         tags: question.tags || [],
       });
+      if (question.imageUrl) {
+        setPreviewUrl(question.imageUrl);
+      }
     } else if (question?.moduleId) {
       setFormData({ ...formData, moduleId: question.moduleId });
     }
   }, [question]);
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      setError('Please upload an image file');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Image size must be less than 5MB');
+      return;
+    }
+
+    setImageFile(file);
+
+    // Create preview URL
+    const url = URL.createObjectURL(file);
+    setPreviewUrl(url);
+
+    // Upload image immediately
+    try {
+      setUploading(true);
+      setError(null);
+
+      const formDataObj = new FormData();
+      formDataObj.append('file', file);
+
+      const response = await adminCardAPI.uploadImage(formDataObj);
+
+      if (response.data && response.data.imageUrl) {
+        setFormData({ ...formData, imageUrl: response.data.imageUrl });
+      }
+
+      setUploading(false);
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to upload image');
+      setUploading(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -47,12 +101,7 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
       return;
     }
 
-    if (!formData.answer.trim()) {
-      setError('Answer is required');
-      return;
-    }
-
-    // MCQ specific validation
+    // Type-specific validation
     if (formData.cardType === 'multiple_choice') {
       const validOptions = formData.options.filter(opt => opt.trim());
       if (validOptions.length < 2) {
@@ -63,6 +112,26 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
         setError('The correct answer must be one of the options');
         return;
       }
+    } else if (formData.cardType === 'image') {
+      if (!formData.imageUrl) {
+        setError('Please upload an image');
+        return;
+      }
+      if (!formData.occludedRegions || formData.occludedRegions.length === 0) {
+        setError('Please create at least one occluded region');
+        return;
+      }
+      const invalidRegion = formData.occludedRegions.find(r => !r.answer || !r.answer.trim());
+      if (invalidRegion) {
+        setError('Please provide an answer for all occluded regions');
+        return;
+      }
+    } else {
+      // Basic and cloze
+      if (!formData.answer.trim()) {
+        setError('Answer is required');
+        return;
+      }
     }
 
     try {
@@ -71,13 +140,15 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
         courseId,
         moduleId: formData.moduleId || null,
         question: formData.question,
-        answer: formData.answer,
+        answer: formData.answer || '',
         hint: formData.hint || null,
         explanation: formData.explanation || null,
         cardType: formData.cardType,
         options: formData.cardType === 'multiple_choice'
           ? formData.options.filter(opt => opt.trim())
           : null,
+        imageUrl: formData.cardType === 'image' ? formData.imageUrl : null,
+        occludedRegions: formData.cardType === 'image' ? formData.occludedRegions : null,
         tags: formData.tags,
       };
 
@@ -136,6 +207,7 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
                 <option value="basic">📝 Short Answer</option>
                 <option value="cloze">✍️ Fill in the Blanks</option>
                 <option value="multiple_choice">☑️ Multiple Choice (MCQ)</option>
+                <option value="image">🖼️ Image Occlusion</option>
               </select>
             </div>
 
@@ -155,25 +227,67 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
             </div>
           </div>
 
-          <div className="form-group">
-            <label>Question *</label>
-            {formData.cardType === 'cloze' && (
-              <small className="help-text">
-                Use <strong>___</strong> (3 underscores) to indicate blanks. Example: "The capital of France is ___"
-              </small>
-            )}
-            <textarea
-              value={formData.question}
-              onChange={(e) => setFormData({ ...formData, question: e.target.value })}
-              rows={3}
-              required
-              placeholder={
-                formData.cardType === 'cloze'
-                  ? 'The capital of France is ___'
-                  : 'Enter your question here...'
-              }
-            />
-          </div>
+          {formData.cardType === 'image' ? (
+            <>
+              <div className="form-group">
+                <label>Image *</label>
+                <small className="help-text">
+                  Upload an image and draw rectangles to hide parts of it. Students will practice recalling what's hidden.
+                </small>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  disabled={uploading}
+                />
+                {uploading && <p className="upload-status">Uploading image...</p>}
+              </div>
+
+              {previewUrl && (
+                <ImageOcclusionEditor
+                  imageUrl={previewUrl}
+                  regions={formData.occludedRegions}
+                  onChange={(regions) => setFormData({ ...formData, occludedRegions: regions })}
+                />
+              )}
+
+              <div className="form-group">
+                <label>Question Title *</label>
+                <small className="help-text">
+                  Give this image occlusion a descriptive title (e.g., "Parts of a Cell", "Countries in Europe")
+                </small>
+                <input
+                  type="text"
+                  value={formData.question}
+                  onChange={(e) => setFormData({ ...formData, question: e.target.value })}
+                  required
+                  placeholder="e.g., Label the parts of the diagram"
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="form-group">
+                <label>Question *</label>
+                {formData.cardType === 'cloze' && (
+                  <small className="help-text">
+                    Use <strong>___</strong> (3 underscores) to indicate blanks. Example: "The capital of France is ___"
+                  </small>
+                )}
+                <textarea
+                  value={formData.question}
+                  onChange={(e) => setFormData({ ...formData, question: e.target.value })}
+                  rows={3}
+                  required
+                  placeholder={
+                    formData.cardType === 'cloze'
+                      ? 'The capital of France is ___'
+                      : 'Enter your question here...'
+                  }
+                />
+              </div>
+            </>
+          )}
 
           {formData.cardType === 'multiple_choice' ? (
             <>
@@ -232,7 +346,7 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
                 <p>The order of options will be randomized each time a student sees this question.</p>
               </div>
             </>
-          ) : (
+          ) : formData.cardType !== 'image' && (
             <div className="form-group">
               <label>Correct Answer *</label>
               <input
@@ -249,7 +363,8 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
             </div>
           )}
 
-          <div className="form-group">
+          {formData.cardType !== 'image' && (
+            <div className="form-group">
             <label>Hint (optional)</label>
             <input
               type="text"
@@ -268,6 +383,7 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
               placeholder="Explain why this is the correct answer (shown after answering)"
             />
           </div>
+          )}
 
           <div className="info-box sm2-info">
             <h4>📊 SM-2 Spaced Repetition</h4>

@@ -10,8 +10,10 @@ const router = express.Router();
 const { protect } = require('../../middleware/auth');
 const { requirePermission } = require('../../middleware/rbac');
 const { auditLog } = require('../../middleware/auditLog');
+const { uploadSingle } = require('../../middleware/upload');
 const { Card, Course } = require('../../models');
 const { Op } = require('sequelize');
+const path = require('path');
 
 /**
  * @route   GET /api/admin/cards
@@ -207,6 +209,47 @@ router.get(
 );
 
 /**
+ * @route   POST /api/admin/cards/upload-image
+ * @desc    Upload image for image occlusion card
+ * @access  Admin, Teacher
+ */
+router.post(
+  '/upload-image',
+  protect,
+  requirePermission('cards.create'),
+  uploadSingle,
+  async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({
+          success: false,
+          error: 'No image file uploaded'
+        });
+      }
+
+      // Generate URL path for the uploaded image
+      const imageUrl = `/uploads/course-content/${req.file.filename}`;
+
+      res.json({
+        success: true,
+        message: 'Image uploaded successfully',
+        data: {
+          imageUrl,
+          fileName: req.file.originalname,
+          fileSize: req.file.size
+        }
+      });
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Error uploading image'
+      });
+    }
+  }
+);
+
+/**
  * @route   POST /api/admin/cards
  * @desc    Create new card template
  * @access  Admin, Teacher
@@ -227,14 +270,16 @@ router.post(
         explanation,
         cardType,
         options,
+        imageUrl,
+        occludedRegions,
         tags
       } = req.body;
 
       // Validation
-      if (!courseId || !question || !answer) {
+      if (!courseId || !question) {
         return res.status(400).json({
           success: false,
-          error: 'Course ID, question, and answer are required'
+          error: 'Course ID and question are required'
         });
       }
 
@@ -259,12 +304,54 @@ router.post(
       const validCardTypes = ['basic', 'multiple_choice', 'cloze', 'image'];
       const finalCardType = cardType && validCardTypes.includes(cardType) ? cardType : 'basic';
 
-      // For multiple choice, ensure we have options
-      if (finalCardType === 'multiple_choice' && (!options || !Array.isArray(options) || options.length < 2)) {
-        return res.status(400).json({
-          success: false,
-          error: 'Multiple choice questions must have at least 2 options'
-        });
+      // Type-specific validation
+      if (finalCardType === 'multiple_choice') {
+        // For multiple choice, ensure we have options and answer is one of them
+        if (!options || !Array.isArray(options) || options.length < 2) {
+          return res.status(400).json({
+            success: false,
+            error: 'Multiple choice questions must have at least 2 options'
+          });
+        }
+        if (!answer) {
+          return res.status(400).json({
+            success: false,
+            error: 'Answer is required for multiple choice questions'
+          });
+        }
+      } else if (finalCardType === 'image') {
+        // For image occlusion, ensure we have imageUrl and occludedRegions
+        if (!imageUrl) {
+          return res.status(400).json({
+            success: false,
+            error: 'Image URL is required for image occlusion cards'
+          });
+        }
+        if (!occludedRegions || !Array.isArray(occludedRegions) || occludedRegions.length === 0) {
+          return res.status(400).json({
+            success: false,
+            error: 'At least one occluded region is required for image occlusion cards'
+          });
+        }
+        // Validate each region has required fields
+        const invalidRegion = occludedRegions.find(
+          r => typeof r.x !== 'number' || typeof r.y !== 'number' ||
+               typeof r.width !== 'number' || typeof r.height !== 'number' || !r.answer
+        );
+        if (invalidRegion) {
+          return res.status(400).json({
+            success: false,
+            error: 'Each occluded region must have x, y, width, height, and answer'
+          });
+        }
+      } else {
+        // For basic and cloze, answer is required
+        if (!answer) {
+          return res.status(400).json({
+            success: false,
+            error: 'Answer is required'
+          });
+        }
       }
 
       // Create card template
@@ -273,11 +360,13 @@ router.post(
         moduleId: moduleId || null,
         userId: null, // Template card
         question,
-        answer,
+        answer: answer || '',
         hint: hint || null,
         explanation: explanation || null,
         cardType: finalCardType,
         options: finalCardType === 'multiple_choice' ? options : null,
+        imageUrl: finalCardType === 'image' ? imageUrl : null,
+        occludedRegions: finalCardType === 'image' ? occludedRegions : null,
         tags: tags || [],
         status: 'new',
         easeFactor: 2.5,
@@ -427,19 +516,21 @@ router.put(
         question,
         answer,
         hint,
-        type,
+        explanation,
+        cardType,
         options,
-        correctAnswer,
-        imageUrl
+        imageUrl,
+        occludedRegions
       } = req.body;
 
       if (question !== undefined) card.question = question;
       if (answer !== undefined) card.answer = answer;
       if (hint !== undefined) card.hint = hint;
-      if (type !== undefined) card.type = type;
+      if (explanation !== undefined) card.explanation = explanation;
+      if (cardType !== undefined) card.cardType = cardType;
       if (options !== undefined) card.options = options;
-      if (correctAnswer !== undefined) card.correctAnswer = correctAnswer;
       if (imageUrl !== undefined) card.imageUrl = imageUrl;
+      if (occludedRegions !== undefined) card.occludedRegions = occludedRegions;
 
       await card.save();
 
