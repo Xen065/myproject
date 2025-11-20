@@ -179,15 +179,15 @@
 
 .region-item {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.75rem;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
   border: 2px solid #e5e7eb;
-  border-radius: 6px;
-  margin-bottom: 0.5rem;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
   transition: all 0.2s;
   cursor: pointer;
+  background: white;
 }
 
 .region-item:hover {
@@ -201,40 +201,60 @@
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.region-info {
+.region-header {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  flex: 1;
+  justify-content: space-between;
 }
 
 .region-number {
   background: #3b82f6;
   color: white;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.85rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
   font-weight: 600;
-  min-width: 2rem;
-  text-align: center;
 }
 
 .region-item.selected .region-number {
   background: #1d4ed8;
 }
 
-.region-info input {
-  flex: 1;
-  padding: 0.5rem;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-  font-size: 0.9rem;
+.region-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
-.region-info input:focus {
+.region-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.region-field label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.region-field input {
+  padding: 0.6rem;
+  border: 2px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.region-field input:focus {
   outline: none;
   border-color: #3b82f6;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.region-field input::placeholder {
+  color: #9ca3af;
+  font-size: 0.85rem;
 }
 
 .btn-delete-region {

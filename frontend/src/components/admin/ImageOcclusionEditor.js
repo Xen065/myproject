@@ -100,14 +100,15 @@ const ImageOcclusionEditor = ({ imageUrl, regions, onChange }) => {
       ctx.fillRect(region.x + region.width - handleSize/2, region.y + region.height/2 - handleSize/2, handleSize, handleSize);
     }
 
-    // Draw label
-    if (region.answer) {
+    // Draw label (show region name if available, otherwise show answer preview)
+    const displayText = region.label || region.answer || '';
+    if (displayText) {
       ctx.fillStyle = isSelected ? '#3b82f6' : '#ffffff';
-      ctx.font = '14px Arial';
+      ctx.font = 'bold 14px Arial';
       const labelX = shape === 'rectangle' ? region.x + 5 : region.x + region.width / 2 - 40;
       const labelY = shape === 'rectangle' ? region.y + 20 : region.y + region.height / 2;
       ctx.fillText(
-        region.answer.substring(0, 20) + (region.answer.length > 20 ? '...' : ''),
+        displayText.substring(0, 20) + (displayText.length > 20 ? '...' : ''),
         labelX,
         labelY
       );
@@ -590,6 +591,12 @@ const ImageOcclusionEditor = ({ imageUrl, regions, onChange }) => {
     onChange(newRegions);
   };
 
+  const updateRegionLabel = (index, label) => {
+    const newRegions = [...regions];
+    newRegions[index] = { ...newRegions[index], label };
+    onChange(newRegions);
+  };
+
   return (
     <div className="picture-quiz-editor">
       <div className="editor-instructions">
@@ -663,27 +670,42 @@ const ImageOcclusionEditor = ({ imageUrl, regions, onChange }) => {
               className={`region-item ${index === selectedRegionIndex ? 'selected' : ''}`}
               onClick={() => setSelectedRegionIndex(index)}
             >
-              <div className="region-info">
-                <span className="region-number">#{index + 1}</span>
-                <input
-                  type="text"
-                  value={region.answer || ''}
-                  onChange={(e) => updateRegionAnswer(index, e.target.value)}
-                  placeholder="What's hidden here?"
-                  onClick={(e) => e.stopPropagation()}
-                  required
-                />
+              <div className="region-header">
+                <span className="region-number">Region #{index + 1}</span>
+                <button
+                  type="button"
+                  className="btn-delete-region"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    deleteRegion(index);
+                  }}
+                >
+                  Delete
+                </button>
               </div>
-              <button
-                type="button"
-                className="btn-delete-region"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  deleteRegion(index);
-                }}
-              >
-                Delete
-              </button>
+              <div className="region-fields">
+                <div className="region-field">
+                  <label>Occluded Region Name:</label>
+                  <input
+                    type="text"
+                    value={region.label || ''}
+                    onChange={(e) => updateRegionLabel(index, e.target.value)}
+                    placeholder="e.g., Mitochondria, Capital City, etc."
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                </div>
+                <div className="region-field">
+                  <label>Answer (What's hidden):</label>
+                  <input
+                    type="text"
+                    value={region.answer || ''}
+                    onChange={(e) => updateRegionAnswer(index, e.target.value)}
+                    placeholder="The answer students must provide"
+                    onClick={(e) => e.stopPropagation()}
+                    required
+                  />
+                </div>
+              </div>
             </div>
           ))}
         </div>
