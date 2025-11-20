@@ -144,6 +144,12 @@ const AdminDashboard = () => {
             <p>Add a new course with flashcards</p>
           </Link>
 
+          <Link to="/admin/questions" className="action-card">
+            <div className="action-icon">📋</div>
+            <h3>Question Management</h3>
+            <p>Manage all questions across courses</p>
+          </Link>
+
           {(userRole === 'admin' || userRole === 'super_admin') && (
             <Link to="/admin/users" className="action-card">
               <div className="action-icon">👥</div>

@@ -17,6 +17,7 @@ import Permissions from './pages/admin/Permissions';
 import AdminCourses from './pages/admin/AdminCourses';
 import CreateCourse from './pages/admin/CreateCourse';
 import ManageCourseContent from './pages/admin/ManageCourseContent';
+import QuestionManagement from './pages/admin/QuestionManagement';
 import './App.css';
 
 function App() {
@@ -121,6 +122,14 @@ function App() {
                     element={
                       <ProtectedRoute>
                         <Permissions />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/questions"
+                    element={
+                      <ProtectedRoute>
+                        <QuestionManagement />
                       </ProtectedRoute>
                     }
                   />
