@@ -8,6 +8,7 @@ import PomodoroTimer from '../components/PomodoroTimer';
 import StudyGoals from '../components/StudyGoals';
 import ProgressDashboard from '../components/ProgressDashboard';
 import SmartStudyPlanner from '../components/SmartStudyPlanner';
+import NotesManager from '../components/NotesManager';
 import './Study.css';
 
 function Study() {
@@ -44,6 +45,8 @@ function Study() {
   const [showGoals, setShowGoals] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
   const [showPlanner, setShowPlanner] = useState(false);
+  const [showNotes, setShowNotes] = useState(false);
+  const [showQuickNote, setShowQuickNote] = useState(false);
 
   // Calculate card difficulty level
   const getDifficultyLevel = (card) => {
@@ -401,6 +404,14 @@ function Study() {
               <span className="tool-icon">🧠</span>
               <span className="tool-label">Planner</span>
             </button>
+            <button
+              className="tool-btn notes"
+              onClick={() => setShowNotes(true)}
+              title="Notes Manager"
+            >
+              <span className="tool-icon">📝</span>
+              <span className="tool-label">Notes</span>
+            </button>
           </div>
         </div>
 
@@ -482,6 +493,13 @@ function Study() {
 
         {showPlanner && (
           <SmartStudyPlanner onClose={() => setShowPlanner(false)} />
+        )}
+
+        {showNotes && (
+          <NotesManager
+            onClose={() => setShowNotes(false)}
+            courses={enrolledCourses.map(c => ({ id: c.id, name: c.title }))}
+          />
         )}
       </div>
     );
@@ -668,6 +686,17 @@ function Study() {
         </div>
       </div>
 
+      {/* Quick Note Button */}
+      <div className="quick-actions">
+        <button
+          className="quick-note-btn"
+          onClick={() => setShowQuickNote(true)}
+          title="Take a quick note about this card"
+        >
+          📝 Quick Note
+        </button>
+      </div>
+
       {flipped && (
         <div className="rating-buttons">
           <button
@@ -729,6 +758,16 @@ function Study() {
           Rate your recall to optimize spaced repetition
         </p>
       </div>
+
+      {/* Quick Note Modal */}
+      {showQuickNote && (
+        <NotesManager
+          onClose={() => setShowQuickNote(false)}
+          courses={enrolledCourses.map(c => ({ id: c.id, name: c.title }))}
+          initialCourseId={selectedCourse?.id}
+          initialCardId={currentCard?.id}
+        />
+      )}
     </div>
   );
 }

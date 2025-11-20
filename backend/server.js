@@ -35,6 +35,7 @@ const studyGoalsRoutes = require('./routes/studyGoals');
 const analyticsRoutes = require('./routes/analytics');
 const pomodoroRoutes = require('./routes/pomodoro');
 const smartPlannerRoutes = require('./routes/smartPlanner');
+const studyNotesRoutes = require('./routes/studyNotes');
 
 // Initialize Express app
 const app = express();
@@ -114,6 +115,7 @@ app.use('/api/study/goals', studyGoalsRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/pomodoro', pomodoroRoutes);
 app.use('/api/planner', smartPlannerRoutes);
+app.use('/api/study/notes', studyNotesRoutes);
 
 // 404 handler for unknown routes
 app.use((req, res) => {

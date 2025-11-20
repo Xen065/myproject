@@ -20,6 +20,7 @@ const AuditLog = require('./AuditLog');
 const CourseModule = require('./CourseModule');
 const CourseContent = require('./CourseContent');
 const StudyGoal = require('./StudyGoal');
+const StudyNote = require('./StudyNote');
 
 // ============================================
 // Define Model Associations (Relationships)
@@ -281,6 +282,61 @@ StudyGoal.belongsTo(Course, {
   as: 'course'
 });
 
+// User -> StudyNote (One-to-Many)
+User.hasMany(StudyNote, {
+  foreignKey: 'userId',
+  as: 'studyNotes'
+});
+
+StudyNote.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'student'
+});
+
+// Course -> StudyNote (One-to-Many)
+Course.hasMany(StudyNote, {
+  foreignKey: 'courseId',
+  as: 'notes'
+});
+
+StudyNote.belongsTo(Course, {
+  foreignKey: 'courseId',
+  as: 'course'
+});
+
+// Card -> StudyNote (One-to-Many)
+Card.hasMany(StudyNote, {
+  foreignKey: 'cardId',
+  as: 'notes'
+});
+
+StudyNote.belongsTo(Card, {
+  foreignKey: 'cardId',
+  as: 'card'
+});
+
+// StudySession -> StudyNote (One-to-Many)
+StudySession.hasMany(StudyNote, {
+  foreignKey: 'studySessionId',
+  as: 'notes'
+});
+
+StudyNote.belongsTo(StudySession, {
+  foreignKey: 'studySessionId',
+  as: 'studySession'
+});
+
+// StudyTask -> StudyNote (One-to-Many)
+StudyTask.hasMany(StudyNote, {
+  foreignKey: 'taskId',
+  as: 'notes'
+});
+
+StudyNote.belongsTo(StudyTask, {
+  foreignKey: 'taskId',
+  as: 'task'
+});
+
 // ============================================
 // Export all models
 // ============================================
@@ -300,5 +356,6 @@ module.exports = {
   AuditLog,
   CourseModule,
   CourseContent,
-  StudyGoal
+  StudyGoal,
+  StudyNote
 };
