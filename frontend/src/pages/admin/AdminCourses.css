@@ -45,22 +45,34 @@
 }
 
 .btn-primary {
-  background: var(--primary-color, #6366F1);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-light) 100%);
   color: white;
+  box-shadow: var(--shadow-primary);
 }
 
 .btn-primary:hover {
-  background: var(--primary-dark, #4f46e5);
-  transform: translateY(-2px);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+}
+
+.btn-primary:active {
+  transform: translateY(-1px) scale(0.98);
 }
 
 .btn-secondary {
-  background: var(--secondary-color, #64748b);
-  color: white;
+  background: var(--input-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--input-border);
 }
 
 .btn-secondary:hover {
-  background: var(--secondary-dark, #475569);
+  background: var(--input-focus-bg);
+  border-color: var(--card-border-hover);
+  transform: translateY(-2px);
+}
+
+.btn-secondary:active {
+  transform: translateY(0) scale(0.98);
 }
 
 .btn-icon {
@@ -382,16 +394,11 @@
   min-width: 180px;
 }
 
-/* Dark Mode Support */
-@media (prefers-color-scheme: dark) {
-  .admin-courses {
-    --text-primary: #e5e5e5;
-    --text-secondary: #a0a0a0;
-    --card-bg: #1e1e1e;
-    --border-color: #333;
-    --hover-bg: #2a2a2a;
-    --header-bg: #252525;
-    --button-bg: #333;
-    --button-hover: #404040;
-  }
+/* Improved Button Styles */
+.btn-manage-content {
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+}
+
+.btn-manage-content:hover {
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35);
 }
