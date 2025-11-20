@@ -1,25 +1,31 @@
 /**
  * Question Modal Component
- * Supports: Short Questions, Fill in the Blanks, Multiple Choice, Image Occlusion, Ordered
+ * Supports: Short Questions, Fill in the Blanks, Multiple Choice, Image Occlusion, Ordered, True/False, Multi-Select, Matching, Categorization
  */
 import React, { useState, useEffect } from 'react';
 import { adminCardAPI } from '../../services/adminApi';
 import ImageOcclusionEditor from './ImageOcclusionEditor';
 import OrderedQuestionEditor from './OrderedQuestionEditor';
+import MultiSelectEditor from './MultiSelectEditor';
+import MatchingPairsEditor from './MatchingPairsEditor';
+import CategorizationEditor from './CategorizationEditor';
 import './Modal.css';
 
 const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
   const [formData, setFormData] = useState({
-    cardType: 'basic', // basic, cloze, multiple_choice, image, ordered
+    cardType: 'basic', // basic, cloze, multiple_choice, image, ordered, true_false, multi_select, matching, categorization
     moduleId: '',
     question: '',
     answer: '',
     hint: '',
     explanation: '',
-    options: ['', '', '', ''], // For MCQ
+    options: ['', '', '', ''], // For MCQ and multi-select
     imageUrl: '', // For image occlusion
     occludedRegions: [], // For image occlusion
     orderedItems: [], // For ordered questions
+    multiSelectAnswers: [], // For multi-select correct answers
+    matchingPairs: [], // For matching pairs
+    categories: {}, // For categorization
     tags: [],
   });
   const [saving, setSaving] = useState(false);
@@ -41,6 +47,9 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
         imageUrl: question.imageUrl || '',
         occludedRegions: question.occludedRegions || [],
         orderedItems: question.orderedItems || [],
+        multiSelectAnswers: question.multiSelectAnswers || [],
+        matchingPairs: question.matchingPairs || [],
+        categories: question.categories || {},
         tags: question.tags || [],
       });
       if (question.imageUrl) {
@@ -143,6 +152,37 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
         setError('Ordered questions must have at least 2 items');
         return;
       }
+    } else if (formData.cardType === 'true_false') {
+      if (!formData.answer || !['true', 'false'].includes(formData.answer.toLowerCase())) {
+        setError('Please select True or False');
+        return;
+      }
+    } else if (formData.cardType === 'multi_select') {
+      const validOptions = formData.options.filter(opt => opt.trim());
+      if (validOptions.length < 2) {
+        setError('Multi-select questions must have at least 2 options');
+        return;
+      }
+      if (!formData.multiSelectAnswers || formData.multiSelectAnswers.length === 0) {
+        setError('Please select at least one correct answer');
+        return;
+      }
+    } else if (formData.cardType === 'matching') {
+      if (!formData.matchingPairs || formData.matchingPairs.length < 2) {
+        setError('Matching questions must have at least 2 pairs');
+        return;
+      }
+    } else if (formData.cardType === 'categorization') {
+      const categoryNames = Object.keys(formData.categories);
+      if (categoryNames.length < 2) {
+        setError('Categorization questions must have at least 2 categories');
+        return;
+      }
+      const emptyCategory = categoryNames.find(cat => formData.categories[cat].length === 0);
+      if (emptyCategory) {
+        setError(`Category "${emptyCategory}" must have at least one item`);
+        return;
+      }
     } else {
       // Basic and cloze
       if (!formData.answer.trim()) {
@@ -161,12 +201,15 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
         hint: formData.hint || null,
         explanation: formData.explanation || null,
         cardType: formData.cardType,
-        options: formData.cardType === 'multiple_choice'
+        options: (formData.cardType === 'multiple_choice' || formData.cardType === 'multi_select')
           ? formData.options.filter(opt => opt.trim())
           : null,
         imageUrl: formData.cardType === 'image' ? formData.imageUrl : null,
         occludedRegions: formData.cardType === 'image' ? formData.occludedRegions : null,
         orderedItems: formData.cardType === 'ordered' ? formData.orderedItems : null,
+        multiSelectAnswers: formData.cardType === 'multi_select' ? formData.multiSelectAnswers : null,
+        matchingPairs: formData.cardType === 'matching' ? formData.matchingPairs : null,
+        categories: formData.cardType === 'categorization' ? formData.categories : null,
         tags: formData.tags,
       };
 
@@ -225,6 +268,10 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
                 <option value="basic">📝 Short Answer</option>
                 <option value="cloze">✍️ Fill in the Blanks</option>
                 <option value="multiple_choice">☑️ Multiple Choice (MCQ)</option>
+                <option value="multi_select">☑️☑️ Multi-Select</option>
+                <option value="true_false">✓✗ True/False</option>
+                <option value="matching">🔗 Matching Pairs</option>
+                <option value="categorization">📦 Categorization</option>
                 <option value="image">🖼️ Image Occlusion</option>
                 <option value="ordered">🔢 Ordered Sequence</option>
               </select>
@@ -376,7 +423,68 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
                 <p>Students will need to arrange these items in the correct order you specified above.</p>
               </div>
             </>
-          ) : formData.cardType !== 'image' && formData.cardType !== 'ordered' && (
+          ) : formData.cardType === 'true_false' ? (
+            <div className="form-group">
+              <label>Correct Answer *</label>
+              <div className="true-false-options">
+                <label className="radio-option">
+                  <input
+                    type="radio"
+                    name="trueFalse"
+                    value="true"
+                    checked={formData.answer.toLowerCase() === 'true'}
+                    onChange={(e) => setFormData({ ...formData, answer: e.target.value })}
+                  />
+                  <span>True ✓</span>
+                </label>
+                <label className="radio-option">
+                  <input
+                    type="radio"
+                    name="trueFalse"
+                    value="false"
+                    checked={formData.answer.toLowerCase() === 'false'}
+                    onChange={(e) => setFormData({ ...formData, answer: e.target.value })}
+                  />
+                  <span>False ✗</span>
+                </label>
+              </div>
+            </div>
+          ) : formData.cardType === 'multi_select' ? (
+            <>
+              <MultiSelectEditor
+                options={formData.options}
+                correctAnswers={formData.multiSelectAnswers}
+                onOptionsChange={(options) => setFormData({ ...formData, options })}
+                onAnswersChange={(answers) => setFormData({ ...formData, multiSelectAnswers: answers })}
+              />
+              <div className="info-box">
+                <strong>☑️☑️ Students must select ALL correct answers!</strong>
+                <p>Options will be shuffled. Students need to check all answers you marked as correct.</p>
+              </div>
+            </>
+          ) : formData.cardType === 'matching' ? (
+            <>
+              <MatchingPairsEditor
+                pairs={formData.matchingPairs}
+                onChange={(pairs) => setFormData({ ...formData, matchingPairs: pairs })}
+              />
+              <div className="info-box">
+                <strong>🔗 Right column items will be shuffled!</strong>
+                <p>Students will need to correctly match each item from the left column to the right column.</p>
+              </div>
+            </>
+          ) : formData.cardType === 'categorization' ? (
+            <>
+              <CategorizationEditor
+                categories={formData.categories}
+                onChange={(categories) => setFormData({ ...formData, categories })}
+              />
+              <div className="info-box">
+                <strong>📦 Items will be shuffled!</strong>
+                <p>Students will need to correctly sort all items into their categories.</p>
+              </div>
+            </>
+          ) : formData.cardType !== 'image' && (
             <div className="form-group">
               <label>Correct Answer *</label>
               <input

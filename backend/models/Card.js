@@ -31,8 +31,12 @@ const Card = sequelize.define('Card', {
       // For non-image and non-ordered cards, answer is required
       // For image cards, answers are stored in occludedRegions
       // For ordered cards, answers are stored in orderedItems
+      // For multi_select, answers are stored in multiSelectAnswers
+      // For matching, answers are stored in matchingPairs
+      // For categorization, answers are stored in categories
       notEmpty: function(value) {
-        if (this.cardType !== 'image' && this.cardType !== 'ordered' && (!value || value.trim() === '')) {
+        const typesWithoutAnswer = ['image', 'ordered', 'multi_select', 'matching', 'categorization'];
+        if (!typesWithoutAnswer.includes(this.cardType) && (!value || value.trim() === '')) {
           throw new Error('Answer is required for this card type');
         }
       }
@@ -52,7 +56,7 @@ const Card = sequelize.define('Card', {
 
   // Card Type
   cardType: {
-    type: DataTypes.ENUM('basic', 'multiple_choice', 'cloze', 'image', 'ordered'),
+    type: DataTypes.ENUM('basic', 'multiple_choice', 'cloze', 'image', 'ordered', 'true_false', 'multi_select', 'matching', 'categorization'),
     defaultValue: 'basic',
     field: 'card_type'
   },
@@ -85,6 +89,29 @@ const Card = sequelize.define('Card', {
     allowNull: true,
     field: 'ordered_items',
     comment: 'Array of items in correct order: ["item1", "item2", "item3"]'
+  },
+
+  // Multi-select question fields
+  multiSelectAnswers: {
+    type: DataTypes.JSON,
+    allowNull: true,
+    field: 'multi_select_answers',
+    comment: 'Array of correct answers for multi-select: ["answer1", "answer2"]'
+  },
+
+  // Matching pairs fields
+  matchingPairs: {
+    type: DataTypes.JSON,
+    allowNull: true,
+    field: 'matching_pairs',
+    comment: 'Array of pairs: [{left: "item1", right: "match1"}, {left: "item2", right: "match2"}]'
+  },
+
+  // Categorization fields
+  categories: {
+    type: DataTypes.JSON,
+    allowNull: true,
+    comment: 'Object with categories: {category1: ["item1", "item2"], category2: ["item3"]}'
   },
 
   // Relationships

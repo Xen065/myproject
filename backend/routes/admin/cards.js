@@ -276,6 +276,9 @@ router.post(
         imageUrl,
         occludedRegions,
         orderedItems,
+        multiSelectAnswers,
+        matchingPairs,
+        categories,
         tags
       } = req.body;
 
@@ -305,7 +308,7 @@ router.post(
       }
 
       // Validate cardType
-      const validCardTypes = ['basic', 'multiple_choice', 'cloze', 'image', 'ordered'];
+      const validCardTypes = ['basic', 'multiple_choice', 'cloze', 'image', 'ordered', 'true_false', 'multi_select', 'matching', 'categorization'];
       const finalCardType = cardType && validCardTypes.includes(cardType) ? cardType : 'basic';
 
       // Type-specific validation
@@ -364,6 +367,77 @@ router.post(
             error: 'All items must be non-empty strings'
           });
         }
+      } else if (finalCardType === 'true_false') {
+        // For true/false, ensure answer is 'true' or 'false'
+        if (!answer || !['true', 'false'].includes(answer.toLowerCase())) {
+          return res.status(400).json({
+            success: false,
+            error: 'True/False questions must have answer as "true" or "false"'
+          });
+        }
+      } else if (finalCardType === 'multi_select') {
+        // For multi-select, ensure we have options and at least 2 correct answers
+        if (!options || !Array.isArray(options) || options.length < 2) {
+          return res.status(400).json({
+            success: false,
+            error: 'Multi-select questions must have at least 2 options'
+          });
+        }
+        if (!multiSelectAnswers || !Array.isArray(multiSelectAnswers) || multiSelectAnswers.length < 1) {
+          return res.status(400).json({
+            success: false,
+            error: 'Multi-select questions must have at least 1 correct answer'
+          });
+        }
+        // Validate all correct answers are in options
+        const invalidAnswer = multiSelectAnswers.find(ans => !options.includes(ans));
+        if (invalidAnswer) {
+          return res.status(400).json({
+            success: false,
+            error: 'All correct answers must be in the options list'
+          });
+        }
+      } else if (finalCardType === 'matching') {
+        // For matching, ensure we have pairs
+        if (!matchingPairs || !Array.isArray(matchingPairs) || matchingPairs.length < 2) {
+          return res.status(400).json({
+            success: false,
+            error: 'Matching questions must have at least 2 pairs'
+          });
+        }
+        // Validate each pair has left and right
+        const invalidPair = matchingPairs.find(pair => !pair.left || !pair.right || !pair.left.trim() || !pair.right.trim());
+        if (invalidPair !== undefined) {
+          return res.status(400).json({
+            success: false,
+            error: 'Each pair must have both left and right items'
+          });
+        }
+      } else if (finalCardType === 'categorization') {
+        // For categorization, ensure we have categories with items
+        if (!categories || typeof categories !== 'object' || Object.keys(categories).length < 2) {
+          return res.status(400).json({
+            success: false,
+            error: 'Categorization questions must have at least 2 categories'
+          });
+        }
+        // Validate each category has at least one item
+        for (const [catName, items] of Object.entries(categories)) {
+          if (!Array.isArray(items) || items.length === 0) {
+            return res.status(400).json({
+              success: false,
+              error: `Category "${catName}" must have at least one item`
+            });
+          }
+          // Validate all items are non-empty strings
+          const invalidItem = items.find(item => typeof item !== 'string' || !item.trim());
+          if (invalidItem !== undefined) {
+            return res.status(400).json({
+              success: false,
+              error: `All items in category "${catName}" must be non-empty strings`
+            });
+          }
+        }
       } else {
         // For basic and cloze, answer is required
         if (!answer) {
@@ -384,10 +458,13 @@ router.post(
         hint: hint || null,
         explanation: explanation || null,
         cardType: finalCardType,
-        options: finalCardType === 'multiple_choice' ? options : null,
+        options: (finalCardType === 'multiple_choice' || finalCardType === 'multi_select') ? options : null,
         imageUrl: finalCardType === 'image' ? imageUrl : null,
         occludedRegions: finalCardType === 'image' ? occludedRegions : null,
         orderedItems: finalCardType === 'ordered' ? orderedItems : null,
+        multiSelectAnswers: finalCardType === 'multi_select' ? multiSelectAnswers : null,
+        matchingPairs: finalCardType === 'matching' ? matchingPairs : null,
+        categories: finalCardType === 'categorization' ? categories : null,
         tags: tags || [],
         status: 'new',
         easeFactor: 2.5,
@@ -542,7 +619,10 @@ router.put(
         options,
         imageUrl,
         occludedRegions,
-        orderedItems
+        orderedItems,
+        multiSelectAnswers,
+        matchingPairs,
+        categories
       } = req.body;
 
       if (question !== undefined) card.question = question;
@@ -554,6 +634,9 @@ router.put(
       if (imageUrl !== undefined) card.imageUrl = imageUrl;
       if (occludedRegions !== undefined) card.occludedRegions = occludedRegions;
       if (orderedItems !== undefined) card.orderedItems = orderedItems;
+      if (multiSelectAnswers !== undefined) card.multiSelectAnswers = multiSelectAnswers;
+      if (matchingPairs !== undefined) card.matchingPairs = matchingPairs;
+      if (categories !== undefined) card.categories = categories;
 
       await card.save();
 

@@ -1,0 +1,273 @@
+/* Matching Pairs Editor Styles */
+
+.matching-pairs-editor {
+  background-color: #f9fafb;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 15px 0;
+}
+
+.editor-header {
+  margin-bottom: 16px;
+}
+
+.editor-header h4 {
+  margin: 0 0 6px 0;
+  color: #1f2937;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.help-text {
+  margin: 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* Pairs List */
+.pairs-list {
+  background-color: white;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 15px;
+  min-height: 100px;
+}
+
+.empty-state {
+  padding: 40px 20px;
+  text-align: center;
+  color: #9ca3af;
+  font-style: italic;
+  font-size: 14px;
+}
+
+.pairs-grid-header {
+  display: grid;
+  grid-template-columns: 1fr 40px 1fr 120px;
+  gap: 12px;
+  padding: 12px 15px;
+  background-color: #f9fafb;
+  border-bottom: 2px solid #e5e7eb;
+  border-radius: 6px 6px 0 0;
+}
+
+.col-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.arrow-col {
+  text-align: center;
+}
+
+.actions-col {
+  text-align: center;
+}
+
+.pair-row {
+  display: grid;
+  grid-template-columns: 1fr 40px 1fr 120px;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 15px;
+  border-bottom: 1px solid #e5e7eb;
+  transition: background-color 0.2s;
+}
+
+.pair-row:last-child {
+  border-bottom: none;
+}
+
+.pair-row:hover {
+  background-color: #f9fafb;
+}
+
+.pair-item {
+  color: #1f2937;
+  font-size: 14px;
+  padding: 8px 12px;
+  background-color: #f3f4f6;
+  border-radius: 4px;
+  word-break: break-word;
+}
+
+.left-item {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.right-item {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.pair-arrow {
+  text-align: center;
+  font-size: 20px;
+  color: #6b7280;
+  font-weight: bold;
+}
+
+.pair-arrow-static {
+  text-align: center;
+  font-size: 24px;
+  color: #9ca3af;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pair-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+
+.btn-edit,
+.btn-delete {
+  padding: 6px 10px;
+  border: 1px solid #e5e7eb;
+  background-color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.btn-edit:hover {
+  background-color: #f59e0b;
+  border-color: #f59e0b;
+}
+
+.btn-delete:hover {
+  background-color: #ef4444;
+  border-color: #ef4444;
+}
+
+/* Edit Mode */
+.edit-input {
+  padding: 8px 12px;
+  border: 2px solid #3b82f6;
+  border-radius: 4px;
+  font-size: 14px;
+  outline: none;
+  width: 100%;
+}
+
+.btn-save,
+.btn-cancel {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-save {
+  background-color: #10b981;
+  color: white;
+}
+
+.btn-save:hover {
+  background-color: #059669;
+}
+
+.btn-cancel {
+  background-color: #e5e7eb;
+  color: #6b7280;
+}
+
+.btn-cancel:hover {
+  background-color: #d1d5db;
+}
+
+/* Add Pair Section */
+.add-pair-section {
+  display: grid;
+  grid-template-columns: 1fr 40px 1fr 100px;
+  gap: 10px;
+  align-items: center;
+}
+
+.add-input {
+  padding: 10px 14px;
+  border: 2px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.add-input:focus {
+  border-color: #3b82f6;
+}
+
+.add-input.left:focus {
+  border-color: #3b82f6;
+  background-color: #eff6ff;
+}
+
+.add-input.right:focus {
+  border-color: #10b981;
+  background-color: #f0fdf4;
+}
+
+.btn-add {
+  padding: 10px 16px;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+
+.btn-add:hover {
+  background-color: #2563eb;
+}
+
+/* Pairs Summary */
+.pairs-summary {
+  margin-top: 12px;
+  padding: 8px 12px;
+  background-color: #eff6ff;
+  border-radius: 4px;
+  color: #1e40af;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .pairs-grid-header,
+  .pair-row,
+  .add-pair-section {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .pair-arrow,
+  .pair-arrow-static,
+  .arrow-col {
+    display: none;
+  }
+
+  .actions-col {
+    display: none;
+  }
+
+  .pair-actions {
+    grid-column: 1;
+    justify-content: flex-end;
+  }
+}
