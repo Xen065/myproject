@@ -27,113 +27,7 @@ const ImageOcclusionEditor = ({ imageUrl, regions, onChange }) => {
   const [resizeHandle, setResizeHandle] = useState(null); // 'nw', 'ne', 'sw', 'se', 'n', 's', 'e', 'w'
   const [polygonPoints, setPolygonPoints] = useState([]);
 
-  // Load and draw image
-  useEffect(() => {
-    if (!imageUrl || !canvasRef.current) return;
-
-    const canvas = canvasRef.current;
-    const img = new Image();
-
-    img.onload = () => {
-      // Set canvas size to match image
-      const maxWidth = 800;
-      const scale = img.width > maxWidth ? maxWidth / img.width : 1;
-      canvas.width = img.width * scale;
-      canvas.height = img.height * scale;
-
-      imageRef.current = img;
-      redrawCanvas();
-    };
-
-    img.onerror = () => {
-      console.error('Failed to load image:', imageUrl);
-    };
-
-    // Use the imageUrl directly - QuestionModal now provides full URLs
-    img.crossOrigin = 'anonymous'; // Enable CORS for canvas manipulation
-    img.src = imageUrl;
-  }, [imageUrl]);
-
-  // Redraw canvas whenever regions change
-  useEffect(() => {
-    redrawCanvas();
-  }, [regions, currentRegion, selectedRegionIndex, zoom, pan, redrawCanvas]);
-
-  // Keyboard shortcuts
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      // Only handle if not typing in input
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-
-      switch (e.key) {
-        case 'Delete':
-        case 'Backspace':
-          if (selectedRegionIndex !== null) {
-            e.preventDefault();
-            deleteRegion(selectedRegionIndex);
-          }
-          break;
-        case '+':
-        case '=':
-          e.preventDefault();
-          handleZoomIn();
-          break;
-        case '-':
-        case '_':
-          e.preventDefault();
-          handleZoomOut();
-          break;
-        case '0':
-          e.preventDefault();
-          handleResetZoom();
-          break;
-        case 'Escape':
-          setSelectedRegionIndex(null);
-          break;
-        default:
-          break;
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedRegionIndex, zoom, deleteRegion]);
-
-  const redrawCanvas = useCallback(() => {
-    if (!canvasRef.current || !imageRef.current) return;
-
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    const img = imageRef.current;
-
-    // Save context state
-    ctx.save();
-
-    // Clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Apply transformations for zoom and pan
-    ctx.translate(canvas.width / 2 + pan.x, canvas.height / 2 + pan.y);
-    ctx.scale(zoom, zoom);
-    ctx.translate(-canvas.width / 2, -canvas.height / 2);
-
-    // Draw image
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-    // Draw all regions
-    regions.forEach((region, index) => {
-      drawRegion(ctx, region, index === selectedRegionIndex);
-    });
-
-    // Draw current region being drawn
-    if (currentRegion) {
-      drawRegion(ctx, currentRegion, false, true);
-    }
-
-    // Restore context state
-    ctx.restore();
-  }, [regions, currentRegion, selectedRegionIndex, zoom, pan]);
-
+  // Helper function to draw a region on the canvas
   const drawRegion = (ctx, region, isSelected, isDrawing = false) => {
     const shape = region.shape || 'rectangle';
 
@@ -220,6 +114,135 @@ const ImageOcclusionEditor = ({ imageUrl, regions, onChange }) => {
     }
   };
 
+  // Redraw canvas function
+  const redrawCanvas = useCallback(() => {
+    if (!canvasRef.current || !imageRef.current) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    const img = imageRef.current;
+
+    // Save context state
+    ctx.save();
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Apply transformations for zoom and pan
+    ctx.translate(canvas.width / 2 + pan.x, canvas.height / 2 + pan.y);
+    ctx.scale(zoom, zoom);
+    ctx.translate(-canvas.width / 2, -canvas.height / 2);
+
+    // Draw image
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+    // Draw all regions
+    regions.forEach((region, index) => {
+      drawRegion(ctx, region, index === selectedRegionIndex);
+    });
+
+    // Draw current region being drawn
+    if (currentRegion) {
+      drawRegion(ctx, currentRegion, false, true);
+    }
+
+    // Restore context state
+    ctx.restore();
+  }, [regions, currentRegion, selectedRegionIndex, zoom, pan]);
+
+  // Delete region function
+  const deleteRegion = useCallback((index) => {
+    const newRegions = regions.filter((_, i) => i !== index);
+    onChange(newRegions);
+    setSelectedRegionIndex(null);
+  }, [regions, onChange]);
+
+  // Load and draw image
+  useEffect(() => {
+    if (!imageUrl || !canvasRef.current) return;
+
+    const canvas = canvasRef.current;
+    const img = new Image();
+
+    img.onload = () => {
+      // Set canvas size to match image
+      const maxWidth = 800;
+      const scale = img.width > maxWidth ? maxWidth / img.width : 1;
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+
+      imageRef.current = img;
+      redrawCanvas();
+    };
+
+    img.onerror = () => {
+      console.error('Failed to load image:', imageUrl);
+    };
+
+    // Use the imageUrl directly - QuestionModal now provides full URLs
+    img.crossOrigin = 'anonymous'; // Enable CORS for canvas manipulation
+    img.src = imageUrl;
+  }, [imageUrl]);
+
+  // Redraw canvas whenever regions change
+  useEffect(() => {
+    redrawCanvas();
+  }, [regions, currentRegion, selectedRegionIndex, zoom, pan, redrawCanvas]);
+
+  // Zoom handlers
+  const handleZoomIn = () => {
+    setZoom(prev => Math.min(prev + 0.25, 3));
+  };
+
+  const handleZoomOut = () => {
+    setZoom(prev => Math.max(prev - 0.25, 0.5));
+  };
+
+  const handleResetZoom = () => {
+    setZoom(1);
+    setPan({ x: 0, y: 0 });
+  };
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Only handle if not typing in input
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+      switch (e.key) {
+        case 'Delete':
+        case 'Backspace':
+          if (selectedRegionIndex !== null) {
+            e.preventDefault();
+            deleteRegion(selectedRegionIndex);
+          }
+          break;
+        case '+':
+        case '=':
+          e.preventDefault();
+          handleZoomIn();
+          break;
+        case '-':
+        case '_':
+          e.preventDefault();
+          handleZoomOut();
+          break;
+        case '0':
+          e.preventDefault();
+          handleResetZoom();
+          break;
+        case 'Escape':
+          setSelectedRegionIndex(null);
+          break;
+        default:
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedRegionIndex, zoom, deleteRegion, handleZoomIn, handleZoomOut, handleResetZoom]);
+
   // Helper functions for resize/move detection
   const getResizeHandle = (pos, region) => {
     const handleSize = 8;
@@ -299,20 +322,6 @@ const ImageOcclusionEditor = ({ imageUrl, regions, onChange }) => {
     y = (y - canvas.height / 2 - pan.y) / zoom + canvas.height / 2;
 
     return { x, y };
-  };
-
-  // Zoom handlers
-  const handleZoomIn = () => {
-    setZoom(prev => Math.min(prev + 0.25, 3));
-  };
-
-  const handleZoomOut = () => {
-    setZoom(prev => Math.max(prev - 0.25, 0.5));
-  };
-
-  const handleResetZoom = () => {
-    setZoom(1);
-    setPan({ x: 0, y: 0 });
   };
 
   const handleWheel = (e) => {
@@ -543,12 +552,6 @@ const ImageOcclusionEditor = ({ imageUrl, regions, onChange }) => {
     const newRegions = [...regions];
     newRegions[index] = { ...newRegions[index], answer };
     onChange(newRegions);
-  };
-
-  const deleteRegion = (index) => {
-    const newRegions = regions.filter((_, i) => i !== index);
-    onChange(newRegions);
-    setSelectedRegionIndex(null);
   };
 
   return (
