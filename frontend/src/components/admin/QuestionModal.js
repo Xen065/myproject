@@ -376,7 +376,7 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
                 <p>Students will need to arrange these items in the correct order you specified above.</p>
               </div>
             </>
-          ) : formData.cardType !== 'image' && (
+          ) : formData.cardType !== 'image' && formData.cardType !== 'ordered' && (
             <div className="form-group">
               <label>Correct Answer *</label>
               <input
