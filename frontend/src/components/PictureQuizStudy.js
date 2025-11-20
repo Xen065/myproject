@@ -129,7 +129,7 @@ const PictureQuizStudy = ({ card, isRevealed }) => {
 
     if (occlusionStyle === 'solid') {
       // Solid black overlay
-      ctx.fillStyle = `rgba(0, 0, 0, ${0.8 * opacity})`;
+      ctx.fillStyle = `rgba(0, 0, 0, ${0.95 * opacity})`;
       ctx.fillRect(region.x, region.y, region.width, region.height);
     } else if (occlusionStyle === 'blur') {
       // Blur effect using multiple semi-transparent layers

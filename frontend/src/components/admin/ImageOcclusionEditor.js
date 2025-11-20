@@ -32,9 +32,9 @@ const ImageOcclusionEditor = ({ imageUrl, regions, onChange }) => {
     const shape = region.shape || 'rectangle';
 
     // Draw semi-transparent fill
-    ctx.fillStyle = isDrawing ? 'rgba(255, 165, 0, 0.4)' :
-                    isSelected ? 'rgba(59, 130, 246, 0.4)' :
-                    'rgba(0, 0, 0, 0.6)';
+    ctx.fillStyle = isDrawing ? 'rgba(255, 165, 0, 0.5)' :
+                    isSelected ? 'rgba(59, 130, 246, 0.5)' :
+                    'rgba(0, 0, 0, 0.9)';
 
     if (shape === 'rectangle') {
       ctx.fillRect(region.x, region.y, region.width, region.height);
@@ -146,9 +146,45 @@ const ImageOcclusionEditor = ({ imageUrl, regions, onChange }) => {
       drawRegion(ctx, currentRegion, false, true);
     }
 
+    // Draw polygon points as they're being placed
+    if (polygonPoints.length > 0) {
+      // Draw lines between points
+      ctx.strokeStyle = '#FFA500';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      polygonPoints.forEach((point, i) => {
+        if (i === 0) {
+          ctx.moveTo(point.x, point.y);
+        } else {
+          ctx.lineTo(point.x, point.y);
+        }
+      });
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Draw points as circles
+      polygonPoints.forEach((point, i) => {
+        ctx.fillStyle = '#FFA500';
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.stroke();
+
+        // Draw point number
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = 'bold 12px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText((i + 1).toString(), point.x, point.y);
+      });
+    }
+
     // Restore context state
     ctx.restore();
-  }, [regions, currentRegion, selectedRegionIndex, zoom, pan]);
+  }, [regions, currentRegion, selectedRegionIndex, zoom, pan, polygonPoints]);
 
   // Delete region function
   const deleteRegion = useCallback((index) => {
