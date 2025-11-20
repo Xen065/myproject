@@ -4,6 +4,10 @@ import PictureQuizStudy from '../components/PictureQuizStudy';
 import StudyCalendar from '../components/StudyCalendar';
 import StudyTodoList from '../components/StudyTodoList';
 import ExamReminder from '../components/ExamReminder';
+import PomodoroTimer from '../components/PomodoroTimer';
+import StudyGoals from '../components/StudyGoals';
+import ProgressDashboard from '../components/ProgressDashboard';
+import SmartStudyPlanner from '../components/SmartStudyPlanner';
 import './Study.css';
 
 function Study() {
@@ -36,6 +40,10 @@ function Study() {
   const [showCalendar, setShowCalendar] = useState(false);
   const [showTodoList, setShowTodoList] = useState(false);
   const [showExamReminder, setShowExamReminder] = useState(false);
+  const [showPomodoro, setShowPomodoro] = useState(false);
+  const [showGoals, setShowGoals] = useState(false);
+  const [showDashboard, setShowDashboard] = useState(false);
+  const [showPlanner, setShowPlanner] = useState(false);
 
   // Calculate card difficulty level
   const getDifficultyLevel = (card) => {
@@ -361,6 +369,38 @@ function Study() {
               <span className="tool-icon">🔔</span>
               <span className="tool-label">Exam Reminders</span>
             </button>
+            <button
+              className="tool-btn pomodoro"
+              onClick={() => setShowPomodoro(true)}
+              title="Study Timer & Pomodoro Tracker"
+            >
+              <span className="tool-icon">⏱️</span>
+              <span className="tool-label">Timer</span>
+            </button>
+            <button
+              className="tool-btn goals"
+              onClick={() => setShowGoals(true)}
+              title="Study Goals & Milestones"
+            >
+              <span className="tool-icon">🏆</span>
+              <span className="tool-label">Goals</span>
+            </button>
+            <button
+              className="tool-btn dashboard"
+              onClick={() => setShowDashboard(true)}
+              title="Progress Dashboard & Analytics"
+            >
+              <span className="tool-icon">📊</span>
+              <span className="tool-label">Analytics</span>
+            </button>
+            <button
+              className="tool-btn planner"
+              onClick={() => setShowPlanner(true)}
+              title="Smart Study Planner"
+            >
+              <span className="tool-icon">🧠</span>
+              <span className="tool-label">Planner</span>
+            </button>
           </div>
         </div>
 
@@ -420,6 +460,28 @@ function Study() {
           <div className="modal-overlay">
             <ExamReminder onClose={() => setShowExamReminder(false)} />
           </div>
+        )}
+
+        {showPomodoro && (
+          <PomodoroTimer
+            onClose={() => setShowPomodoro(false)}
+            courses={enrolledCourses.map(c => ({ id: c.id, name: c.title }))}
+          />
+        )}
+
+        {showGoals && (
+          <StudyGoals
+            onClose={() => setShowGoals(false)}
+            courses={enrolledCourses.map(c => ({ id: c.id, name: c.title }))}
+          />
+        )}
+
+        {showDashboard && (
+          <ProgressDashboard onClose={() => setShowDashboard(false)} />
+        )}
+
+        {showPlanner && (
+          <SmartStudyPlanner onClose={() => setShowPlanner(false)} />
         )}
       </div>
     );

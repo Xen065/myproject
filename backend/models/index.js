@@ -19,6 +19,7 @@ const RolePermission = require('./RolePermission');
 const AuditLog = require('./AuditLog');
 const CourseModule = require('./CourseModule');
 const CourseContent = require('./CourseContent');
+const StudyGoal = require('./StudyGoal');
 
 // ============================================
 // Define Model Associations (Relationships)
@@ -258,6 +259,28 @@ ExamReminder.belongsTo(Course, {
   as: 'course'
 });
 
+// User -> StudyGoal (One-to-Many)
+User.hasMany(StudyGoal, {
+  foreignKey: 'userId',
+  as: 'studyGoals'
+});
+
+StudyGoal.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'student'
+});
+
+// Course -> StudyGoal (One-to-Many)
+Course.hasMany(StudyGoal, {
+  foreignKey: 'courseId',
+  as: 'goals'
+});
+
+StudyGoal.belongsTo(Course, {
+  foreignKey: 'courseId',
+  as: 'course'
+});
+
 // ============================================
 // Export all models
 // ============================================
@@ -276,5 +299,6 @@ module.exports = {
   RolePermission,
   AuditLog,
   CourseModule,
-  CourseContent
+  CourseContent,
+  StudyGoal
 };

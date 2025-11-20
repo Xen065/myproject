@@ -30,6 +30,11 @@ const calendarRoutes = require('./routes/calendar');
 const statsRoutes = require('./routes/stats');
 const achievementRoutes = require('./routes/achievements');
 const adminRoutes = require('./routes/admin');
+// New study tool features
+const studyGoalsRoutes = require('./routes/studyGoals');
+const analyticsRoutes = require('./routes/analytics');
+const pomodoroRoutes = require('./routes/pomodoro');
+const smartPlannerRoutes = require('./routes/smartPlanner');
 
 // Initialize Express app
 const app = express();
@@ -103,6 +108,12 @@ app.use('/api/achievements', achievementRoutes);
 
 // Admin routes (RBAC protected)
 app.use('/api/admin', adminRoutes);
+
+// Study tool features routes
+app.use('/api/study/goals', studyGoalsRoutes);
+app.use('/api/analytics', analyticsRoutes);
+app.use('/api/pomodoro', pomodoroRoutes);
+app.use('/api/planner', smartPlannerRoutes);
 
 // 404 handler for unknown routes
 app.use((req, res) => {
