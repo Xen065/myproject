@@ -84,8 +84,9 @@ const MathTrickScore = sequelize.define('MathTrickScore', {
     defaultValue: DataTypes.NOW
   }
 }, {
-  timestamps: true,
-  tableName: 'math_trick_scores'
+  tableName: 'math_trick_scores',
+  underscored: true,
+  timestamps: true
 });
 
 module.exports = MathTrickScore;

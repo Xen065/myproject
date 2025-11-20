@@ -111,8 +111,7 @@ const StudyGoal = sequelize.define('StudyGoal', {
   recurringPeriod: {
     type: DataTypes.ENUM('daily', 'weekly', 'monthly'),
     allowNull: true,
-    field: 'recurring_period',
-    comment: 'Period for recurring goals'
+    field: 'recurring_period'
   },
   lastResetDate: {
     type: DataTypes.DATEONLY,

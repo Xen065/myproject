@@ -36,12 +36,13 @@ const MathTrickAchievement = sequelize.define('MathTrickAchievement', {
     defaultValue: DataTypes.NOW
   }
 }, {
-  timestamps: true,
   tableName: 'math_trick_achievements',
+  underscored: true,
+  timestamps: true,
   indexes: [
     {
       unique: true,
-      fields: ['userId', 'badgeName']
+      fields: ['user_id', 'badge_name']
     }
   ]
 });

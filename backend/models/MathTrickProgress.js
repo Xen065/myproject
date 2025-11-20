@@ -85,8 +85,9 @@ const MathTrickProgress = sequelize.define('MathTrickProgress', {
     defaultValue: ['speedArithmetic', 'mentalMath', 'percentage'] // Start with 3 unlocked
   }
 }, {
-  timestamps: true,
-  tableName: 'math_trick_progress'
+  tableName: 'math_trick_progress',
+  underscored: true,
+  timestamps: true
 });
 
 module.exports = MathTrickProgress;

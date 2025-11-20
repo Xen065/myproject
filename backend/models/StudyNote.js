@@ -79,8 +79,7 @@ const StudyNote = sequelize.define('StudyNote', {
     type: DataTypes.ENUM('text', 'markdown', 'drawing', 'mixed'),
     allowNull: false,
     defaultValue: 'markdown',
-    field: 'note_type',
-    comment: 'Type of note content'
+    field: 'note_type'
   },
   folder: {
     type: DataTypes.STRING(200),
