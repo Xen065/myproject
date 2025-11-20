@@ -42,7 +42,7 @@ const QuestionManagement = () => {
     true_false: '✓✗ True/False',
     matching: '🔗 Matching Pairs',
     categorization: '📦 Categorization',
-    image: '🖼️ Image Occlusion',
+    image: '🖼️ Image Quiz',
     ordered: '🔢 Ordered Sequence'
   };
 

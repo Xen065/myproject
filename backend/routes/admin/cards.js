@@ -213,7 +213,7 @@ router.get(
 
 /**
  * @route   POST /api/admin/cards/upload-image
- * @desc    Upload image for image occlusion card
+ * @desc    Upload image for image quiz card
  * @access  Admin, Teacher
  */
 router.post(
@@ -327,17 +327,17 @@ router.post(
           });
         }
       } else if (finalCardType === 'image') {
-        // For image occlusion, ensure we have imageUrl and occludedRegions
+        // For image quiz, ensure we have imageUrl and occludedRegions
         if (!imageUrl) {
           return res.status(400).json({
             success: false,
-            error: 'Image URL is required for image occlusion cards'
+            error: 'Image URL is required for image quiz cards'
           });
         }
         if (!occludedRegions || !Array.isArray(occludedRegions) || occludedRegions.length === 0) {
           return res.status(400).json({
             success: false,
-            error: 'At least one occluded region is required for image occlusion cards'
+            error: 'At least one occluded region is required for image quiz cards'
           });
         }
         // Validate each region has required fields

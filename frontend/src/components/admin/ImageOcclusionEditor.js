@@ -1,5 +1,5 @@
 /**
- * Image Occlusion Editor Component
+ * Image Quiz Editor Component
  * Allows teachers to draw shapes on an image to create quiz regions
  * Enhanced with zoom, pan, and keyboard shortcuts
  */

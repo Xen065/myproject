@@ -1,6 +1,6 @@
 /**
  * Question Modal Component
- * Supports: Short Questions, Fill in the Blanks, Multiple Choice, Image Occlusion, Ordered, True/False, Multi-Select, Matching, Categorization
+ * Supports: Short Questions, Fill in the Blanks, Multiple Choice, Image Quiz, Ordered, True/False, Multi-Select, Matching, Categorization
  */
 import React, { useState, useEffect } from 'react';
 import { adminCardAPI } from '../../services/adminApi';
@@ -20,8 +20,8 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
     hint: '',
     explanation: '',
     options: ['', '', '', ''], // For MCQ and multi-select
-    imageUrl: '', // For image occlusion
-    occludedRegions: [], // For image occlusion
+    imageUrl: '', // For image quiz
+    occludedRegions: [], // For image quiz
     orderedItems: [], // For ordered questions
     multiSelectAnswers: [], // For multi-select correct answers
     matchingPairs: [], // For matching pairs
@@ -272,7 +272,7 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
                 <option value="true_false">✓✗ True/False</option>
                 <option value="matching">🔗 Matching Pairs</option>
                 <option value="categorization">📦 Categorization</option>
-                <option value="image">🖼️ Image Occlusion</option>
+                <option value="image">🖼️ Image Quiz</option>
                 <option value="ordered">🔢 Ordered Sequence</option>
               </select>
             </div>
@@ -320,7 +320,7 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
               <div className="form-group">
                 <label>Question Title *</label>
                 <small className="help-text">
-                  Give this image occlusion a descriptive title (e.g., "Parts of a Cell", "Countries in Europe")
+                  Give this image quiz a descriptive title (e.g., "Parts of a Cell", "Countries in Europe")
                 </small>
                 <input
                   type="text"

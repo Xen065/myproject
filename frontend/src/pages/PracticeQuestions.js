@@ -84,7 +84,7 @@ const PracticeQuestions = () => {
   const submitAnswer = async () => {
     const current = questions[currentIndex];
 
-    // For image occlusion, check if all regions are revealed
+    // For image quiz, check if all regions are revealed
     if (current.cardType === 'image') {
       const allRevealed = current.occludedRegions?.every((_, idx) => revealedRegions.includes(idx));
       if (!allRevealed) {
@@ -220,7 +220,7 @@ const PracticeQuestions = () => {
           {currentQuestion.cardType === 'basic' && '📝 Short Answer'}
           {currentQuestion.cardType === 'cloze' && '✍️ Fill in the Blanks'}
           {currentQuestion.cardType === 'multiple_choice' && '☑️ Multiple Choice'}
-          {currentQuestion.cardType === 'image' && '🖼️ Image Occlusion'}
+          {currentQuestion.cardType === 'image' && '🖼️ Image Quiz'}
           {currentQuestion.cardType === 'ordered' && '🔢 Ordered Sequence'}
         </div>
 
@@ -237,7 +237,7 @@ const PracticeQuestions = () => {
         {!showAnswer && (
           <div className="answer-section">
             {currentQuestion.cardType === 'image' ? (
-              // Image Occlusion
+              // Image Quiz
               <div className="picture-quiz-practice">
                 <p className="occlusion-instructions">
                   👆 Click on the blurred regions to reveal what's hidden

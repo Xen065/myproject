@@ -68,12 +68,12 @@ const Card = sequelize.define('Card', {
     comment: 'For multiple choice cards: ["option1", "option2", "option3", "option4"]'
   },
 
-  // Image Occlusion fields
+  // Image Quiz fields
   imageUrl: {
     type: DataTypes.STRING(500),
     allowNull: true,
     field: 'image_url',
-    comment: 'URL path to the image for image occlusion cards'
+    comment: 'URL path to the image for image quiz cards'
   },
 
   occludedRegions: {
