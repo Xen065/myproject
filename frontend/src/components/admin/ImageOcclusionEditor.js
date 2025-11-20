@@ -13,7 +13,6 @@ const ImageOcclusionEditor = ({ imageUrl, regions, onChange }) => {
   const [startPos, setStartPos] = useState(null);
   const [currentRegion, setCurrentRegion] = useState(null);
   const [selectedRegionIndex, setSelectedRegionIndex] = useState(null);
-  const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
 
   // Enhanced interaction states
   const [zoom, setZoom] = useState(1);
@@ -33,7 +32,6 @@ const ImageOcclusionEditor = ({ imageUrl, regions, onChange }) => {
     if (!imageUrl || !canvasRef.current) return;
 
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
     const img = new Image();
 
     img.onload = () => {
@@ -43,7 +41,6 @@ const ImageOcclusionEditor = ({ imageUrl, regions, onChange }) => {
       canvas.width = img.width * scale;
       canvas.height = img.height * scale;
 
-      setImageDimensions({ width: canvas.width, height: canvas.height });
       imageRef.current = img;
       redrawCanvas();
     };
@@ -60,7 +57,7 @@ const ImageOcclusionEditor = ({ imageUrl, regions, onChange }) => {
   // Redraw canvas whenever regions change
   useEffect(() => {
     redrawCanvas();
-  }, [regions, currentRegion, selectedRegionIndex, zoom, pan]);
+  }, [regions, currentRegion, selectedRegionIndex, zoom, pan, redrawCanvas]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -100,7 +97,7 @@ const ImageOcclusionEditor = ({ imageUrl, regions, onChange }) => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedRegionIndex, zoom]);
+  }, [selectedRegionIndex, zoom, deleteRegion]);
 
   const redrawCanvas = useCallback(() => {
     if (!canvasRef.current || !imageRef.current) return;

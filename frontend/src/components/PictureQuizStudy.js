@@ -3,7 +3,7 @@
  * Displays picture quiz cards during study sessions
  * Enhanced with zoom, pan, keyboard shortcuts, and touch support
  */
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import './PictureQuizStudy.css';
 
 const PictureQuizStudy = ({ card, isRevealed }) => {
@@ -11,7 +11,6 @@ const PictureQuizStudy = ({ card, isRevealed }) => {
   const containerRef = useRef(null);
   const imageRef = useRef(null);
   const [currentRegionIndex, setCurrentRegionIndex] = useState(0);
-  const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
 
   // Enhanced interaction states
   const [zoom, setZoom] = useState(1);
@@ -30,13 +29,12 @@ const PictureQuizStudy = ({ card, isRevealed }) => {
     ? card.imageUrl
     : `${API_BASE_URL}${card.imageUrl}`;
 
-  const regions = card.occludedRegions || [];
+  const regions = useMemo(() => card.occludedRegions || [], [card.occludedRegions]);
 
   useEffect(() => {
     if (!imageUrl || !canvasRef.current) return;
 
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
     const img = new Image();
 
     img.onload = () => {
@@ -46,7 +44,6 @@ const PictureQuizStudy = ({ card, isRevealed }) => {
       canvas.width = img.width * scale;
       canvas.height = img.height * scale;
 
-      setImageDimensions({ width: canvas.width, height: canvas.height });
       imageRef.current = img;
       redrawCanvas();
     };
@@ -61,7 +58,7 @@ const PictureQuizStudy = ({ card, isRevealed }) => {
 
   useEffect(() => {
     redrawCanvas();
-  }, [isRevealed, currentRegionIndex, zoom, pan, animationProgress, occlusionStyle]);
+  }, [isRevealed, currentRegionIndex, zoom, pan, animationProgress, occlusionStyle, redrawCanvas]);
 
   // Animation effect when revealing
   useEffect(() => {
@@ -122,7 +119,7 @@ const PictureQuizStudy = ({ card, isRevealed }) => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentRegionIndex, regions.length, zoom]);
+  }, [currentRegionIndex, regions.length, zoom, handleNextRegion, handlePrevRegion]);
 
   // Helper function to draw occlusion based on style
   const drawOcclusion = useCallback((ctx, region, index) => {
