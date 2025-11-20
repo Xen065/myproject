@@ -1,15 +1,16 @@
 /**
  * Question Modal Component
- * Supports: Short Questions, Fill in the Blanks, Multiple Choice, Image Occlusion
+ * Supports: Short Questions, Fill in the Blanks, Multiple Choice, Image Occlusion, Ordered
  */
 import React, { useState, useEffect } from 'react';
 import { adminCardAPI } from '../../services/adminApi';
 import ImageOcclusionEditor from './ImageOcclusionEditor';
+import OrderedQuestionEditor from './OrderedQuestionEditor';
 import './Modal.css';
 
 const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
   const [formData, setFormData] = useState({
-    cardType: 'basic', // basic, cloze, multiple_choice, image
+    cardType: 'basic', // basic, cloze, multiple_choice, image, ordered
     moduleId: '',
     question: '',
     answer: '',
@@ -18,6 +19,7 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
     options: ['', '', '', ''], // For MCQ
     imageUrl: '', // For image occlusion
     occludedRegions: [], // For image occlusion
+    orderedItems: [], // For ordered questions
     tags: [],
   });
   const [saving, setSaving] = useState(false);
@@ -38,6 +40,7 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
         options: question.options || ['', '', '', ''],
         imageUrl: question.imageUrl || '',
         occludedRegions: question.occludedRegions || [],
+        orderedItems: question.orderedItems || [],
         tags: question.tags || [],
       });
       if (question.imageUrl) {
@@ -135,6 +138,11 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
         setError('Please provide an answer for all occluded regions');
         return;
       }
+    } else if (formData.cardType === 'ordered') {
+      if (!formData.orderedItems || formData.orderedItems.length < 2) {
+        setError('Ordered questions must have at least 2 items');
+        return;
+      }
     } else {
       // Basic and cloze
       if (!formData.answer.trim()) {
@@ -158,6 +166,7 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
           : null,
         imageUrl: formData.cardType === 'image' ? formData.imageUrl : null,
         occludedRegions: formData.cardType === 'image' ? formData.occludedRegions : null,
+        orderedItems: formData.cardType === 'ordered' ? formData.orderedItems : null,
         tags: formData.tags,
       };
 
@@ -217,6 +226,7 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
                 <option value="cloze">✍️ Fill in the Blanks</option>
                 <option value="multiple_choice">☑️ Multiple Choice (MCQ)</option>
                 <option value="image">🖼️ Image Occlusion</option>
+                <option value="ordered">🔢 Ordered Sequence</option>
               </select>
             </div>
 
@@ -353,6 +363,17 @@ const QuestionModal = ({ courseId, question, modules, onClose, onSave }) => {
               <div className="info-box">
                 <strong>🔀 Options will be shuffled for students!</strong>
                 <p>The order of options will be randomized each time a student sees this question.</p>
+              </div>
+            </>
+          ) : formData.cardType === 'ordered' ? (
+            <>
+              <OrderedQuestionEditor
+                items={formData.orderedItems}
+                onChange={(items) => setFormData({ ...formData, orderedItems: items })}
+              />
+              <div className="info-box">
+                <strong>🔢 Items will be shuffled for students!</strong>
+                <p>Students will need to arrange these items in the correct order you specified above.</p>
               </div>
             </>
           ) : formData.cardType !== 'image' && (

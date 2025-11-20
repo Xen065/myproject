@@ -32,13 +32,14 @@ const PracticeQuestions = () => {
   const [loading, setLoading] = useState(true);
   const [shuffledOptions, setShuffledOptions] = useState([]);
   const [revealedRegions, setRevealedRegions] = useState([]);
+  const [shuffledOrderedItems, setShuffledOrderedItems] = useState([]);
 
   // Load questions
   useEffect(() => {
     loadQuestions();
   }, [courseId]);
 
-  // Shuffle MCQ options when question changes
+  // Shuffle MCQ options and ordered items when question changes
   useEffect(() => {
     const current = questions[currentIndex];
     if (current && current.cardType === 'multiple_choice' && current.options) {
@@ -47,6 +48,14 @@ const PracticeQuestions = () => {
     } else {
       setShuffledOptions([]);
     }
+
+    if (current && current.cardType === 'ordered' && current.orderedItems) {
+      // Shuffle ordered items for students to rearrange
+      setShuffledOrderedItems(shuffleArray(current.orderedItems));
+    } else {
+      setShuffledOrderedItems([]);
+    }
+
     setUserAnswer('');
     setShowAnswer(false);
     setRevealedRegions([]);
@@ -138,6 +147,20 @@ const PracticeQuestions = () => {
     setUserAnswer(value);
   };
 
+  const moveItemUp = (index) => {
+    if (index === 0) return;
+    const newItems = [...shuffledOrderedItems];
+    [newItems[index - 1], newItems[index]] = [newItems[index], newItems[index - 1]];
+    setShuffledOrderedItems(newItems);
+  };
+
+  const moveItemDown = (index) => {
+    if (index === shuffledOrderedItems.length - 1) return;
+    const newItems = [...shuffledOrderedItems];
+    [newItems[index], newItems[index + 1]] = [newItems[index + 1], newItems[index]];
+    setShuffledOrderedItems(newItems);
+  };
+
   if (loading) {
     return (
       <div className="practice-page">
@@ -160,10 +183,16 @@ const PracticeQuestions = () => {
 
   const currentQuestion = questions[currentIndex];
 
-  // For image occlusion, consider it correct if all regions were revealed
-  const isCorrect = currentQuestion.cardType === 'image'
-    ? revealedRegions.length === currentQuestion.occludedRegions?.length
-    : userAnswer.trim().toLowerCase() === currentQuestion.answer.trim().toLowerCase();
+  // Check if answer is correct based on question type
+  let isCorrect = false;
+  if (currentQuestion.cardType === 'image') {
+    isCorrect = revealedRegions.length === currentQuestion.occludedRegions?.length;
+  } else if (currentQuestion.cardType === 'ordered') {
+    // Check if the order matches exactly
+    isCorrect = JSON.stringify(shuffledOrderedItems) === JSON.stringify(currentQuestion.orderedItems);
+  } else {
+    isCorrect = userAnswer.trim().toLowerCase() === currentQuestion.answer.trim().toLowerCase();
+  }
 
   return (
     <div className="practice-page">
@@ -192,6 +221,7 @@ const PracticeQuestions = () => {
           {currentQuestion.cardType === 'cloze' && '✍️ Fill in the Blanks'}
           {currentQuestion.cardType === 'multiple_choice' && '☑️ Multiple Choice'}
           {currentQuestion.cardType === 'image' && '🖼️ Image Occlusion'}
+          {currentQuestion.cardType === 'ordered' && '🔢 Ordered Sequence'}
         </div>
 
         <div className="question-content">
@@ -270,6 +300,39 @@ const PracticeQuestions = () => {
                     <span className="option-text">{option}</span>
                   </label>
                 ))}
+              </div>
+            ) : currentQuestion.cardType === 'ordered' ? (
+              // Ordered sequence with reordering controls
+              <div className="ordered-items-practice">
+                <p className="shuffle-notice">
+                  🔢 Arrange these items in the correct order
+                </p>
+                <div className="ordered-items-list">
+                  {shuffledOrderedItems.map((item, index) => (
+                    <div key={index} className="ordered-item">
+                      <span className="item-number">{index + 1}.</span>
+                      <span className="item-text">{item}</span>
+                      <div className="item-controls">
+                        <button
+                          onClick={() => moveItemUp(index)}
+                          disabled={index === 0}
+                          className="btn-move-item"
+                          title="Move up"
+                        >
+                          ↑
+                        </button>
+                        <button
+                          onClick={() => moveItemDown(index)}
+                          disabled={index === shuffledOrderedItems.length - 1}
+                          className="btn-move-item"
+                          title="Move down"
+                        >
+                          ↓
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             ) : (
               // Text input for other types

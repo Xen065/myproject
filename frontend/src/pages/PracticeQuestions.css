@@ -448,3 +448,88 @@
     max-width: 100%;
   }
 }
+
+/* Ordered Items Practice Styles */
+.ordered-items-practice {
+  width: 100%;
+}
+
+.ordered-items-list {
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 12px;
+}
+
+.ordered-item {
+  display: flex;
+  align-items: center;
+  background-color: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 8px;
+  transition: all 0.2s;
+}
+
+.ordered-item:last-child {
+  margin-bottom: 0;
+}
+
+.ordered-item:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.ordered-item .item-number {
+  font-weight: 700;
+  color: #6366f1;
+  margin-right: 12px;
+  min-width: 30px;
+  font-size: 16px;
+}
+
+.ordered-item .item-text {
+  flex: 1;
+  color: #1f2937;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.ordered-item .item-controls {
+  display: flex;
+  gap: 6px;
+  margin-left: 12px;
+}
+
+.btn-move-item {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #e5e7eb;
+  background-color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  color: #6b7280;
+}
+
+.btn-move-item:hover:not(:disabled) {
+  background-color: #6366f1;
+  border-color: #6366f1;
+  color: white;
+}
+
+.btn-move-item:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.btn-move-item:active:not(:disabled) {
+  transform: scale(0.95);
+}
+}

@@ -272,6 +272,7 @@ router.post(
         options,
         imageUrl,
         occludedRegions,
+        orderedItems,
         tags
       } = req.body;
 
@@ -301,7 +302,7 @@ router.post(
       }
 
       // Validate cardType
-      const validCardTypes = ['basic', 'multiple_choice', 'cloze', 'image'];
+      const validCardTypes = ['basic', 'multiple_choice', 'cloze', 'image', 'ordered'];
       const finalCardType = cardType && validCardTypes.includes(cardType) ? cardType : 'basic';
 
       // Type-specific validation
@@ -344,6 +345,22 @@ router.post(
             error: 'Each occluded region must have x, y, width, height, and answer'
           });
         }
+      } else if (finalCardType === 'ordered') {
+        // For ordered questions, ensure we have orderedItems
+        if (!orderedItems || !Array.isArray(orderedItems) || orderedItems.length < 2) {
+          return res.status(400).json({
+            success: false,
+            error: 'Ordered questions must have at least 2 items'
+          });
+        }
+        // Validate each item is a non-empty string
+        const invalidItem = orderedItems.find(item => typeof item !== 'string' || !item.trim());
+        if (invalidItem !== undefined) {
+          return res.status(400).json({
+            success: false,
+            error: 'All items must be non-empty strings'
+          });
+        }
       } else {
         // For basic and cloze, answer is required
         if (!answer) {
@@ -367,6 +384,7 @@ router.post(
         options: finalCardType === 'multiple_choice' ? options : null,
         imageUrl: finalCardType === 'image' ? imageUrl : null,
         occludedRegions: finalCardType === 'image' ? occludedRegions : null,
+        orderedItems: finalCardType === 'ordered' ? orderedItems : null,
         tags: tags || [],
         status: 'new',
         easeFactor: 2.5,
@@ -520,7 +538,8 @@ router.put(
         cardType,
         options,
         imageUrl,
-        occludedRegions
+        occludedRegions,
+        orderedItems
       } = req.body;
 
       if (question !== undefined) card.question = question;
@@ -531,6 +550,7 @@ router.put(
       if (options !== undefined) card.options = options;
       if (imageUrl !== undefined) card.imageUrl = imageUrl;
       if (occludedRegions !== undefined) card.occludedRegions = occludedRegions;
+      if (orderedItems !== undefined) card.orderedItems = orderedItems;
 
       await card.save();
 
